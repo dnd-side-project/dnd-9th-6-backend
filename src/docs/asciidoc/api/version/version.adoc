@@ -1,0 +1,9 @@
+=== Version 변경 API
+
+==== HTTP Request Body
+include::{snippets}/version-check/http-request.adoc[]
+include::{snippets}/version-check/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/version-check/http-response.adoc[]
+include::{snippets}/version-check/response-fields.adoc[]

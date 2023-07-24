@@ -1,0 +1,15 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= 📈 API
+
+== Version API
+include::api/version/version.adoc[]
