@@ -19,7 +19,7 @@ public class VersionController {
 
     @GetMapping("/api/v1/version")
     public CustomResponseEntity<String> checkVersion() {
-        return CustomResponseEntity.success("Release 0.0.5");
+        return CustomResponseEntity.success("Release 0.0.6");
     }
 
     @PostMapping("/api/v1/version")
