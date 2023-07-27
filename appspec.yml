@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/dnd-9th-6-backend
+file_exists_behavior: OVERWRITE
+
+hooks:
+  ApplicationStart:
+    - location: scripts/run_new_was.sh
+      timeout: 60
+      runas: ec2-user
+    - location: scripts/health_check.sh
+      timeout: 60
+      runas: ec2-user
+    - location: scripts/switch.sh
+      timeout: 60
+      runas: ec2-user
