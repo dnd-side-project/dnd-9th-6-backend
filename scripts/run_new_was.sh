@@ -3,7 +3,7 @@
 #!/bin/bash
 
 PROJECT_ROOT="/home/ec2-user/dnd-9th-6-backend"
-JAR_FILE="$PROJECT_ROOT/build/libs/dnd-9th-6-backend-0.0.1-SNAPSHOT.jar"
+JAR_FILE="$PROJECT_ROOT/build/libs/project-0.0.1-SNAPSHOT.jar"
 
 CURRENT_PORT=$(cat /home/ec2-user/service_url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
