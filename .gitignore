@@ -202,3 +202,7 @@ src/main/resources/application-dev.yml
 src/test/resources/application.yml
 
 src/main/resources/db/h2/data.sql
+
+bin/main/application.yml
+
+bin/test/application.yml
