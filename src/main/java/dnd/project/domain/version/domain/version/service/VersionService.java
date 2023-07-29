@@ -1,7 +1,7 @@
-package dnd.project.domain.version.service;
+package dnd.project.domain.version.domain.version.service;
 
-import dnd.project.domain.version.request.VersionServiceRequest;
-import dnd.project.domain.version.response.VersionResponse;
+import dnd.project.domain.version.domain.version.response.VersionResponse;
+import dnd.project.domain.version.domain.version.request.VersionServiceRequest;
 import org.springframework.stereotype.Service;
 
 @Service

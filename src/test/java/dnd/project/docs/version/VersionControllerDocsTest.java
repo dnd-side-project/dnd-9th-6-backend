@@ -1,10 +1,11 @@
 package dnd.project.docs.version;
 
 import dnd.project.docs.RestDocsSupport;
-import dnd.project.domain.version.controller.VersionController;
-import dnd.project.domain.version.request.VersionRequest;
-import dnd.project.domain.version.response.VersionResponse;
-import dnd.project.domain.version.service.VersionService;
+
+import dnd.project.domain.version.domain.version.controller.VersionController;
+import dnd.project.domain.version.domain.version.request.VersionRequest;
+import dnd.project.domain.version.domain.version.response.VersionResponse;
+import dnd.project.domain.version.domain.version.service.VersionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

@@ -1,8 +1,8 @@
-package dnd.project.domain.version.controller;
+package dnd.project.domain.version.domain.version.controller;
 
-import dnd.project.domain.version.request.VersionRequest;
-import dnd.project.domain.version.response.VersionResponse;
-import dnd.project.domain.version.service.VersionService;
+import dnd.project.domain.version.domain.version.response.VersionResponse;
+import dnd.project.domain.version.domain.version.request.VersionRequest;
+import dnd.project.domain.version.domain.version.service.VersionService;
 import dnd.project.global.common.CustomResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class VersionController {
 
     @GetMapping("/api/v1/version")
     public CustomResponseEntity<String> checkVersion() {
-        return CustomResponseEntity.success("Release 0.0.7");
+        return CustomResponseEntity.success("Release 0.1.0");
     }
 
     @PostMapping("/api/v1/version")

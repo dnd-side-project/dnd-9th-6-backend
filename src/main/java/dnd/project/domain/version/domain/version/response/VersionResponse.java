@@ -1,4 +1,4 @@
-package dnd.project.domain.version.response;
+package dnd.project.domain.version.domain.version.response;
 
 import lombok.Builder;
 import lombok.Getter;

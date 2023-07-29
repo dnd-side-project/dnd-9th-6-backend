@@ -1,4 +1,4 @@
-package dnd.project.domain.version.request;
+package dnd.project.domain.version.domain.version.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
