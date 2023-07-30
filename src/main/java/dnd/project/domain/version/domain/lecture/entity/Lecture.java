@@ -37,8 +37,12 @@ public class Lecture {
     private String subCategory;
 
     @NotNull
-    private String keyword;
+    private String keywords;
 
+    @NotNull
+    private String content;
+
+    @NotNull
     private String imageUrl;
 
 
