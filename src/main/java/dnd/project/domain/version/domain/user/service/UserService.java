@@ -1,5 +1,6 @@
 package dnd.project.domain.version.domain.user.service;
 
+import dnd.project.domain.version.domain.user.config.Platform;
 import dnd.project.domain.version.domain.user.entity.Authority;
 import dnd.project.domain.version.domain.user.entity.Users;
 import dnd.project.domain.version.domain.user.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static dnd.project.global.common.Result.FAIL;
 import static dnd.project.global.common.Result.NOT_FOUND_USER;
 
 @Service
@@ -22,6 +24,8 @@ import static dnd.project.global.common.Result.NOT_FOUND_USER;
 public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final KakaoLoginService kakaoLoginService;
+    private final GoogleLoginService googleLoginService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
@@ -49,8 +53,30 @@ public class UserService {
     public UserResponse.Detail findMyListUser(Long userId) {
         return UserResponse.Detail.response(getUser(userId));
     }
-    // method
 
+    public UserResponse.Login loginByOAuth(String code, Platform platform) {
+        // 요청된 로그인 플랫폼 확인 후 소셜 로그인 진행
+        Users userEntity;
+        switch (platform.name()) {
+            case "KAKAO" -> userEntity = kakaoLoginService.toEntityUser(code, platform);
+            case "GOOGLE" -> userEntity = googleLoginService.toEntityUser(code, platform);
+            default -> throw new CustomException(FAIL);
+        }
+
+        // 서비스 회원이 아니면 가입
+        Users user = userRepository.findByEmail(userEntity.getEmail())
+                .orElseGet(() -> userRepository.save(userEntity));
+
+        // 토큰 발급
+        String accessToken = tokenProvider.createToken(
+                user.getId(), getAuthentication(user.getEmail(), platform.name())
+        );
+        String refreshToken = tokenProvider.createRefreshToken(user.getEmail());
+
+        return UserResponse.Login.response(user, accessToken, refreshToken);
+    }
+
+    // method
     private Authentication getAuthentication(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(email, password);
