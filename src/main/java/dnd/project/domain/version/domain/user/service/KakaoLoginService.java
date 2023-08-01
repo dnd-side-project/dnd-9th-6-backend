@@ -6,6 +6,7 @@ import dnd.project.domain.version.domain.user.entity.Authority;
 import dnd.project.domain.version.domain.user.entity.Users;
 import dnd.project.domain.version.domain.user.response.KakaoTokenResponse;
 import dnd.project.domain.version.domain.user.response.KakaoUserResponse;
+import dnd.project.domain.version.domain.user.response.UserResponse;
 import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -24,22 +25,26 @@ import static dnd.project.global.common.Result.*;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoLoginService {
+public class KakaoLoginService implements OAuth2LoginService {
 
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate = new RestTemplate();
     private final KakaoProperties kakaoProperties;
 
+    @Override
+    public Platform supports() {
+        return Platform.KAKAO;
+    }
+
     // 유저 Entity 로 변환
-    public Users toEntityUser(String code, Platform platform) {
+    @Override
+    public UserResponse.OAuth toSocialEntityResponse(String code, Platform platform) {
         String accessToken = toRequestAccessToken(code);
         KakaoUserResponse profile = toRequestProfile(accessToken);
 
-        return Users.builder()
+        return UserResponse.OAuth.builder()
                 .email(profile.getKakaoAccount().getEmail())
                 .name(profile.getProperties().getNickname())
-                .password(passwordEncoder.encode(platform.name()))
-                .authority(ROLE_USER)
                 .build();
     }
 

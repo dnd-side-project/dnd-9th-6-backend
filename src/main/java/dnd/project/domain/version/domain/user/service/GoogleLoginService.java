@@ -6,6 +6,7 @@ import dnd.project.domain.version.domain.user.entity.Authority;
 import dnd.project.domain.version.domain.user.entity.Users;
 import dnd.project.domain.version.domain.user.response.GoogleTokenResponse;
 import dnd.project.domain.version.domain.user.response.GoogleUserResponse;
+import dnd.project.domain.version.domain.user.response.UserResponse;
 import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -22,22 +23,26 @@ import static dnd.project.global.common.Result.FAIL;
 
 @Service
 @RequiredArgsConstructor
-public class GoogleLoginService {
+public class GoogleLoginService implements OAuth2LoginService{
 
     private final PasswordEncoder passwordEncoder;
     private final GoogleProperties googleProperties;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // 유저 Entity 로 변환
-    public Users toEntityUser(String code, Platform platform) {
+    @Override
+    public Platform supports() {
+        return Platform.GOOGLE;
+    }
+
+    // DTO로 변환
+    @Override
+    public UserResponse.OAuth toSocialEntityResponse(String code, Platform platform) {
         String accessToken = toRequestAccessToken(code);
         GoogleUserResponse profile = toRequestProfile(accessToken);
 
-        return Users.builder()
+        return UserResponse.OAuth.builder()
                 .email(profile.getEmail())
                 .name(profile.getName())
-                .password(passwordEncoder.encode(platform.name()))
-                .authority(ROLE_USER)
                 .build();
     }
 
