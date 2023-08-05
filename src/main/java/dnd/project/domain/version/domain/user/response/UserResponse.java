@@ -1,9 +1,7 @@
 package dnd.project.domain.version.domain.user.response;
 
 import dnd.project.domain.version.domain.user.entity.Users;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 public class UserResponse {
@@ -58,5 +56,14 @@ public class UserResponse {
                     .name(user.getName())
                     .build();
         }
+    }
+
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class OAuth {
+        private String email;
+        private String name;
     }
 }

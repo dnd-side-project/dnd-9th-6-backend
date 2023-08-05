@@ -8,10 +8,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static dnd.project.domain.version.domain.user.config.Platform.GOOGLE;
+import static dnd.project.domain.version.domain.user.config.Platform.KAKAO;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,4 +35,17 @@ public class UserController {
     ) {
         return CustomResponseEntity.success(userService.findMyListUser(userId));
     }
+
+    // 카카오 로그인
+    @GetMapping("/login/kakao")
+    public CustomResponseEntity<UserResponse.Login> loginByKakao(@RequestParam String code) {
+        return CustomResponseEntity.success(userService.loginByOAuth(code, KAKAO));
+    }
+
+    // 구글 로그인
+    @GetMapping("/login/google")
+    public CustomResponseEntity<UserResponse.Login> loginByGoogle(@RequestParam String code) {
+        return CustomResponseEntity.success(userService.loginByOAuth(code, GOOGLE));
+    }
+
 }
