@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers(
                                 "/api/v1/version", "/auth","/auth/admin",
-                                "/login/kakao", "/login/google"
+                                "/login/kakao", "/login/google", "/docs/*"
                         )
                         .permitAll()
                 )
