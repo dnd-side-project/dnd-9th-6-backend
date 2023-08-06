@@ -1,8 +1,7 @@
 package dnd.project.domain.version.service;
 
-import dnd.project.domain.version.domain.version.request.VersionRequest;
-import dnd.project.domain.version.domain.version.response.VersionResponse;
-import dnd.project.domain.version.domain.version.service.VersionService;
+import dnd.project.domain.version.request.VersionRequest;
+import dnd.project.domain.version.response.VersionResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
