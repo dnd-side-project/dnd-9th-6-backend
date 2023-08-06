@@ -1,7 +1,7 @@
 package dnd.project.global.config;
 
-import dnd.project.domain.version.domain.user.entity.Users;
-import dnd.project.domain.version.domain.user.repository.UserRepository;
+import dnd.project.domain.user.entity.Users;
+import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
