@@ -39,7 +39,7 @@ public class UserService {
                 Users.builder()
                         .email(request.getEmail())
                         .password(passwordEncoder.encode(request.getPassword()))
-                        .name(request.getName())
+                        .nickName(request.getName())
                         .authority(ROLE_USER)
                         .build()
         );
@@ -65,7 +65,7 @@ public class UserService {
         UserResponse.OAuth socialLoginUser = toSocialLogin(code, platform);
         Users userEntity = Users.builder()
                 .email(socialLoginUser.getEmail())
-                .name(socialLoginUser.getName())
+                .nickName(socialLoginUser.getName())
                 .password(passwordEncoder.encode(platform.name()))
                 .authority(ROLE_USER)
                 .build();
