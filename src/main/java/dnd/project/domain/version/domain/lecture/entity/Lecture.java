@@ -1,9 +1,14 @@
 package dnd.project.domain.version.domain.lecture.entity;
 
+import dnd.project.domain.version.domain.review.entity.Review;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -45,5 +50,7 @@ public class Lecture {
     @NotNull
     private String imageUrl;
 
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY)
+    private List<Review> reviews;
 
 }

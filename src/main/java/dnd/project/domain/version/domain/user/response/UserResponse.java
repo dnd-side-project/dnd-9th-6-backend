@@ -28,7 +28,7 @@ public class UserResponse {
             return Login.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .name(user.getName())
+                    .name(user.getNickName())
                     .accessToken(atk)
                     .refreshToken(rtk)
                     .build();
@@ -53,7 +53,7 @@ public class UserResponse {
             return UserResponse.Detail.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .name(user.getName())
+                    .name(user.getNickName())
                     .build();
         }
     }
