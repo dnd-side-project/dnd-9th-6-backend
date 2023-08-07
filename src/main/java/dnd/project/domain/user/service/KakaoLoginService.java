@@ -11,7 +11,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -24,7 +23,6 @@ import static dnd.project.global.common.Result.FAIL;
 @RequiredArgsConstructor
 public class KakaoLoginService implements OAuth2LoginService {
 
-    private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate = new RestTemplate();
     private final KakaoProperties kakaoProperties;
 
@@ -45,7 +43,7 @@ public class KakaoLoginService implements OAuth2LoginService {
                 .build();
     }
 
-    // Google AccessToken 응답
+    // Kakao AccessToken 응답
     private String toRequestAccessToken(String authorizationCode) {
         // 발급받은 code -> GET 요청
         HttpHeaders headers = new HttpHeaders();
