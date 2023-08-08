@@ -1,22 +1,20 @@
 package dnd.project.domain.user.request.service;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+import java.util.List;
+
+import static lombok.AccessLevel.*;
 
 public class UserServiceRequest {
+
+    @AllArgsConstructor(access = PRIVATE)
     @NoArgsConstructor
     @Getter
-    public static class CreateUser {
-        private String email;
-        private String password;
-        private String name;
-
-        @Builder
-        private CreateUser(String email, String password, String name) {
-            this.email = email;
-            this.password = password;
-            this.name = name;
-        }
+    @Builder
+    public static class Interests {
+        @NotNull(message = "interests 는 필수 값 입니다.")
+        private List<String> interests;
     }
 }

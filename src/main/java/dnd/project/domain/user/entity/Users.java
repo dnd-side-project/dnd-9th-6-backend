@@ -38,4 +38,8 @@ public class Users {
 
     @OneToMany(mappedBy = "user", fetch = LAZY)
     private List<Bookmark> bookmarks;
+
+    public void toUpdateInterests(String interests) {
+        this.interests = interests;
+    }
 }

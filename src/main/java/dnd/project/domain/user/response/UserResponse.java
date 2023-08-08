@@ -6,29 +6,24 @@ import lombok.*;
 
 public class UserResponse {
 
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class Login {
         private Long id;
         private String email;
         private String name;
+        private Boolean isRegister;
         private String accessToken;
         private String refreshToken;
 
-        @Builder
-        private Login(Long id, String email, String name, String accessToken, String refreshToken) {
-            this.id = id;
-            this.email = email;
-            this.name = name;
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-        }
-
-        public static Login response(Users user, String atk, String rtk) {
+        public static Login response(Users user, String atk, String rtk, Boolean isRegister) {
             return Login.builder()
                     .id(user.getId())
                     .email(user.getEmail())
                     .name(user.getNickName())
+                    .isRegister(isRegister)
                     .accessToken(atk)
                     .refreshToken(rtk)
                     .build();
