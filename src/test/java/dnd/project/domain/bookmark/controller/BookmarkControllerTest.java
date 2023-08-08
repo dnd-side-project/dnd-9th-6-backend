@@ -24,4 +24,18 @@ class BookmarkControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("북마크 취소 API")
+    @Test
+    void cancelBookmark() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/auth/bookmark")
+                                .header("Authorization", "Bearer AccessToken")
+                                .param("lectureId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }
