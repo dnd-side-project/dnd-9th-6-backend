@@ -4,10 +4,7 @@ import dnd.project.domain.bookmark.service.BookmarkService;
 import dnd.project.global.common.CustomResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,4 +20,13 @@ public class BookmarkController {
     ) {
         return CustomResponseEntity.success(bookmarkService.addBookmark(lectureId, userId));
     }
+
+    // 북마크 취소 API
+    @DeleteMapping("/bookmark")
+    public CustomResponseEntity<Void> cancelBookmark(
+            @RequestParam Long lectureId, @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(bookmarkService.cancelBookmark(lectureId, userId));
+    }
+
 }
