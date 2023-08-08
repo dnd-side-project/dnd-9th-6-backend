@@ -1,0 +1,12 @@
+=== 북마크 등록 API
+
+==== HTTP Request Header
+include::{snippets}/add-bookmark/request-headers.adoc[]
+
+==== HTTP Request FormParameter
+include::{snippets}/add-bookmark/http-request.adoc[]
+include::{snippets}/add-bookmark/form-parameters.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/add-bookmark/http-response.adoc[]
+include::{snippets}/add-bookmark/response-fields.adoc[]
