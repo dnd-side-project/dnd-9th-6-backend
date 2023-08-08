@@ -9,7 +9,10 @@ public enum Result {
     FAIL(-1, "실패"),
     // User
     NOT_FOUND_USER(-1000, "존재하지 않는 사용자"),
-    AT_LEAST_ONE_INTEREST_REQUIRED(-1001, "하나 이상의 관심분야를 선택해야 합니다.");
+    AT_LEAST_ONE_INTEREST_REQUIRED(-1001, "하나 이상의 관심분야를 선택해야 합니다."),
+
+    // Lecture
+    NOT_FOUND_LECTURE(-2000, "존재하지 않는 강의");
 
     private final int code;
     private final String message;
