@@ -9,7 +9,15 @@ endif::[]
 :toclevels: 2
 :sectlinks:
 
+== 서버 도메인
+----
+ec2-52-78-18-124.ap-northeast-2.compute.amazonaws.com
+----
+
 = 📈 API
 
 == Version API
 include::api/version/version.adoc[]
+
+== User API
+include::api/user/user.adoc[]
