@@ -23,3 +23,16 @@ include::{snippets}/delete-review/form-parameters.adoc[]
 ==== HTTP Response Body
 include::{snippets}/delete-review/http-response.adoc[]
 include::{snippets}/delete-review/response-fields.adoc[]
+
+=== 후기 수정 API
+
+==== HTTP Request Header
+include::{snippets}/update-review/request-headers.adoc[]
+
+==== HTTP Request body
+include::{snippets}/update-review/http-request.adoc[]
+include::{snippets}/update-review/request-fields.adoc[]
+
+==== HTTP Response body
+include::{snippets}/update-review/http-response.adoc[]
+include::{snippets}/update-review/response-fields.adoc[]
