@@ -43,4 +43,21 @@ class ReviewControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("후기 수정 API")
+    @Test
+    void updateReview() throws Exception {
+        // given
+        ReviewRequest.Update request =
+                new ReviewRequest.Update(1L, 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.patch("/review")
+                                .header("Authorization", "Bearer AccessToken")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

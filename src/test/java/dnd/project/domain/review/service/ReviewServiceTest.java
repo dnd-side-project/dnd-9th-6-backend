@@ -22,7 +22,6 @@ import java.util.Optional;
 import static dnd.project.domain.user.entity.Authority.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -95,11 +94,36 @@ class ReviewServiceTest {
         entityManager.clear();
 
         // when
-        reviewService.deleteReview(review.getId(),user.getId());
+        reviewService.deleteReview(review.getId(), user.getId());
 
         // then
         Optional<Review> optionalReview = reviewRepository.findById(review.getId());
         assertThat(optionalReview.isEmpty()).isTrue();
+    }
+
+    @DisplayName("유저가 자신이 작성한 후기를 수정한다.")
+    @Test
+    void updateReview() {
+        // given
+        Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+        Review review = saveReview(lecture, user, 4.0, "");
+
+        ReviewRequest.Update request =
+                new ReviewRequest.Update(review.getId(), 3.5, "빠른 답변,이해가 잘돼요,도움이 안되었어요", "강의가 별로네요..");
+
+        // when
+        ReviewResponse.Create response =
+                reviewService.updateReview(request.toServiceRequest(), user.getId());
+
+        // then
+        assertThat(response)
+                .extracting("reviewId", "lectureId", "userId", "nickName", "score", "tags", "content")
+                .contains(
+                        review.getId(), lecture.getId(), user.getId(),
+                        user.getNickName(), 3.5, "빠른 답변,이해가 잘돼요,도움이 안되었어요",
+                        "강의가 별로네요.."
+                );
     }
 
     // method
