@@ -1,10 +1,7 @@
 package dnd.project.domain.lecture.entity;
 
 import dnd.project.domain.review.entity.Review;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -18,6 +15,7 @@ import java.util.List;
 public class Lecture {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -44,7 +42,6 @@ public class Lecture {
     @NotNull
     private String keywords;
 
-    @NotNull
     private String content;
 
     @NotNull
