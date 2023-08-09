@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -25,6 +26,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.formParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,7 +45,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
     void createReview() throws Exception {
         // given
         ReviewRequest.Create request =
-                new ReviewRequest.Create(1L, 4, "빠른 답변,이해가 잘돼요,보통이에요", "강의가 만족스럽습니다!");
+                new ReviewRequest.Create(1L, 5.0, "빠른 답변,이해가 잘돼요,보통이에요", "강의가 만족스럽습니다!");
 
         given(reviewService.createReview(any(), any()))
                 .willReturn(
@@ -51,7 +54,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                 .lectureId(1L)
                                 .userId(1L)
                                 .nickName("클래스코프")
-                                .score(5)
+                                .score(5.0)
                                 .tags("빠른 답변,이해가 잘돼요,보통이에요")
                                 .content("강의가 만족스럽습니다!")
                                 .createdDate("2023-08-09")
@@ -78,7 +81,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("lectureId").type(NUMBER)
                                         .description("강의 ID"),
                                 fieldWithPath("score").type(NUMBER)
-                                        .description("후기 점수 / Integer 1~5 "),
+                                        .description("후기 점수 / Double 1~5 "),
                                 fieldWithPath("tags").type(STRING)
                                         .description("후기 태그"),
                                 fieldWithPath("content").type(STRING)
@@ -99,13 +102,46 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.nickName").type(STRING)
                                         .description("유저 닉네임"),
                                 fieldWithPath("data.score").type(NUMBER)
-                                        .description("후기 점수"),
+                                        .description("후기 점수 / Double"),
                                 fieldWithPath("data.tags").type(STRING)
                                         .description("후기 태그"),
                                 fieldWithPath("data.content").type(STRING)
                                         .description("후기 내용 / 없을시 빈 문자열"),
                                 fieldWithPath("data.createdDate").type(STRING)
                                         .description("후기 작성 날짜")
+                        )
+                ));
+    }
+
+    @DisplayName("후기 삭제 API")
+    @Test
+    void deleteReview() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/review")
+                                .header("Authorization", "Bearer AccessToken")
+                                .param("reviewId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("delete-review",
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("발급된 JWT AccessToken")
+                        ),
+                        formParameters(
+                                parameterWithName("reviewId")
+                                        .description("후기 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL)
+                                        .description("NULL")
                         )
                 ));
     }

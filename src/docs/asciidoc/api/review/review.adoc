@@ -10,3 +10,16 @@ include::{snippets}/create-review/request-fields.adoc[]
 ==== HTTP Response Body
 include::{snippets}/create-review/http-response.adoc[]
 include::{snippets}/create-review/response-fields.adoc[]
+
+=== 후기 삭제 API
+
+==== HTTP Request Header
+include::{snippets}/delete-review/request-headers.adoc[]
+
+==== HTTP Request FormParameter
+include::{snippets}/delete-review/http-request.adoc[]
+include::{snippets}/delete-review/form-parameters.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/delete-review/http-response.adoc[]
+include::{snippets}/delete-review/response-fields.adoc[]
