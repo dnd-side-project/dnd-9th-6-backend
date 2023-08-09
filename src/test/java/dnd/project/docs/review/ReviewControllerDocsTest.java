@@ -23,8 +23,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.formParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -216,6 +215,52 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.createdDate").type(STRING)
                                         .description("후기 작성 날짜")
                         )
+                ));
+    }
+
+    @DisplayName("후기 좋아요 및 취소 API")
+    @Test
+    void toggleLikeReview() throws Exception {
+        // given
+        given(reviewService.toggleLikeReview(anyLong(), any()))
+                .willReturn(
+                        ReviewResponse.ToggleLike.builder()
+                                .reviewId(1L)
+                                .userId(1L)
+                                .isCancelled(false)
+                                .build()
+                );
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/review/like")
+                                .header("Authorization", "Bearer AccessToken")
+                                .param("reviewId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("toggle-like",
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("발급된 JWT AccessToken")
+                        ),
+                        formParameters(
+                                parameterWithName("reviewId")
+                                        .description("후기 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data.reviewId").type(NUMBER)
+                                        .description("후기 ID"),
+                                fieldWithPath("data.userId").type(NUMBER)
+                                        .description("유저 ID"),
+                                fieldWithPath("data.isCancelled").type(BOOLEAN)
+                                        .description("좋아요 취소 여부 ex) 좋아요 등록시 -> false")
+                                )
                 ));
     }
 }

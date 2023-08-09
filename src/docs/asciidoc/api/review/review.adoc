@@ -36,3 +36,16 @@ include::{snippets}/update-review/request-fields.adoc[]
 ==== HTTP Response body
 include::{snippets}/update-review/http-response.adoc[]
 include::{snippets}/update-review/response-fields.adoc[]
+
+=== 후기 좋아요 및 취소 API
+
+==== HTTP Request Header
+include::{snippets}/toggle-like/request-headers.adoc[]
+
+==== HTTP Request FormParameter
+include::{snippets}/toggle-like/http-request.adoc[]
+include::{snippets}/toggle-like/form-parameters.adoc[]
+
+==== HTTP Response body
+include::{snippets}/toggle-like/http-response.adoc[]
+include::{snippets}/toggle-like/response-fields.adoc[]
