@@ -6,6 +6,7 @@ import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
+import dnd.project.global.common.Result;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-import static dnd.project.global.common.Result.FAIL;
-import static dnd.project.global.common.Result.NOT_FOUND_USER;
+import static dnd.project.global.common.Result.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,36 +33,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final List<OAuth2LoginService> oAuth2LoginServices;
 
-    // 일반 회원가입
-    @Transactional
-    public UserResponse.Login createUserAccount(UserServiceRequest.CreateUser request) {
-        Users user = userRepository.save(
-                Users.builder()
-                        .email(request.getEmail())
-                        .password(passwordEncoder.encode(request.getPassword()))
-                        .nickName(request.getName())
-                        .authority(Authority.ROLE_USER)
-                        .build()
-        );
-
-        // 토큰 발급
-        String accessToken = tokenProvider.createToken(
-                user.getId(), getAuthentication(request.getEmail(), request.getPassword())
-        );
-        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
-
-        return UserResponse.Login.response(user, accessToken, refreshToken);
-
-    }
-
     public UserResponse.Detail findMyListUser(Long userId) {
         return UserResponse.Detail.response(getUser(userId));
     }
 
-    // 소셜 로그인
+    // 소셜 로그인 API
     @Transactional
     public UserResponse.Login loginByOAuth(String code, Platform platform) {
         // OAuth 로그인 진행
+        boolean isRegister = false;
         UserResponse.OAuth socialLoginUser = toSocialLogin(code, platform);
         Users userEntity = Users.builder()
                 .email(socialLoginUser.getEmail())
@@ -72,8 +52,14 @@ public class UserService {
 
 
         // 서비스 회원이 아니면 가입
-        Users user = userRepository.findByEmail(userEntity.getEmail())
-                .orElseGet(() -> userRepository.save(userEntity));
+        Users user;
+        Optional<Users> optionalUser = userRepository.findByEmail(userEntity.getEmail());
+        if (optionalUser.isEmpty()) {
+            user = userRepository.save(userEntity);
+            isRegister = true;
+        } else {
+            user = optionalUser.get();
+        }
 
         // 토큰 발급
         String accessToken = tokenProvider.createToken(
@@ -81,7 +67,21 @@ public class UserService {
         );
         String refreshToken = tokenProvider.createRefreshToken(user.getEmail());
 
-        return UserResponse.Login.response(user, accessToken, refreshToken);
+        return UserResponse.Login.response(user, accessToken, refreshToken, isRegister);
+    }
+
+    // 관심분야 요청 API
+    @Transactional
+    public Void addInterests(Long userId, UserServiceRequest.Interests request) {
+        List<String> interests = request.getInterests();
+
+        if (interests.isEmpty()) {
+            throw new CustomException(AT_LEAST_ONE_INTEREST_REQUIRED);
+        }
+
+        Users user = getUser(userId);
+        user.toUpdateInterests(String.join(",", interests));
+        return null;
     }
 
     // method

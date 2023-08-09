@@ -1,0 +1,50 @@
+=== 소셜로그인 API
+
+==== 카카오 로그인
+[source,http,options="nowrap"]
+----
+1. 카카오 로그인 페이지
+https://kauth.kakao.com/oauth/authorize?client_id=e372da97369cf835ea1691792daa9370&redirect_uri=http://ec2-52-78-18-124.ap-northeast-2.compute.amazonaws.com/login/kakao&response_type=code
+
+2. 카카오 로그인 RedirectURL
+GET -> /login/kakao
+
+3. 로그인 성공시 RedirectURL로 자동 이동
+----
+
+==== 구글 로그인
+[source,http,options="nowrap"]
+----
+1. 구글 로그인 페이지
+https://accounts.google.com/o/oauth2/v2/auth?client_id=848453248473-levss4uvgkrum3h46knam82hlv83phvr.apps.googleusercontent.com&redirect_uri=http://ec2-52-78-18-124.ap-northeast-2.compute.amazonaws.com/login/google&response_type=code&scope=email%20profile%20openid&access_type=offline
+
+2. 구글 로그인 RedirectURL
+GET -> /login/google
+
+3. 로그인 성공시 RedirectURL로 자동 이동
+----
+
+==== HTTP Request QueryParameter
+include::{snippets}/login-by-kakao/http-request.adoc[]
+[source,http,options="nowrap"]
+----
+GET /login/google?code=4%252F0AdEu5BVdKyrEElZENWgSJOrJSHUeAjsSJHvWUSi237TQ13FqUfqPOa-ZcES6lGID7DmVaJwSig HTTP/1.1
+----
+include::{snippets}/login-by-kakao/query-parameters.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/login-by-kakao/http-response.adoc[]
+include::{snippets}/login-by-kakao/response-fields.adoc[]
+
+=== 관심분야 추가 요청 API
+
+==== HTTP Request Header
+include::{snippets}/add-interests/request-headers.adoc[]
+
+==== HTTP Request Body
+include::{snippets}/add-interests/http-request.adoc[]
+include::{snippets}/add-interests/request-fields.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/add-interests/http-response.adoc[]
+include::{snippets}/add-interests/response-fields.adoc[]

@@ -4,6 +4,6 @@
 include::{snippets}/version-check/http-request.adoc[]
 include::{snippets}/version-check/request-fields.adoc[]
 
-==== HTTP Response
+==== HTTP Response Body
 include::{snippets}/version-check/http-response.adoc[]
 include::{snippets}/version-check/response-fields.adoc[]
