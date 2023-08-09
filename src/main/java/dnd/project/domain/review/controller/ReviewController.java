@@ -7,9 +7,7 @@ import dnd.project.global.common.CustomResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,5 +20,12 @@ public class ReviewController {
             @RequestBody @Valid ReviewRequest.Create request, @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.createReview(request.toServiceRequest(), userId));
+    }
+
+    @DeleteMapping("/review")
+    public CustomResponseEntity<Void> deleteReview(
+            @RequestParam Long reviewId, @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(reviewService.deleteReview(reviewId, userId));
     }
 }

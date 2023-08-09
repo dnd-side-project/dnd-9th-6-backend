@@ -16,7 +16,7 @@ public class ReviewServiceRequest {
     @Builder
     public static class Create {
         private Long lectureId;
-        private Integer score;
+        private Double score;
         private String tags;
         private Optional<String> content;
     }

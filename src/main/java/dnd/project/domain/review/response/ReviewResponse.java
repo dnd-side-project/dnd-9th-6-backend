@@ -22,7 +22,7 @@ public class ReviewResponse {
         private Long lectureId;
         private Long userId;
         private String nickName;
-        private Integer score;
+        private Double score;
         private String tags;
         private String content;
         private String createdDate;

@@ -20,7 +20,7 @@ public class ReviewRequest {
         private Long lectureId;
 
         @NotNull(message = "강의 점수는 필수입니다.")
-        private Integer score;
+        private Double score;
 
         @NotNull(message = "하나 이상의 태그가 필요합니다.")
         @NotBlank(message = "태그는 빈 문자열을 허용하지 않습니다.")
