@@ -60,4 +60,18 @@ class ReviewControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("후기 좋아요 및 취소 API")
+    @Test
+    void toggleLikeReview() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/review/like")
+                        .header("Authorization", "Bearer AccessToken")
+                        .param("reviewId","1")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
