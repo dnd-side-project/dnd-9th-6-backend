@@ -9,12 +9,15 @@ import dnd.project.domain.review.response.ReviewResponse;
 import dnd.project.domain.user.entity.Authority;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static dnd.project.domain.user.entity.Authority.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Transactional
 class ReviewServiceTest {
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     private UserRepository userRepository;
@@ -46,7 +51,7 @@ class ReviewServiceTest {
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
 
         ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4, "빠른 답변,이해가 잘돼요,보통이에요", null);
+                new ReviewRequest.Create(lecture.getId(), 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
 
         // when
         ReviewResponse.Create response =
@@ -57,7 +62,7 @@ class ReviewServiceTest {
                 .extracting("lectureId", "userId", "nickName", "score", "tags", "content", "createdDate")
                 .contains(
                         lecture.getId(), user.getId(), user.getNickName(),
-                        4, "빠른 답변,이해가 잘돼요,보통이에요", "", "2023-08-09"
+                        4.0, "빠른 답변,이해가 잘돼요,보통이에요", "", "2023-08-09"
                 );
     }
 
@@ -67,10 +72,10 @@ class ReviewServiceTest {
         // given
         Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
-        Review review = saveReview(lecture, user, 4, "");
+        Review review = saveReview(lecture, user, 4.0, "");
 
         ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4, "빠른 답변,이해가 잘돼요,보통이에요", null);
+                new ReviewRequest.Create(lecture.getId(), 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
 
         // when // then
         assertThatThrownBy(() -> reviewService.createReview(request.toServiceRequest(), user.getId()))
@@ -78,9 +83,28 @@ class ReviewServiceTest {
                 .contains(-3000, "이미 해당 강의의 후기를 작성하였습니다.");
     }
 
+    @DisplayName("유저가 남겼던 후기를 삭제한다.")
+    @Test
+    void deleteReview() {
+        // given
+        Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+        Review review = saveReview(lecture, user, 4.0, "");
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        reviewService.deleteReview(review.getId(),user.getId());
+
+        // then
+        Optional<Review> optionalReview = reviewRepository.findById(review.getId());
+        assertThat(optionalReview.isEmpty()).isTrue();
+    }
+
     // method
 
-    private Review saveReview(Lecture lecture, Users user, Integer score, String content) {
+    private Review saveReview(Lecture lecture, Users user, Double score, String content) {
         return reviewRepository.save(
                 Review.builder()
                         .user(user)

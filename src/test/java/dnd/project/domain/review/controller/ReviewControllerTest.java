@@ -16,7 +16,7 @@ class ReviewControllerTest extends ControllerTestSupport {
     @Test
     void createReview() throws Exception {
         // given
-        ReviewRequest.Create request = new ReviewRequest.Create(1L, 4, "빠른 답변,이해가 잘돼요,보통이에요", null);
+        ReviewRequest.Create request = new ReviewRequest.Create(1L, 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
 
         // when // then
         mockMvc.perform(
@@ -24,6 +24,20 @@ class ReviewControllerTest extends ControllerTestSupport {
                                 .header("Authorization", "Bearer AccessToken")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("후기 삭제 API")
+    @Test
+    void deleteReview() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/review")
+                                .header("Authorization", "Bearer AccessToken")
+                                .param("reviewId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
