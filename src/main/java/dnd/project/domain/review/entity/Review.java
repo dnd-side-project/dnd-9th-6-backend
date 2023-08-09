@@ -46,4 +46,9 @@ public class Review extends BaseEntity {
     @OneToMany(mappedBy = "review", fetch = LAZY)
     private List<LikeReview> likeReviews;
 
+    public void toUpdateReview(Double score, String tags, String content) {
+        this.score = score;
+        this.tags = tags;
+        this.content = content;
+    }
 }

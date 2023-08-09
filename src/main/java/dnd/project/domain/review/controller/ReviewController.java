@@ -15,6 +15,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    // 후기 작성 API
     @PostMapping("/review")
     public CustomResponseEntity<ReviewResponse.Create> createReview(
             @RequestBody @Valid ReviewRequest.Create request, @AuthenticationPrincipal Long userId
@@ -22,10 +23,19 @@ public class ReviewController {
         return CustomResponseEntity.success(reviewService.createReview(request.toServiceRequest(), userId));
     }
 
+    // 후기 삭제 API
     @DeleteMapping("/review")
     public CustomResponseEntity<Void> deleteReview(
             @RequestParam Long reviewId, @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.deleteReview(reviewId, userId));
+    }
+
+    // 후기 수정 API
+    @PatchMapping("/review")
+    public CustomResponseEntity<ReviewResponse.Create> updateReview(
+            @RequestBody @Valid ReviewRequest.Update request, @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(reviewService.updateReview(request.toServiceRequest(), userId));
     }
 }
