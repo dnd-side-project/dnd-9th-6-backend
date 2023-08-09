@@ -38,4 +38,12 @@ public class ReviewController {
     ) {
         return CustomResponseEntity.success(reviewService.updateReview(request.toServiceRequest(), userId));
     }
+
+    // 후기 좋아요 및 취소 API
+    @PostMapping("/review/like")
+    public CustomResponseEntity<ReviewResponse.ToggleLike> toggleLikeReview(
+            @RequestParam Long reviewId, @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(reviewService.toggleLikeReview(reviewId, userId));
+    }
 }

@@ -40,4 +40,22 @@ public class ReviewResponse {
                     .build();
         }
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class ToggleLike {
+        private Long reviewId;
+        private Long userId;
+        private Boolean isCancelled;
+
+        public static ToggleLike response(Review review, Users user, Boolean isCancelled) {
+            return ToggleLike.builder()
+                    .reviewId(review.getId())
+                    .userId(user.getId())
+                    .isCancelled(isCancelled)
+                    .build();
+        }
+    }
 }
