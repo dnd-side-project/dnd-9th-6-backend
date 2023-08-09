@@ -13,9 +13,12 @@ import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.redis.RedisDao;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static dnd.project.global.common.Result.*;
@@ -104,14 +107,24 @@ public class ReviewService {
         return ReviewResponse.ToggleLike.response(review, user, isCancelled);
     }
 
+    // 최근 올라온 후기 조회 API
+    public List<ReviewResponse.ReadRecent> readRecentReview() {
+        List<Review> reviews =
+                reviewRepository.findByRecentReview(PageRequest.of(0, 10));
+
+        return reviews.stream().map(review -> ReviewResponse.ReadRecent.response(
+                review, review.getLecture(), review.getUser())
+        ).toList();
+    }
+
+    // method
+
     private static LikeReview toEntityLikeReview(Review review, Users user) {
         return LikeReview.builder()
                 .users(user)
                 .review(review)
                 .build();
     }
-
-    // method
 
     private static Review toEntityReview(
             Double score, String tags, Optional<String> optionalContent,

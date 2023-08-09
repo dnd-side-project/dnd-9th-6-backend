@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class ReviewResponse {
 
@@ -57,5 +58,68 @@ public class ReviewResponse {
                     .isCancelled(isCancelled)
                     .build();
         }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class ReadRecent {
+        private Reviews review;
+        private Lectures lecture;
+        private User user;
+
+        public static ReviewResponse.ReadRecent response(Review review, Lecture lecture, Users users) {
+            return ReadRecent.builder()
+                    .review(Reviews.builder()
+                            .reviewId(review.getId())
+                            .score(review.getScore())
+                            .content(review.getContent())
+                            .createdDate(review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .tags(review.getTags())
+                            .likes(review.getLikeReviews().size())
+                            .build()
+                    )
+                    .lecture(Lectures.builder()
+                            .lectureId(lecture.getId())
+                            .title(lecture.getTitle())
+                            .imageUrl(lecture.getImageUrl())
+                            .build()
+                    )
+                    .user(User.builder()
+                            .userId(users.getId())
+                            .imageUrl(users.getImageUrl())
+                            .nickName(users.getNickName())
+                            .build()
+                    )
+                    .build();
+        }
+    }
+
+    @AllArgsConstructor
+    @Builder
+    public static class Reviews {
+        private Long reviewId;
+        private Double score;
+        private String content;
+        private String createdDate;
+        private String tags;
+        private Integer likes;
+    }
+
+    @AllArgsConstructor
+    @Builder
+    public static class Lectures {
+        private Long lectureId;
+        private String title;
+        private String imageUrl;
+    }
+
+    @AllArgsConstructor
+    @Builder
+    public static class User {
+        private Long userId;
+        private String imageUrl;
+        private String nickName;
     }
 }

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
@@ -45,5 +47,11 @@ public class ReviewController {
             @RequestParam Long reviewId, @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.toggleLikeReview(reviewId, userId));
+    }
+
+    // 최근 올라온 후기 조회 API
+    @GetMapping("/review/recent")
+    public CustomResponseEntity<List<ReviewResponse.ReadRecent>> readRecentReview() {
+        return CustomResponseEntity.success(reviewService.readRecentReview());
     }
 }

@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -44,7 +45,8 @@ public class Review extends BaseEntity {
     private String content;
 
     @OneToMany(mappedBy = "review", fetch = LAZY)
-    private List<LikeReview> likeReviews;
+    @Builder.Default
+    private List<LikeReview> likeReviews = new ArrayList<>();
 
     public void toUpdateReview(Double score, String tags, String content) {
         this.score = score;
