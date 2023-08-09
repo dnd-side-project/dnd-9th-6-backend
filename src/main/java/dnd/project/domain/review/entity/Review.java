@@ -42,6 +42,7 @@ public class Review {
     @NotNull
     private String tags;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(updatable = false)
