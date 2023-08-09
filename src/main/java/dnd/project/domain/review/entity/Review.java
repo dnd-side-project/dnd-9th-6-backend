@@ -36,7 +36,7 @@ public class Review extends BaseEntity {
     private Lecture lecture;
 
     @NotNull
-    private Integer score;
+    private Double score;
 
     @NotNull
     private String tags;
