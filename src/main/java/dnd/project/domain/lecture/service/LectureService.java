@@ -8,6 +8,7 @@ import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,7 @@ public class LectureService {
     private static final Integer MIN_SIZE = 10;
     private final LectureQueryRepository lectureQueryRepository;
 
+    @Transactional(readOnly = true)
     public LectureListReadResponse getLectures(Integer mainCategoryId,
                                                Integer subCategoryId,
                                                String searchKeyword,
@@ -56,7 +58,7 @@ public class LectureService {
         }
     }
 
-    public LectureListReadResponse getLecturesFromMainSubCategory(Integer mainCategoryId,
+    private LectureListReadResponse getLecturesFromMainSubCategory(Integer mainCategoryId,
                                                                   Integer subCategoryId,
                                                                   String searchKeyword,
                                                                   Integer page,
@@ -78,7 +80,7 @@ public class LectureService {
         return LectureListReadResponse.of(totalPages, pageNumber, pageSize, totalElements, content);
     }
 
-    public LectureListReadResponse getLecturesFromMainCategory(Integer mainCategoryId,
+    private LectureListReadResponse getLecturesFromMainCategory(Integer mainCategoryId,
                                                                String searchKeyword,
                                                                Integer page,
                                                                Integer size,
@@ -97,7 +99,7 @@ public class LectureService {
         return LectureListReadResponse.of(totalPages, pageNumber, pageSize, totalElements, content);
     }
 
-    public LectureListReadResponse getLecturesFromAllCategory(String searchKeyword,
+    private LectureListReadResponse getLecturesFromAllCategory(String searchKeyword,
                                                               Integer page,
                                                               Integer size,
                                                               String sort) {
