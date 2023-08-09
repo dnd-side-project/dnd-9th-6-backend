@@ -65,4 +65,37 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
+
+    @DisplayName("북마크 취소 API")
+    @Test
+    void cancelBookmark() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/auth/bookmark")
+                                .header("Authorization", "Bearer AccessToken")
+                                .param("lectureId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("cancel-bookmark",
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("발급된 JWT AccessToken")
+                        ),
+                        formParameters(
+                                parameterWithName("lectureId")
+                                        .description("강의 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL)
+                                        .description("NULL")
+                        )
+                ));
+    }
 }

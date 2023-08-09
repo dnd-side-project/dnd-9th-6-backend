@@ -36,6 +36,15 @@ public class BookmarkService {
         return null;
     }
 
+    // 북마크 취소 API
+    public Void cancelBookmark(Long lectureId, Long userId) {
+        Users users = getUser(userId);
+        Lecture lecture = getLecture(lectureId);
+
+        bookmarkRepository.deleteByLectureAndUser(lecture, users);
+        return null;
+    }
+
     // method
 
     private Lecture getLecture(Long lectureId) {
@@ -49,5 +58,4 @@ public class BookmarkService {
                 () -> new CustomException(NOT_FOUND_USER)
         );
     }
-
 }

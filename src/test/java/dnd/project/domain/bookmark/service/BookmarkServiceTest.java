@@ -77,4 +77,49 @@ class BookmarkServiceTest {
         Optional<Bookmark> validateLecture = bookmarkRepository.findByLectureAndUser(lecture, user);
         assertThat(validateLecture.isPresent()).isTrue();
     }
+
+    @DisplayName("유저가 등록한 북마크를 취소한다.")
+    @Test
+    void cancelBookmark() {
+        // given
+        Lecture lecture = lectureRepository.save(
+                Lecture.builder()
+                        .title("Practical Testing: 실용적인 테스트 가이드")
+                        .source("인프런")
+                        .url("https://www.inflearn.com/course/practical-testing-실용적인-테스트-가이드/dashboard")
+                        .price("53900")
+                        .name("박우빈")
+                        .mainCategory("프로그래밍")
+                        .subCategory("백엔드")
+                        .keywords("테스트,test,백엔드,스프링,스프링부트,spring")
+                        .imageUrl("test")
+                        .build()
+        );
+
+        Users user = userRepository.save(
+                Users.builder()
+                        .email("test@test.com")
+                        .password("test")
+                        .nickName("test")
+                        .authority(ROLE_USER)
+                        .build()
+        );
+
+        Bookmark bookmark = bookmarkRepository.save(
+                Bookmark.builder()
+                        .user(user)
+                        .lecture(lecture)
+                        .build()
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        bookmarkService.cancelBookmark(lecture.getId(), user.getId());
+
+        // then
+        Optional<Bookmark> optionalBookmark = bookmarkRepository.findById(bookmark.getId());
+        assertThat(optionalBookmark.isEmpty()).isTrue();
+    }
 }
