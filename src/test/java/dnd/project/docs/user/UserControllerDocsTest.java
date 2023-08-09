@@ -52,6 +52,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                 .refreshToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5dS1qdW5nMzE0NzZAbmF2ZXIuY29tIiwiZXhwIjoxNjg5MjYwODM2fQ.cgZ8eFDU_Gz7Z3EghXxoa3v-iXUeQmBZ1AfKCBQZnnqFJ6mqMqGdiTS5uVCF1lIKBarXeD6nEmRZj9Ng94pnHw")
                                 .build()
                 );
+
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/login/kakao")
@@ -91,6 +92,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
     void addInterests() throws Exception {
         // given
         UserRequest.Interests request = new UserRequest.Interests(List.of("데이터 사이언스,디자인"));
+
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.post("/auth")

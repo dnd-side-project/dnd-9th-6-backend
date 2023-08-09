@@ -1,0 +1,12 @@
+=== 후기 작성 API
+
+==== HTTP Request Header
+include::{snippets}/create-review/request-headers.adoc[]
+
+==== HTTP Request Body
+include::{snippets}/create-review/http-request.adoc[]
+include::{snippets}/create-review/request-fields.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/create-review/http-response.adoc[]
+include::{snippets}/create-review/response-fields.adoc[]
