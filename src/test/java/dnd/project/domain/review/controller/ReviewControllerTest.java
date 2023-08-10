@@ -67,10 +67,22 @@ class ReviewControllerTest extends ControllerTestSupport {
         // given
         // when // then
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/review/like")
-                        .header("Authorization", "Bearer AccessToken")
-                        .param("reviewId","1")
-        )
+                        MockMvcRequestBuilders.post("/review/like")
+                                .header("Authorization", "Bearer AccessToken")
+                                .param("reviewId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("최근 올라온 후기 조회 API")
+    @Test
+    void readRecentReview() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/review/recent")
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
     }

@@ -97,6 +97,8 @@ public class ReviewResponse {
     }
 
     @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
     public static class Reviews {
         private Long reviewId;
@@ -108,6 +110,8 @@ public class ReviewResponse {
     }
 
     @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
     public static class Lectures {
         private Long lectureId;
@@ -116,6 +120,8 @@ public class ReviewResponse {
     }
 
     @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
     public static class User {
         private Long userId;

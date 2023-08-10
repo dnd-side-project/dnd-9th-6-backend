@@ -21,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +76,8 @@ class ReviewServiceTest {
                 .extracting("lectureId", "userId", "nickName", "score", "tags", "content", "createdDate")
                 .contains(
                         lecture.getId(), user.getId(), user.getNickName(),
-                        4.0, "빠른 답변,이해가 잘돼요,보통이에요", "", "2023-08-09"
+                        4.0, "빠른 답변,이해가 잘돼요,보통이에요", "",
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                 );
     }
 

@@ -14,6 +14,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -260,7 +264,89 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         .description("유저 ID"),
                                 fieldWithPath("data.isCancelled").type(BOOLEAN)
                                         .description("좋아요 취소 여부 ex) 좋아요 등록시 -> false")
-                                )
+                        )
                 ));
+    }
+
+    @DisplayName("최근 올라온 후기 조회 API")
+    @Test
+    void readRecentReview() throws Exception {
+        // given
+        List<ReviewResponse.ReadRecent> readRecentList = new ArrayList<>();
+        for (long i = 1; i <= 10; i++) {
+            ReviewResponse.ReadRecent expectedReadRecent = toEntityReadRecent(i, i, i);
+            readRecentList.add(expectedReadRecent);
+        }
+
+        given(reviewService.readRecentReview())
+                .willReturn(readRecentList);
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/review/recent")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("recent-review",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data[].review.reviewId").type(NUMBER)
+                                        .description("후기 ID"),
+                                fieldWithPath("data[].review.score").type(NUMBER)
+                                        .description("후기 점수"),
+                                fieldWithPath("data[].review.content").type(STRING)
+                                        .description("후기 내용"),
+                                fieldWithPath("data[].review.createdDate").type(STRING)
+                                        .description("후기 작성일"),
+                                fieldWithPath("data[].review.tags").type(STRING)
+                                        .description("후기 태그"),
+                                fieldWithPath("data[].review.likes").type(NUMBER)
+                                        .description("후기 좋아요 수"),
+
+                                fieldWithPath("data[].lecture.lectureId").type(NUMBER)
+                                        .description("강의 ID"),
+                                fieldWithPath("data[].lecture.title").type(STRING)
+                                        .description("강의 제목"),
+                                fieldWithPath("data[].lecture.imageUrl").type(STRING)
+                                        .description("강의 이미지 URL"),
+
+                                fieldWithPath("data[].user.userId").type(NUMBER)
+                                        .description("유저 ID"),
+                                fieldWithPath("data[].user.imageUrl").type(STRING)
+                                        .description("유저 이미지 URL"),
+                                fieldWithPath("data[].user.nickName").type(STRING)
+                                        .description("유저 닉네임")
+                        )
+                ));
+    }
+
+    private static ReviewResponse.ReadRecent toEntityReadRecent(Long reviewId, Long lectureId, Long userId) {
+        return ReviewResponse.ReadRecent.builder()
+                .review(ReviewResponse.Reviews.builder()
+                        .reviewId(reviewId)
+                        .score(4.5)
+                        .content("수업이 좋습니다!")
+                        .createdDate("2023-08-10")
+                        .tags("교육,프로그래밍")
+                        .likes(0)
+                        .build()
+                )
+                .lecture(ReviewResponse.Lectures.builder()
+                        .lectureId(lectureId)
+                        .title("프로그래밍 입문" + lectureId)
+                        .imageUrl("https://example.com/programming.jpg")
+                        .build()
+                )
+                .user(ReviewResponse.User.builder()
+                        .userId(userId)
+                        .imageUrl("https://example.com/user1.jpg")
+                        .nickName("사용자" + userId)
+                        .build()
+                )
+                .build();
     }
 }

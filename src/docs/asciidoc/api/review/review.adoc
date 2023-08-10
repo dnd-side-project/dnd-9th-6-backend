@@ -49,3 +49,12 @@ include::{snippets}/toggle-like/form-parameters.adoc[]
 ==== HTTP Response body
 include::{snippets}/toggle-like/http-response.adoc[]
 include::{snippets}/toggle-like/response-fields.adoc[]
+
+=== 최근 올라온 후기 조회 API
+
+==== HTTP Request body
+include::{snippets}/recent-review/http-request.adoc[]
+
+==== HTTP Response body
+include::{snippets}/recent-review/http-response.adoc[]
+include::{snippets}/recent-review/response-fields.adoc[]
