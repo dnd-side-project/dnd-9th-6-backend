@@ -6,6 +6,7 @@ import dnd.project.domain.review.controller.ReviewController;
 import dnd.project.domain.review.request.ReviewRequest;
 import dnd.project.domain.review.response.ReviewResponse;
 import dnd.project.domain.review.service.ReviewService;
+import dnd.project.domain.user.entity.Users;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dnd.project.domain.user.entity.Authority.ROLE_USER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -308,6 +310,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         .description("강의 ID"),
                                 fieldWithPath("data[].lecture.title").type(STRING)
                                         .description("강의 제목"),
+                                fieldWithPath("data[].lecture.name").type(STRING)
+                                        .description("강사 이름"),
                                 fieldWithPath("data[].lecture.imageUrl").type(STRING)
                                         .description("강의 이미지 URL"),
 
@@ -321,6 +325,126 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+    @DisplayName("내 후기 조회 API")
+    @Test
+    void readMyReviews() throws Exception {
+        // given
+
+        // 강의 생성
+        ReviewResponse.Lectures lecture1 = ReviewResponse.Lectures.builder()
+                .lectureId(1L)
+                .title("프로그래밍 입문")
+                .imageUrl("https://example.com/lecture1_image.jpg")
+                .name("안소희")
+                .build();
+
+        ReviewResponse.Lectures lecture2 = ReviewResponse.Lectures.builder()
+                .lectureId(2L)
+                .title("자료 구조와 알고리즘")
+                .imageUrl("https://example.com/lecture2_image.jpg")
+                .name("한소희")
+                .build();
+
+        ReviewResponse.Lectures lecture3 = ReviewResponse.Lectures.builder()
+                .lectureId(3L)
+                .title("객체 지향 프로그래밍")
+                .name("안유진")
+                .imageUrl("https://example.com/lecture3_image.jpg")
+                .build();
+
+        // 후기 생성
+        ReviewResponse.Reviews review1 = ReviewResponse.Reviews.builder()
+                .reviewId(1L)
+                .score(4.5)
+                .content("프로그래밍 개념에 대한 훌륭한 소개입니다.")
+                .createdDate("2023-08-10")
+                .tags("빠른 답변, 구성이 알차요, 보통이에요")
+                .likes(15)
+                .build();
+
+        ReviewResponse.Reviews review2 = ReviewResponse.Reviews.builder()
+                .reviewId(2L)
+                .score(3.8)
+                .content("자료 구조 설명이 좀 더 명확했으면 좋겠습니다.")
+                .createdDate("2023-08-11")
+                .tags("빠른 답변, 구성이 알차요, 보통이에요")
+                .likes(8)
+                .build();
+
+        ReviewResponse.Reviews review3 = ReviewResponse.Reviews.builder()
+                .reviewId(3L)
+                .score(5.0)
+                .content("객체 지향 프로그래밍 원리에 대한 훌륭한 강의입니다.")
+                .createdDate("2023-08-12")
+                .tags("빠른 답변, 구성이 알차요, 보통이에요")
+                .likes(20)
+                .build();
+
+        // ReadDetails 생성
+        ReviewResponse.ReadMyDetails readDetails1 = ReviewResponse.ReadMyDetails.builder()
+                .review(review1)
+                .lecture(lecture1)
+                .build();
+
+        ReviewResponse.ReadMyDetails readDetails2 = ReviewResponse.ReadMyDetails.builder()
+                .review(review2)
+                .lecture(lecture2)
+                .build();
+
+        ReviewResponse.ReadMyDetails readDetails3 = ReviewResponse.ReadMyDetails.builder()
+                .review(review3)
+                .lecture(lecture3)
+                .build();
+
+        given(reviewService.readMyReviews(any()))
+                .willReturn(
+                        List.of(readDetails1, readDetails2, readDetails3)
+                );
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/review")
+                                .header("Authorization", "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("read-my-review",
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("발급된 JWT AccessToken")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data[].review.reviewId").type(NUMBER)
+                                        .description("후기 ID"),
+                                fieldWithPath("data[].review.score").type(NUMBER)
+                                        .description("후기 점수"),
+                                fieldWithPath("data[].review.content").type(STRING)
+                                        .description("후기 내용"),
+                                fieldWithPath("data[].review.createdDate").type(STRING)
+                                        .description("후기 작성일"),
+                                fieldWithPath("data[].review.tags").type(STRING)
+                                        .description("후기 태그"),
+                                fieldWithPath("data[].review.likes").type(NUMBER)
+                                        .description("후기 좋아요 수"),
+
+                                fieldWithPath("data[].lecture.lectureId").type(NUMBER)
+                                        .description("강의 ID"),
+                                fieldWithPath("data[].lecture.title").type(STRING)
+                                        .description("강의 제목"),
+                                fieldWithPath("data[].lecture.name").type(STRING)
+                                        .description("강사 이름"),
+                                fieldWithPath("data[].lecture.imageUrl").type(STRING)
+                                        .description("강의 이미지 URL")
+                        )
+                ));
+    }
+
+    // method
     private static ReviewResponse.ReadDetails toEntityReadRecent(Long reviewId, Long lectureId, Long userId) {
         return ReviewResponse.ReadDetails.builder()
                 .review(ReviewResponse.Reviews.builder()
@@ -334,6 +458,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 )
                 .lecture(ReviewResponse.Lectures.builder()
                         .lectureId(lectureId)
+                        .name("안유진")
                         .title("프로그래밍 입문" + lectureId)
                         .imageUrl("https://example.com/programming.jpg")
                         .build()

@@ -58,3 +58,13 @@ include::{snippets}/recent-review/http-request.adoc[]
 ==== HTTP Response body
 include::{snippets}/recent-review/http-response.adoc[]
 include::{snippets}/recent-review/response-fields.adoc[]
+
+=== 내 후기 조회 API
+
+==== HTTP Request Header
+include::{snippets}/read-my-review/request-headers.adoc[]
+include::{snippets}/read-my-review/http-request.adoc[]
+
+==== HTTP Response body
+include::{snippets}/read-my-review/http-response.adoc[]
+include::{snippets}/read-my-review/response-fields.adoc[]
