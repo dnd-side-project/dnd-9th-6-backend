@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 public class ReviewResponse {
 
@@ -64,13 +63,13 @@ public class ReviewResponse {
     @NoArgsConstructor
     @Getter
     @Builder
-    public static class ReadRecent {
+    public static class ReadDetails {
         private Reviews review;
         private Lectures lecture;
         private User user;
 
-        public static ReviewResponse.ReadRecent response(Review review, Lecture lecture, Users users) {
-            return ReadRecent.builder()
+        public static ReadDetails response(Review review, Lecture lecture, Users users) {
+            return ReadDetails.builder()
                     .review(Reviews.builder()
                             .reviewId(review.getId())
                             .score(review.getScore())

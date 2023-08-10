@@ -4,17 +4,14 @@ package dnd.project.docs.review;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.review.controller.ReviewController;
 import dnd.project.domain.review.request.ReviewRequest;
-import dnd.project.domain.review.request.ReviewServiceRequest;
 import dnd.project.domain.review.response.ReviewResponse;
 import dnd.project.domain.review.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -272,14 +269,14 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
     @Test
     void readRecentReview() throws Exception {
         // given
-        List<ReviewResponse.ReadRecent> readRecentList = new ArrayList<>();
+        List<ReviewResponse.ReadDetails> readDetailsList = new ArrayList<>();
         for (long i = 1; i <= 10; i++) {
-            ReviewResponse.ReadRecent expectedReadRecent = toEntityReadRecent(i, i, i);
-            readRecentList.add(expectedReadRecent);
+            ReviewResponse.ReadDetails expectedReadDetails = toEntityReadRecent(i, i, i);
+            readDetailsList.add(expectedReadDetails);
         }
 
         given(reviewService.readRecentReview())
-                .willReturn(readRecentList);
+                .willReturn(readDetailsList);
 
         // when // then
         mockMvc.perform(
@@ -324,8 +321,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
-    private static ReviewResponse.ReadRecent toEntityReadRecent(Long reviewId, Long lectureId, Long userId) {
-        return ReviewResponse.ReadRecent.builder()
+    private static ReviewResponse.ReadDetails toEntityReadRecent(Long reviewId, Long lectureId, Long userId) {
+        return ReviewResponse.ReadDetails.builder()
                 .review(ReviewResponse.Reviews.builder()
                         .reviewId(reviewId)
                         .score(4.5)
