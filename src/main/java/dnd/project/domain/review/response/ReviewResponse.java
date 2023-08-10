@@ -64,12 +64,14 @@ public class ReviewResponse {
     @Getter
     @Builder
     public static class ReadDetails {
+        private Boolean isAddLike;
         private Reviews review;
         private Lectures lecture;
         private User user;
 
-        public static ReadDetails response(Review review, Lecture lecture, Users users) {
+        public static ReadDetails response(Review review, Lecture lecture, Users users, Boolean isAddLike) {
             return ReadDetails.builder()
+                    .isAddLike(isAddLike)
                     .review(Reviews.builder()
                             .reviewId(review.getId())
                             .score(review.getScore())

@@ -107,13 +107,23 @@ public class ReviewService {
     }
 
     // 최근 올라온 후기 조회 API
-    public List<ReviewResponse.ReadDetails> readRecentReview() {
+    public List<ReviewResponse.ReadDetails> readRecentReview(Long userId) {
         List<Review> reviews =
                 reviewRepository.findByRecentReview(PageRequest.of(0, 10));
 
-        return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
-                review, review.getLecture(), review.getUser())
-        ).toList();
+        if (userId == null) {
+            return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
+                    review, review.getLecture(), review.getUser(), false)
+            ).toList();
+        } else {
+            return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
+                    review,
+                    review.getLecture(),
+                    review.getUser(),
+                    review.getLikeReviews().stream()
+                            .anyMatch(likeReview -> likeReview.getUsers().getId().equals(userId)))
+            ).toList();
+        }
     }
 
     // 내 후기 조회 API

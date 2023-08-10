@@ -51,8 +51,10 @@ public class ReviewController {
 
     // 최근 올라온 후기 조회 API
     @GetMapping("/review/recent")
-    public CustomResponseEntity<List<ReviewResponse.ReadDetails>> readRecentReview() {
-        return CustomResponseEntity.success(reviewService.readRecentReview());
+    public CustomResponseEntity<List<ReviewResponse.ReadDetails>> readRecentReview(
+            @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(reviewService.readRecentReview(userId));
     }
 
     // 내 후기 조회 API
