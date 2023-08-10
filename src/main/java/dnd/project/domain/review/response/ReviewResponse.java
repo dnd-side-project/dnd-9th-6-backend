@@ -83,12 +83,43 @@ public class ReviewResponse {
                             .lectureId(lecture.getId())
                             .title(lecture.getTitle())
                             .imageUrl(lecture.getImageUrl())
+                            .name(lecture.getName())
                             .build()
                     )
                     .user(User.builder()
                             .userId(users.getId())
                             .imageUrl(users.getImageUrl())
                             .nickName(users.getNickName())
+                            .build()
+                    )
+                    .build();
+        }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class ReadMyDetails {
+        private Reviews review;
+        private Lectures lecture;
+
+        public static ReadMyDetails response(Review review, Lecture lecture) {
+            return ReadMyDetails.builder()
+                    .review(Reviews.builder()
+                            .reviewId(review.getId())
+                            .score(review.getScore())
+                            .content(review.getContent())
+                            .createdDate(review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .tags(review.getTags())
+                            .likes(review.getLikeReviews().size())
+                            .build()
+                    )
+                    .lecture(Lectures.builder()
+                            .lectureId(lecture.getId())
+                            .title(lecture.getTitle())
+                            .imageUrl(lecture.getImageUrl())
+                            .name(lecture.getName())
                             .build()
                     )
                     .build();
@@ -116,6 +147,7 @@ public class ReviewResponse {
         private Long lectureId;
         private String title;
         private String imageUrl;
+        private String name;
     }
 
     @AllArgsConstructor

@@ -6,6 +6,7 @@ import dnd.project.domain.user.entity.Users;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,5 +22,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "r.createdDate DESC"
     )
     List<Review> findByRecentReview(Pageable pageable);
+
     Boolean existsByLectureAndUser(Lecture lecture, Users user);
+
+    @Query(
+            "SELECT u " +
+            "FROM Users as u " +
+            "LEFT JOIN FETCH u.reviews " +
+            "WHERE u.id = :userId"
+    )
+    Users findByMyReview(@Param("userId") Long userId);
+
 }

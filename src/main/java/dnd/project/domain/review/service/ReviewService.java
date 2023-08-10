@@ -116,6 +116,19 @@ public class ReviewService {
         ).toList();
     }
 
+    // 내 후기 조회 API
+    public List<ReviewResponse.ReadMyDetails> readMyReviews(Long userId) {
+        Users user = reviewRepository.findByMyReview(userId);
+
+        if (user.getReviews().isEmpty()) {
+            throw new CustomException(NOT_CREATED_REVIEW);
+        }
+
+        return user.getReviews().stream().map(review -> ReviewResponse.ReadMyDetails.response(
+                review, review.getLecture()
+        )).toList();
+    }
+
     // method
 
     private static LikeReview toEntityLikeReview(Review review, Users user) {
@@ -143,8 +156,6 @@ public class ReviewService {
             throw new CustomException(NOT_MATCHED_USER);
         }
     }
-
-    // method
 
     private Review getReview(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(
