@@ -86,4 +86,17 @@ class ReviewControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("내 후기 조회 API")
+    @Test
+    void readMyReviews() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/review")
+                                .header("Authorization", "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

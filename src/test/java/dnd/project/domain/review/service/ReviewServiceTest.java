@@ -278,6 +278,58 @@ class ReviewServiceTest {
                 );
     }
 
+    @DisplayName("유저가 자신이 남긴 후기를 본다.")
+    @Test
+    void readMyReviews() {
+        // given
+        Lecture lecture1 = toEntityLecture("실용적인 테스트 가이드1", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Lecture lecture2 = toEntityLecture("실용적인 테스트 가이드2", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Lecture lecture3 = toEntityLecture("실용적인 테스트 가이드3", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        lectureRepository.saveAll(List.of(lecture1, lecture2, lecture3));
+
+        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+
+        Review review1 = toEntityReview(lecture1, user, 4.5, "아주 재밌습니다.");
+        Review review2 = toEntityReview(lecture2, user, 4.0, "아주 재밌습니다.");
+        Review review3 = toEntityReview(lecture3, user, 5.0, "아주 재밌습니다.");
+        reviewRepository.saveAll(List.of(review1, review2, review3));
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<ReviewResponse.ReadMyDetails> response = reviewService.readMyReviews(user.getId());
+
+        // then
+        assertThat(response)
+                .extracting("review.reviewId", "review.score", "lecture.title")
+                .contains(
+                        tuple(review1.getId(), 4.5, "실용적인 테스트 가이드1"),
+                        tuple(review2.getId(), 4.0, "실용적인 테스트 가이드2"),
+                        tuple(review3.getId(), 5.0, "실용적인 테스트 가이드3")
+                );
+    }
+
+    @DisplayName("유저가 자신이 남긴 후기를 볼때 작성한 후기가 없다면 Exception 이 발생한다.")
+    @Test
+    void readMyReviewsWithNotCreateReview() {
+        // given
+        Lecture lecture1 = toEntityLecture("실용적인 테스트 가이드1", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Lecture lecture2 = toEntityLecture("실용적인 테스트 가이드2", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Lecture lecture3 = toEntityLecture("실용적인 테스트 가이드3", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        lectureRepository.saveAll(List.of(lecture1, lecture2, lecture3));
+
+        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        assertThatThrownBy(() -> reviewService.readMyReviews(user.getId()))
+                .extracting("result.code", "result.message")
+                .contains(-3004, "아직 후기를 한번도 작성하지 않았습니다.");
+    }
+
     // method
 
     private Review saveReview(Lecture lecture, Users user, Double score, String content) {
@@ -298,18 +350,22 @@ class ReviewServiceTest {
 
     private Lecture saveLecture(String title, String mainCategory, String subCategory, String keywords) {
         return lectureRepository.save(
-                Lecture.builder()
-                        .title(title)
-                        .source("인프런")
-                        .url("https://www.inflearn.com/course/practical-testing-실용적인-테스트-가이드/dashboard")
-                        .price("53900")
-                        .name("박우빈")
-                        .mainCategory(mainCategory)
-                        .subCategory(subCategory)
-                        .keywords(keywords)
-                        .imageUrl("test")
-                        .build()
+                toEntityLecture(title, mainCategory, subCategory, keywords)
         );
+    }
+
+    private static Lecture toEntityLecture(String title, String mainCategory, String subCategory, String keywords) {
+        return Lecture.builder()
+                .title(title)
+                .source("인프런")
+                .url("https://www.inflearn.com/course/practical-testing-실용적인-테스트-가이드/dashboard")
+                .price("53900")
+                .name("박우빈")
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
+                .keywords(keywords)
+                .imageUrl("test")
+                .build();
     }
 
     private Users saveUser(String email, String password, String nickName, Authority authority) {
