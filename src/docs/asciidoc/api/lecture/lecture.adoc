@@ -1,0 +1,10 @@
+=== 강의 검색 API
+
+==== HTTP Request QueryParameter
+include::{snippets}/get-lectures/http-request.adoc[]
+include::{snippets}/get-lectures/query-parameters.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/get-lectures/http-response.adoc[]
+include::{snippets}/get-lectures/response-fields.adoc[]
+
