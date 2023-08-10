@@ -277,7 +277,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
             readDetailsList.add(expectedReadDetails);
         }
 
-        given(reviewService.readRecentReview())
+        given(reviewService.readRecentReview(any()))
                 .willReturn(readDetailsList);
 
         // when // then
@@ -293,6 +293,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         .description("상태 코드"),
                                 fieldWithPath("message").type(STRING)
                                         .description("상태 메세지"),
+                                fieldWithPath("data[].isAddLike").type(BOOLEAN)
+                                        .description("후기 좋아요 등록 여부"),
                                 fieldWithPath("data[].review.reviewId").type(NUMBER)
                                         .description("후기 ID"),
                                 fieldWithPath("data[].review.score").type(NUMBER)
@@ -447,6 +449,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
     // method
     private static ReviewResponse.ReadDetails toEntityReadRecent(Long reviewId, Long lectureId, Long userId) {
         return ReviewResponse.ReadDetails.builder()
+                .isAddLike(false)
                 .review(ReviewResponse.Reviews.builder()
                         .reviewId(reviewId)
                         .score(4.5)
