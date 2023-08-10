@@ -169,4 +169,61 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
+
+    @DisplayName("내 정보 수정하기 API")
+    @Test
+    void updateUser() throws Exception {
+        // given
+        UserRequest.Update request = new UserRequest.Update("클래스코프", List.of("프로그래밍", "커리어"));
+        given(userService.updateUser(any(), any()))
+                .willReturn(
+                        UserResponse.Detail.builder()
+                                .id(1L)
+                                .email("classcope@gmail.com")
+                                .nickName("클래스코프")
+                                .imageUrl("http://www.aws.../image.png")
+                                .interests("프로그래밍,커리어")
+                                .build()
+                );
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.patch("/auth")
+                                .header("Authorization", "Bearer AccessToken")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("update-user",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("발급된 JWT AccessToken")
+                        ),
+                        requestFields(
+                                fieldWithPath("nickName").type(STRING)
+                                        .description("변경할 닉네임"),
+                                fieldWithPath("interests").type(ARRAY)
+                                        .description("변경할 관심분야 리스트")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data.id").type(NUMBER)
+                                        .description("유저 ID"),
+                                fieldWithPath("data.email").type(STRING)
+                                        .description("유저 이메일"),
+                                fieldWithPath("data.nickName").type(STRING)
+                                        .description("유저 닉네임"),
+                                fieldWithPath("data.imageUrl").type(STRING)
+                                        .description("유저 프로필 이미지 URL"),
+                                fieldWithPath("data.interests").type(STRING)
+                                        .description("유저 관심분야")
+                        )
+                ));
+    }
 }
