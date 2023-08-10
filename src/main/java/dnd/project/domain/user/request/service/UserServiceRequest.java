@@ -17,4 +17,13 @@ public class UserServiceRequest {
         @NotNull(message = "interests 는 필수 값 입니다.")
         private List<String> interests;
     }
+
+    @AllArgsConstructor(access = PRIVATE)
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class Update {
+        private String nickName;
+        private List<String> interests;
+    }
 }

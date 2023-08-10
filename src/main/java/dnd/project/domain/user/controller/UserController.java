@@ -4,6 +4,7 @@ import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.response.UserResponse;
 import dnd.project.domain.user.service.UserService;
 import dnd.project.global.common.CustomResponseEntity;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,14 @@ public class UserController {
             @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(userService.detailUser(userId));
+    }
+
+    // 내 정보 수정하기 API
+    @PatchMapping("/auth")
+    public CustomResponseEntity<UserResponse.Detail> updateUser(
+            @RequestBody @Valid UserRequest.Update request, @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(userService.updateUser(request.toServiceRequest(), userId));
     }
 
 }

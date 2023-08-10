@@ -48,4 +48,9 @@ public class Users {
     public void toUpdateInterests(String interests) {
         this.interests = interests;
     }
+
+    public void toUpdateProfile(String nickName, String interests) {
+        this.nickName = nickName;
+        this.interests = interests;
+    }
 }

@@ -4,6 +4,7 @@ import dnd.project.domain.user.config.Platform;
 import dnd.project.domain.user.entity.Authority;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
+import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
 import dnd.project.global.common.exception.CustomException;
@@ -84,8 +85,21 @@ public class UserService {
         return null;
     }
 
-    // method
+    // 내 정보 수정 API
+    @Transactional
+    public UserResponse.Detail updateUser(UserServiceRequest.Update request, Long userId) {
+        Users user = getUser(userId);
+        List<String> interests = request.getInterests();
 
+        if (interests.isEmpty()) {
+            throw new CustomException(AT_LEAST_ONE_INTEREST_REQUIRED);
+        }
+
+        user.toUpdateProfile(request.getNickName(), String.join(",", interests));
+        return null;
+    }
+
+    // method
     private UserResponse.OAuth toSocialLogin(String code, Platform platform) {
         UserResponse.OAuth socialLoginUser = null;
 
