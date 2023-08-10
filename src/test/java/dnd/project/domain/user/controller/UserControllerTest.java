@@ -6,6 +6,7 @@ import dnd.project.domain.user.request.controller.UserRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
@@ -40,6 +41,19 @@ class UserControllerTest extends ControllerTestSupport {
                                 .header("Authorization", "Bearer AccessToken")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("내 프로필 조회하기 API")
+    @Test
+    void detailUser() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/auth")
+                                .header("Authorization", "Bearer AccessToken")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
