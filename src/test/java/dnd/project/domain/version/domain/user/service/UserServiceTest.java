@@ -90,6 +90,27 @@ class UserServiceTest {
                 );
     }
 
+    @DisplayName("유저가 자신의 프로필 정보를 수정한다.")
+    @Test
+    void updateUser() {
+        // given
+        Users user = saveUser();
+        UserRequest.Update request = new UserRequest.Update("클래스코프", List.of("프로그래밍,커리어"));
+
+        entityManager.flush();
+        entityManager.clear();
+        // when
+        userService.updateUser(request.toServiceRequest(), user.getId());
+
+        // then
+        Users validateUser = userRepository.findById(user.getId()).get();
+        assertThat(validateUser)
+                .extracting("nickName", "interests")
+                .contains("클래스코프", "프로그래밍,커리어");
+    }
+
+    // method
+
     private Users saveUser() {
         return userRepository.save(
                 Users.builder()
@@ -97,7 +118,7 @@ class UserServiceTest {
                         .password("test")
                         .nickName("test")
                         .imageUrl("http://aws.amazon...s3/image.png")
-                        .interests("디자인,드로인")
+                        .interests("디자인,드로잉")
                         .authority(ROLE_USER)
                         .build()
         );
