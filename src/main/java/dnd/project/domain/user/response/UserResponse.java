@@ -30,25 +30,24 @@ public class UserResponse {
         }
     }
 
+    @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class Detail {
         private Long id;
         private String email;
-        private String name;
-
-        @Builder
-        private Detail(Long id, String email, String name) {
-            this.id = id;
-            this.email = email;
-            this.name = name;
-        }
+        private String nickName;
+        private String imageUrl;
+        private String interests;
 
         public static UserResponse.Detail response(Users user) {
-            return UserResponse.Detail.builder()
+            return Detail.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .name(user.getNickName())
+                    .nickName(user.getNickName())
+                    .imageUrl(user.getImageUrl())
+                    .interests(user.getInterests())
                     .build();
         }
     }
