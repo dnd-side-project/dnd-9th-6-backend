@@ -339,7 +339,7 @@ class ReviewServiceTest {
                 );
     }
 
-    @DisplayName("유저가 자신이 남긴 후기를 본다.")
+    @DisplayName("유저가 자신이 작성한 후기를 본다.")
     @Test
     void readMyReviews() {
         // given
@@ -349,25 +349,34 @@ class ReviewServiceTest {
         lectureRepository.saveAll(List.of(lecture1, lecture2, lecture3));
 
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+        Users user2 = saveUser("test2@test.com", "test", "test", ROLE_USER);
 
         Review review1 = toEntityReview(lecture1, user, 4.5, "아주 재밌습니다.");
         Review review2 = toEntityReview(lecture2, user, 4.0, "아주 재밌습니다.");
         Review review3 = toEntityReview(lecture3, user, 5.0, "아주 재밌습니다.");
+
         reviewRepository.saveAll(List.of(review1, review2, review3));
 
         entityManager.flush();
         entityManager.clear();
+
+        likeReviewRepository.save(
+                LikeReview.builder()
+                        .users(user2)
+                        .review(review3)
+                        .build()
+        );
 
         // when
         List<ReviewResponse.ReadMyDetails> response = reviewService.readMyReviews(user.getId());
 
         // then
         assertThat(response)
-                .extracting("review.reviewId", "review.score", "lecture.title")
+                .extracting("review.reviewId", "review.likes", "review.score", "lecture.title")
                 .contains(
-                        tuple(review1.getId(), 4.5, "실용적인 테스트 가이드1"),
-                        tuple(review2.getId(), 4.0, "실용적인 테스트 가이드2"),
-                        tuple(review3.getId(), 5.0, "실용적인 테스트 가이드3")
+                        tuple(review1.getId(), 0, 4.5, "실용적인 테스트 가이드1"),
+                        tuple(review2.getId(), 0, 4.0, "실용적인 테스트 가이드2"),
+                        tuple(review3.getId(), 1, 5.0, "실용적인 테스트 가이드3")
                 );
     }
 
