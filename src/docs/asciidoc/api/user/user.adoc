@@ -48,3 +48,26 @@ include::{snippets}/add-interests/request-fields.adoc[]
 ==== HTTP Response Body
 include::{snippets}/add-interests/http-response.adoc[]
 include::{snippets}/add-interests/response-fields.adoc[]
+
+=== 내 프로필 조회하기 API
+
+==== HTTP Request Header
+include::{snippets}/detail-user/request-headers.adoc[]
+include::{snippets}/detail-user/http-request.adoc[]
+
+==== HTTP Response body
+include::{snippets}/detail-user/http-response.adoc[]
+include::{snippets}/detail-user/response-fields.adoc[]
+
+=== 내 프로필 수정하기 API
+
+==== HTTP Request Header
+include::{snippets}/update-user/request-headers.adoc[]
+
+==== HTTP Request body
+include::{snippets}/update-user/http-request.adoc[]
+include::{snippets}/update-user/request-fields.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/update-user/http-response.adoc[]
+include::{snippets}/update-user/response-fields.adoc[]

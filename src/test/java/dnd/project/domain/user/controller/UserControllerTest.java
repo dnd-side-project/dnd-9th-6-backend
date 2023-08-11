@@ -6,6 +6,7 @@ import dnd.project.domain.user.request.controller.UserRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
@@ -43,5 +44,69 @@ class UserControllerTest extends ControllerTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("내 프로필 조회하기 API")
+    @Test
+    void detailUser() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/auth")
+                                .header("Authorization", "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("내 정보 수정하기 API")
+    @Test
+    void updateUser() throws Exception {
+        // given
+        UserRequest.Update request = new UserRequest.Update("클래스코프", List.of("프로그래밍", "커리어"));
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.patch("/auth")
+                                .header("Authorization", "Bearer AccessToken")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("내 정보 수정하기 API - 닉네임 미입력 실패")
+    @Test
+    void updateUserNotInsertNickNameThrowException() throws Exception {
+        // given
+        UserRequest.Update request = new UserRequest.Update(" ", List.of("프로그래밍", "커리어"));
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.patch("/auth")
+                                .header("Authorization", "Bearer AccessToken")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("내 정보 수정하기 API - 관심분야 미입력 실패")
+    @Test
+    void updateUserNotInsertInterestThrowException() throws Exception {
+        // given
+        UserRequest.Update request = new UserRequest.Update("클래스코프", null);
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.patch("/auth")
+                                .header("Authorization", "Bearer AccessToken")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }

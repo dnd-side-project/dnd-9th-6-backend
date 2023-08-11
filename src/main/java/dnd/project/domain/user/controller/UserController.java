@@ -6,11 +6,8 @@ import dnd.project.domain.user.service.UserService;
 import dnd.project.global.common.CustomResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static dnd.project.domain.user.config.Platform.GOOGLE;
 import static dnd.project.domain.user.config.Platform.KAKAO;
@@ -41,13 +38,20 @@ public class UserController {
         return CustomResponseEntity.success(userService.addInterests(userId, request.toServiceRequest()));
     }
 
-    // 정보 조회 API
+    // 내 프로필 조회하기 API
     @GetMapping("/auth")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    public CustomResponseEntity<UserResponse.Detail> findMyListUser(
+    public CustomResponseEntity<UserResponse.Detail> detailUser(
             @AuthenticationPrincipal Long userId
     ) {
-        return CustomResponseEntity.success(userService.findMyListUser(userId));
+        return CustomResponseEntity.success(userService.detailUser(userId));
+    }
+
+    // 내 정보 수정하기 API
+    @PatchMapping("/auth")
+    public CustomResponseEntity<UserResponse.Detail> updateUser(
+            @RequestBody @Valid UserRequest.Update request, @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(userService.updateUser(request.toServiceRequest(), userId));
     }
 
 }

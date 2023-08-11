@@ -4,9 +4,9 @@ import dnd.project.domain.user.config.Platform;
 import dnd.project.domain.user.entity.Authority;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
+import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
-import dnd.project.global.common.Result;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final List<OAuth2LoginService> oAuth2LoginServices;
 
-    public UserResponse.Detail findMyListUser(Long userId) {
+    // 내 프로필 조회하기 API
+    public UserResponse.Detail detailUser(Long userId) {
         return UserResponse.Detail.response(getUser(userId));
     }
 
@@ -84,8 +85,21 @@ public class UserService {
         return null;
     }
 
-    // method
+    // 내 정보 수정 API
+    @Transactional
+    public UserResponse.Detail updateUser(UserServiceRequest.Update request, Long userId) {
+        Users user = getUser(userId);
+        List<String> interests = request.getInterests();
 
+        if (interests.isEmpty()) {
+            throw new CustomException(AT_LEAST_ONE_INTEREST_REQUIRED);
+        }
+
+        user.toUpdateProfile(request.getNickName(), String.join(",", interests));
+        return null;
+    }
+
+    // method
     private UserResponse.OAuth toSocialLogin(String code, Platform platform) {
         UserResponse.OAuth socialLoginUser = null;
 
