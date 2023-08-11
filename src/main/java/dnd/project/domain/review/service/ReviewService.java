@@ -13,7 +13,6 @@ import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.redis.RedisDao;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,7 +108,7 @@ public class ReviewService {
     // 최근 올라온 후기 조회 API
     public List<ReviewResponse.ReadDetails> readRecentReview(Long userId) {
         List<Review> reviews =
-                reviewRepository.findByRecentReview(PageRequest.of(0, 10));
+                reviewRepository.findByRecentReview();
 
         if (userId == null) {
             return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
@@ -128,13 +127,13 @@ public class ReviewService {
 
     // 내 후기 조회 API
     public List<ReviewResponse.ReadMyDetails> readMyReviews(Long userId) {
-        Users user = reviewRepository.findByMyReview(userId);
+        List<Review> reviews = reviewRepository.findByMyReview(userId);
 
-        if (user.getReviews().isEmpty()) {
+        if (reviews.isEmpty()) {
             throw new CustomException(NOT_CREATED_REVIEW);
         }
 
-        return user.getReviews().stream().map(review -> ReviewResponse.ReadMyDetails.response(
+        return reviews.stream().map(review -> ReviewResponse.ReadMyDetails.response(
                 review, review.getLecture()
         )).toList();
     }
