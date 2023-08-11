@@ -46,6 +46,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .willReturn(
                         UserResponse.Login.builder()
                                 .id(1L)
+                                .imageUrl("https://lh3.googleusercontent.com/a/AAcHTtcvELyELRF2Mzpi8LEnNN4yTZi5PthvLCskaI_gRG7m=s96-c")
                                 .email("dnd-9th-6@gmail.com")
                                 .name("클래스코프")
                                 .isRegister(true)
@@ -74,6 +75,8 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                         .description("상태 메세지"),
                                 fieldWithPath("data.id").type(NUMBER)
                                         .description("유저 ID / Long"),
+                                fieldWithPath("data.imageUrl").type(STRING)
+                                        .description("유저 프로필 이미지 URL"),
                                 fieldWithPath("data.email").type(STRING)
                                         .description("유저 이메일"),
                                 fieldWithPath("data.name").type(STRING)
