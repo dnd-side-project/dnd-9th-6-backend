@@ -64,7 +64,7 @@ class ReviewServiceTest {
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
 
         ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
+                new ReviewRequest.Create(lecture.getId(), 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
 
         // when
         ReviewResponse.Create response =
@@ -89,7 +89,7 @@ class ReviewServiceTest {
         Review review = saveReview(lecture, user, 4.0, "");
 
         ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
+                new ReviewRequest.Create(lecture.getId(), 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
 
         // when // then
         assertThatThrownBy(() -> reviewService.createReview(request.toServiceRequest(), user.getId()))
