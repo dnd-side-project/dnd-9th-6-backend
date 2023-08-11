@@ -21,3 +21,9 @@ include::api/version/version.adoc[]
 
 == User API
 include::api/user/user.adoc[]
+
+== Bookmark API
+include::api/bookmark/bookmark.adoc[]
+
+== Review API
+include::api/review/review.adoc[]

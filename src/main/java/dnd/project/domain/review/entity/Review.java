@@ -1,5 +1,6 @@
 package dnd.project.domain.review.entity;
 
+import dnd.project.domain.BaseEntity;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.user.entity.Users;
 import jakarta.persistence.*;
@@ -8,9 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -22,7 +22,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor
 @Getter
 @Builder
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -37,17 +37,20 @@ public class Review {
     private Lecture lecture;
 
     @NotNull
-    private Integer score;
+    private Double score;
 
     @NotNull
     private String tags;
 
     private String content;
 
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createdDate;
-
     @OneToMany(mappedBy = "review", fetch = LAZY)
-    private List<LikeReview> likeReviews;
+    @Builder.Default
+    private List<LikeReview> likeReviews = new ArrayList<>();
+
+    public void toUpdateReview(Double score, String tags, String content) {
+        this.score = score;
+        this.tags = tags;
+        this.content = content;
+    }
 }

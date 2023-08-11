@@ -4,6 +4,7 @@ import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.request.service.UserServiceRequest;
+import dnd.project.domain.user.response.UserResponse;
 import dnd.project.domain.user.service.UserService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -38,14 +39,7 @@ class UserServiceTest {
     @Test
     void addInterests() {
         // given
-        Users user = userRepository.save(
-                Users.builder()
-                        .email("test@test.com")
-                        .password("test")
-                        .nickName("test")
-                        .authority(ROLE_USER)
-                        .build()
-        );
+        Users user = saveUser();
 
         UserRequest.Interests request = new UserRequest.Interests(List.of("프로그래밍,금융투자,데이터 사이언스"));
 
@@ -66,14 +60,7 @@ class UserServiceTest {
     @Test
     void NotChoiceInterestThrowException() {
         // given
-        Users user = userRepository.save(
-                Users.builder()
-                        .email("test@test.com")
-                        .password("test")
-                        .nickName("test")
-                        .authority(ROLE_USER)
-                        .build()
-        );
+        Users user = saveUser();
 
         UserServiceRequest.Interests request = UserServiceRequest.Interests.builder()
                 .interests(List.of())
@@ -83,5 +70,57 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.addInterests(user.getId(), request))
                 .extracting("result.code", "result.message")
                 .contains(-1001, "하나 이상의 관심분야를 선택해야 합니다.");
+    }
+
+    @DisplayName("유저가 자신의 프로필 정보를 확인한다.")
+    @Test
+    void detailUser() {
+        // given
+        Users user = saveUser();
+
+        // when
+        UserResponse.Detail response = userService.detailUser(user.getId());
+
+        // then
+        assertThat(response)
+                .extracting("id", "email", "nickName", "imageUrl", "interests")
+                .contains(
+                        user.getId(), user.getEmail(), user.getNickName(),
+                        user.getImageUrl(), user.getInterests()
+                );
+    }
+
+    @DisplayName("유저가 자신의 프로필 정보를 수정한다.")
+    @Test
+    void updateUser() {
+        // given
+        Users user = saveUser();
+        UserRequest.Update request = new UserRequest.Update("클래스코프", List.of("프로그래밍,커리어"));
+
+        entityManager.flush();
+        entityManager.clear();
+        // when
+        userService.updateUser(request.toServiceRequest(), user.getId());
+
+        // then
+        Users validateUser = userRepository.findById(user.getId()).get();
+        assertThat(validateUser)
+                .extracting("nickName", "interests")
+                .contains("클래스코프", "프로그래밍,커리어");
+    }
+
+    // method
+
+    private Users saveUser() {
+        return userRepository.save(
+                Users.builder()
+                        .email("test@test.com")
+                        .password("test")
+                        .nickName("test")
+                        .imageUrl("http://aws.amazon...s3/image.png")
+                        .interests("디자인,드로잉")
+                        .authority(ROLE_USER)
+                        .build()
+        );
     }
 }
