@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ReviewRequest {
@@ -21,8 +22,7 @@ public class ReviewRequest {
         private Double score;
 
         @NotNull(message = "하나 이상의 태그가 필요합니다.")
-        @NotBlank(message = "태그는 빈 문자열을 허용하지 않습니다.")
-        private String tags;
+        private List<String> tags;
 
         private String content;
 

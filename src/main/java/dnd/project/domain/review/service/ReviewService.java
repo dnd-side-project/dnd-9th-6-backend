@@ -46,8 +46,10 @@ public class ReviewService {
             throw new CustomException(ALREADY_CREATED_REVIEW);
         }
 
+        List<String> tags = request.getTags();
+
         Review review = reviewRepository.save(
-                toEntityReview(request.getScore(), request.getTags(), request.getContent(), user, lecture)
+                toEntityReview(request.getScore(), String.join(",", tags), request.getContent(), user, lecture)
         );
 
         return ReviewResponse.Create.response(review, lecture, user);

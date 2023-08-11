@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -18,7 +19,7 @@ public class ReviewServiceRequest {
     public static class Create {
         private Long lectureId;
         private Double score;
-        private String tags;
+        private List<String> tags;
         private Optional<String> content;
     }
 
