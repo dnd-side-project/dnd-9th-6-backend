@@ -47,7 +47,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
     void createReview() throws Exception {
         // given
         ReviewRequest.Create request =
-                new ReviewRequest.Create(1L, 5.0, "빠른 답변,이해가 잘돼요,보통이에요", "강의가 만족스럽습니다!");
+                new ReviewRequest.Create(1L, 5.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), "강의가 만족스럽습니다!");
 
         given(reviewService.createReview(any(), any()))
                 .willReturn(
@@ -84,7 +84,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         .description("강의 ID"),
                                 fieldWithPath("score").type(NUMBER)
                                         .description("후기 점수 / Double 1~5 "),
-                                fieldWithPath("tags").type(STRING)
+                                fieldWithPath("tags").type(ARRAY)
                                         .description("후기 태그"),
                                 fieldWithPath("content").type(STRING)
                                         .description("후기 내용")
