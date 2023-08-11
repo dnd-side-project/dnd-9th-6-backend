@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
         VersionController.class,
         UserController.class,
         BookmarkController.class,
-        LectureController.class
+        LectureController.class,
         ReviewController.class
 })
 @AutoConfigureMockMvc(addFilters = false)

@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/version", "/auth","/auth/admin",
                                 "/login/kakao", "/login/google", "/docs/*",
-                                "/lectures"
+                                "/lectures",
                                 "/review/recent"
                         )
                         .permitAll()

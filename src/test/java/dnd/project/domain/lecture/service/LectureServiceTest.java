@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import static dnd.project.global.common.Result.NOT_FOUND_MAIN_AND_SUB_CATEGORY;
 import static dnd.project.global.common.Result.NOT_FOUND_MAIN_CATEGORY;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 class LectureServiceTest {
 
