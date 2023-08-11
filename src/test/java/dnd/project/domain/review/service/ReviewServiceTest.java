@@ -263,18 +263,18 @@ class ReviewServiceTest {
 
         // then
         assertThat(response)
-                .extracting("review.reviewId", "review.score", "review.likes", "isAddLike")
+                .extracting("review.reviewId", "lecture.mainCategory", "review.score", "review.likes", "isAddLike")
                 .contains(
-                        tuple(review12.getId(), 2.0, 0, false),
-                        tuple(review11.getId(), 2.0, 1, true),
-                        tuple(review10.getId(), 0.5, 0, false),
-                        tuple(review9.getId(), 1.0, 0, false),
-                        tuple(review8.getId(), 1.5, 0, false),
-                        tuple(review7.getId(), 2.5, 0, false),
-                        tuple(review6.getId(), 5.0, 0, false),
-                        tuple(review5.getId(), 4.0, 0, false),
-                        tuple(review4.getId(), 3.0, 0, false),
-                        tuple(review3.getId(), 3.5, 0, false)
+                        tuple(review12.getId(), "프로그래밍", 2.0, 0, false),
+                        tuple(review11.getId(), "프로그래밍", 2.0, 1, true),
+                        tuple(review10.getId(), "프로그래밍", 0.5, 0, false),
+                        tuple(review9.getId(), "프로그래밍", 1.0, 0, false),
+                        tuple(review8.getId(), "프로그래밍", 1.5, 0, false),
+                        tuple(review7.getId(), "프로그래밍", 2.5, 0, false),
+                        tuple(review6.getId(), "프로그래밍", 5.0, 0, false),
+                        tuple(review5.getId(), "프로그래밍", 4.0, 0, false),
+                        tuple(review4.getId(), "프로그래밍", 3.0, 0, false),
+                        tuple(review3.getId(), "프로그래밍", 3.5, 0, false)
                 );
     }
 

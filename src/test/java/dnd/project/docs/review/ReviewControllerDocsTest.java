@@ -310,6 +310,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
 
                                 fieldWithPath("data[].lecture.lectureId").type(NUMBER)
                                         .description("강의 ID"),
+                                fieldWithPath("data[].lecture.mainCategory").type(STRING)
+                                        .description("강의 메인 카테고리"),
                                 fieldWithPath("data[].lecture.title").type(STRING)
                                         .description("강의 제목"),
                                 fieldWithPath("data[].lecture.name").type(STRING)
@@ -461,6 +463,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 )
                 .lecture(ReviewResponse.Lectures.builder()
                         .lectureId(lectureId)
+                        .mainCategory("프로그래밍")
                         .name("안유진")
                         .title("프로그래밍 입문" + lectureId)
                         .imageUrl("https://example.com/programming.jpg")
