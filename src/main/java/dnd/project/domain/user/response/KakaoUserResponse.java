@@ -61,6 +61,8 @@ public class KakaoUserResponse {
     @Getter
     public static class KakaoProfile {
         private String nickname;
+        @JsonProperty("profile_image_url")
+        private String profileImageUrl;
     }
 
 }

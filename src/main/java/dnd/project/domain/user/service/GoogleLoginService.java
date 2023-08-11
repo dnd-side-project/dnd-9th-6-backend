@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 import static dnd.project.global.common.Result.FAIL;
 
 @Service
@@ -40,6 +42,7 @@ public class GoogleLoginService implements OAuth2LoginService{
         return UserResponse.OAuth.builder()
                 .email(profile.getEmail())
                 .name(profile.getName())
+                .profileImageUrl(Optional.ofNullable(profile.getPicture()))
                 .build();
     }
 

@@ -16,6 +16,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 import static dnd.project.global.common.Result.FAIL;
 
 
@@ -40,6 +42,9 @@ public class KakaoLoginService implements OAuth2LoginService {
         return UserResponse.OAuth.builder()
                 .email(profile.getKakaoAccount().getEmail())
                 .name(profile.getProperties().getNickname())
+                .profileImageUrl(
+                        Optional.ofNullable(profile.getKakaoAccount().getProfile().getProfileImageUrl())
+                )
                 .build();
     }
 
