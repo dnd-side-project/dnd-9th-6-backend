@@ -112,19 +112,12 @@ public class ReviewService {
         List<Review> reviews =
                 reviewRepository.findByRecentReview();
 
-        if (userId == null) {
-            return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
-                    review, review.getLecture(), review.getUser(), false)
-            ).toList();
-        } else {
-            return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
-                    review,
-                    review.getLecture(),
-                    review.getUser(),
-                    review.getLikeReviews().stream()
-                            .anyMatch(likeReview -> likeReview.getUsers().getId().equals(userId)))
-            ).toList();
-        }
+        return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
+                review,
+                review.getLecture(),
+                review.getUser(),
+                checkLiked(userId, review))
+        ).toList();
     }
 
     // 내 후기 조회 API
@@ -141,6 +134,20 @@ public class ReviewService {
     }
 
     // method
+
+    private static boolean checkLiked(Long userId, Review review) {
+        boolean isLiked;
+        if (userId == null) {
+            isLiked = false;
+        } else {
+            isLiked = review.getLikeReviews().stream()
+                    .anyMatch(likeReview -> likeReview.getUsers()
+                            .getId()
+                            .equals(userId)
+                    );
+        }
+        return isLiked;
+    }
 
     private static LikeReview toEntityLikeReview(Review review, Users user) {
         return LikeReview.builder()
