@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.util.List;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,7 +17,7 @@ import java.util.List;
 public class Lecture {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @NotNull
@@ -40,8 +42,10 @@ public class Lecture {
     private String subCategory;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String keywords;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @NotNull

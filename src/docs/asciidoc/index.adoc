@@ -22,6 +22,9 @@ include::api/version/version.adoc[]
 == User API
 include::api/user/user.adoc[]
 
+== Lecture API
+include::api/lecture/lecture.adoc[]
+
 == Bookmark API
 include::api/bookmark/bookmark.adoc[]
 

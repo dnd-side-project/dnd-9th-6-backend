@@ -42,6 +42,7 @@ public class Review extends BaseEntity {
     @NotNull
     private String tags;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @OneToMany(mappedBy = "review", fetch = LAZY)
