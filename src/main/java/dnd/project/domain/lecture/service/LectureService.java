@@ -4,6 +4,8 @@ import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.entity.LectureCategory;
 import dnd.project.domain.lecture.repository.LectureQueryRepository;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
+import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.review.entity.Review;
 import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -59,11 +61,11 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromMainSubCategory(Integer mainCategoryId,
-                                                                  Integer subCategoryId,
-                                                                  String searchKeyword,
-                                                                  Integer page,
-                                                                  Integer size,
-                                                                  String sort) {
+                                                                   Integer subCategoryId,
+                                                                   String searchKeyword,
+                                                                   Integer page,
+                                                                   Integer size,
+                                                                   String sort) {
 
         LectureCategory category = findMainSubCategory(mainCategoryId, subCategoryId);
         String mainCategoryName = category.getMainCategoryName();
@@ -81,10 +83,10 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromMainCategory(Integer mainCategoryId,
-                                                               String searchKeyword,
-                                                               Integer page,
-                                                               Integer size,
-                                                               String sort) {
+                                                                String searchKeyword,
+                                                                Integer page,
+                                                                Integer size,
+                                                                String sort) {
 
         String mainCategoryName = findMainCategoryName(mainCategoryId);
 
@@ -100,9 +102,9 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromAllCategory(String searchKeyword,
-                                                              Integer page,
-                                                              Integer size,
-                                                              String sort) {
+                                                               Integer page,
+                                                               Integer size,
+                                                               String sort) {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, searchKeyword, page, size, sort);
 
@@ -129,5 +131,28 @@ public class LectureService {
                 .findAny()
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MAIN_CATEGORY));
         return category.getMainCategoryName();
+    }
+
+    public LectureScopeListReadResponse getScopeLectures(Long userId) {
+        if (userId == null) {
+            // 별점 높은 수강 후기들 -> 4.0 이상 랜덤
+            List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
+                    lectureQueryRepository.findByHighScores().stream()
+                            .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
+                                    review, review.getUser(), review.getLecture())
+                            ).toList();
+            // 강의력 좋은 순
+            List<LectureScopeListReadResponse.DetailLecture> bestLectures =
+                    lectureQueryRepository.findByBestLectures();
+
+            return LectureScopeListReadResponse.builder()
+                    .isLogin(false)
+                    .userName("anonymous")
+                    .interests("anonymous")
+                    .highScoreReviews(highScoreReviews)
+                    .bestLectures(bestLectures)
+                    .build();
+        }
+        return null;
     }
 }
