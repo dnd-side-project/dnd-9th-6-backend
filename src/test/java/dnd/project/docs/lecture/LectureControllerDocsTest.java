@@ -125,6 +125,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                         RestDocumentationRequestBuilders.get("/lectures")
                                 .param("mainCategoryId", "1")
                                 .param("subCategoryId", "1")
+                                .param("searchKeyword", "web")
                                 .param("page", "0")
                                 .param("size", "10")
                                 .param("sort", "price,asc")
@@ -138,12 +139,25 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("메인 카테고리 ID"),
                                 parameterWithName("subCategoryId")
                                         .description("서브 카테고리 ID"),
+                                parameterWithName("searchKeyword")
+                                        .description("검색어"),
                                 parameterWithName("page")
                                         .description("페이지 번호"),
                                 parameterWithName("size")
                                         .description("한 페이지의 데이터 개수"),
                                 parameterWithName("sort")
-                                        .description("정렬")
+                                        .description("정렬 파라미터,오름차순 또는 내림차순 +\n" +
+                                                "ex) +\n" +
+                                                "price,asc(가격 오름차순) +\n" +
+                                                "price,desc(가격 내림차순) +\n" +
+                                                "title,asc(강의명 오름차순) +\n" +
+                                                "title,desc(강의명 내림차순) +\n" +
+                                                "name,asc(강사명 오름차순) +\n" +
+                                                "name,desc(강사명 내림차순) +\n" +
+                                                "bookmark,asc(북마크수 오름차순) +\n" +
+                                                "bookmark,desc(북마크수 내림차순) +\n" +
+                                                "review,asc(리뷰수 오름차순) +\n" +
+                                                "review,desc(리뷰수 내림차순)")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
