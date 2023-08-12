@@ -14,7 +14,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+import static dnd.project.domain.bookmark.entity.QBookmark.bookmark;
 import static dnd.project.domain.lecture.entity.QLecture.lecture;
+import static dnd.project.domain.review.entity.QReview.review;
 
 @RequiredArgsConstructor
 @Repository
@@ -30,14 +32,44 @@ public class LectureQueryRepository {
                                  Integer size,
                                  String sort) {
 
-        List<Lecture> content = queryFactory.selectFrom(lecture)
-                .where(equalsMainCategory(mainCategory),
-                        equalsSubCategory(subCategory),
-                        likeSearchKeyword(searchKeyword))
-                .offset(page)
-                .limit(size)
-                .orderBy(sort(sort))
-                .fetch();
+        List<Lecture> content;
+
+        if ("review,asc".equals(sort) || "review,desc".equals(sort)) {
+            content = queryFactory.select(lecture)
+                    .from(lecture)
+                    .leftJoin(review).on(lecture.id.eq(review.lecture.id))
+                    .where(equalsMainCategory(mainCategory),
+                            equalsSubCategory(subCategory),
+                            likeSearchKeyword(searchKeyword))
+                    .groupBy(lecture.id)
+                    .orderBy(sort(sort), defaultSort())
+                    .offset(page)
+                    .limit(size)
+                    .fetch();
+
+        } else if ("bookmark,asc".equals(sort) || "bookmark,desc".equals(sort)) {
+            content = queryFactory.select(lecture)
+                    .from(lecture)
+                    .leftJoin(bookmark).on(lecture.id.eq(bookmark.lecture.id))
+                    .where(equalsMainCategory(mainCategory),
+                            equalsSubCategory(subCategory),
+                            likeSearchKeyword(searchKeyword))
+                    .groupBy(lecture.id)
+                    .orderBy(sort(sort), defaultSort())
+                    .offset(page)
+                    .limit(size)
+                    .fetch();
+        } else {
+            content = queryFactory.selectFrom(lecture)
+                    .where(equalsMainCategory(mainCategory),
+                            equalsSubCategory(subCategory),
+                            likeSearchKeyword(searchKeyword))
+                    .orderBy(sort(sort), defaultSort())
+                    .offset(page)
+                    .limit(size)
+                    .fetch();
+        }
+
 
         Long totalCount = queryFactory.select(lecture.count())
                 .from(lecture)
@@ -86,7 +118,7 @@ public class LectureQueryRepository {
     private OrderSpecifier<?> sort(String sort) {
 
         if (!StringUtils.hasText(sort)) {
-            return lecture.id.asc();
+            return defaultSort();
         }
 
         return switch (sort) {
@@ -96,7 +128,15 @@ public class LectureQueryRepository {
             case "title,desc" -> lecture.title.desc();
             case "name,asc" -> lecture.name.asc();
             case "name,desc" -> lecture.name.desc();
-            default -> lecture.id.asc();
+            case "bookmark,asc" -> bookmark.id.count().asc();
+            case "bookmark,desc" -> bookmark.id.count().desc();
+            case "review,asc" -> review.id.count().asc();
+            case "review,desc" -> review.id.count().desc();
+            default -> defaultSort();
         };
+    }
+
+    private OrderSpecifier<Long> defaultSort() {
+        return lecture.id.asc();
     }
 }

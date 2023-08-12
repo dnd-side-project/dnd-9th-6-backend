@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class LectureControllerTest extends ControllerTestSupport {
 
-    static final List<Lecture> LECTURES = List.of(
+    List<Lecture> lectures = List.of(
             Lecture.builder()
                     .id(1L)
                     .title("스프링 부트 - 핵심 원리와 활용")
@@ -101,7 +101,7 @@ class LectureControllerTest extends ControllerTestSupport {
                                 1,
                                 10,
                                 100L,
-                                LECTURES
+                                lectures
                         ));
 
         // when // then

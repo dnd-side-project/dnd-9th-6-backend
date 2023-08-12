@@ -59,11 +59,11 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromMainSubCategory(Integer mainCategoryId,
-                                                                  Integer subCategoryId,
-                                                                  String searchKeyword,
-                                                                  Integer page,
-                                                                  Integer size,
-                                                                  String sort) {
+                                                                   Integer subCategoryId,
+                                                                   String searchKeyword,
+                                                                   Integer page,
+                                                                   Integer size,
+                                                                   String sort) {
 
         LectureCategory category = findMainSubCategory(mainCategoryId, subCategoryId);
         String mainCategoryName = category.getMainCategoryName();
@@ -81,10 +81,10 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromMainCategory(Integer mainCategoryId,
-                                                               String searchKeyword,
-                                                               Integer page,
-                                                               Integer size,
-                                                               String sort) {
+                                                                String searchKeyword,
+                                                                Integer page,
+                                                                Integer size,
+                                                                String sort) {
 
         String mainCategoryName = findMainCategoryName(mainCategoryId);
 
@@ -100,9 +100,9 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromAllCategory(String searchKeyword,
-                                                              Integer page,
-                                                              Integer size,
-                                                              String sort) {
+                                                               Integer page,
+                                                               Integer size,
+                                                               String sort) {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, searchKeyword, page, size, sort);
 

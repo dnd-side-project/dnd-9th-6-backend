@@ -1,7 +1,13 @@
 package dnd.project.domain.lecture.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import dnd.project.domain.bookmark.entity.Bookmark;
+import dnd.project.domain.bookmark.repository.BookmarkRepository;
 import dnd.project.domain.lecture.entity.Lecture;
+import dnd.project.domain.review.entity.Review;
+import dnd.project.domain.review.repository.ReviewRepository;
+import dnd.project.domain.user.entity.Users;
+import dnd.project.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -15,6 +21,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.test.annotation.Commit;
 
 import java.util.List;
 
@@ -27,8 +34,13 @@ class LectureQueryRepositoryTest {
     LectureQueryRepository lectureQueryRepository;
     @Autowired
     LectureRepository lectureRepository;
-
-    static final List<Lecture> LECTURES = List.of(
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    BookmarkRepository bookmarkRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
+    List<Lecture> lectures = List.of(
             Lecture.builder()
                     .title("스프링 부트 - 핵심 원리와 활용")
                     .source("Inflearn")
@@ -95,9 +107,92 @@ class LectureQueryRepositoryTest {
                     .build()
     );
 
+    List<Users> users = List.of(
+            Users.builder().email("user1@gmail.com").password("").nickName("user1").build(),
+            Users.builder().email("user2@gmail.com").password("").nickName("user2").build(),
+            Users.builder().email("user3@gmail.com").password("").nickName("user3").build());
+
+    // Lecture 0(3개), Lecture 2(1개), Lecture 1(1개), Lecture 3(0개), Lecture 4(0개)
+    List<Bookmark> bookmarks = List.of(
+            Bookmark.builder()
+                    .lecture(lectures.get(0))
+                    .user(users.get(0))
+                    .build(),
+            Bookmark.builder()
+                    .lecture(lectures.get(0))
+                    .user(users.get(1))
+                    .build(),
+            Bookmark.builder()
+                    .lecture(lectures.get(0))
+                    .user(users.get(2))
+                    .build(),
+            Bookmark.builder()
+                    .lecture(lectures.get(2))
+                    .user(users.get(1))
+                    .build(),
+            Bookmark.builder()
+                    .lecture(lectures.get(1))
+                    .user(users.get(2))
+                    .build());
+
+    // Lecture 4(3개), Lecture 2(2개), Lecture 3(1개), Lecture 1(1개), Lecture 0(0개)
+    List<Review> reviews = List.of(
+            Review.builder()
+                    .lecture(lectures.get(4))
+                    .user(users.get(0))
+                    .score(5.0)
+                    .tags("좋아요")
+                    .content("iOS 개발 추천 강의")
+                    .build(),
+            Review.builder()
+                    .lecture(lectures.get(4))
+                    .user(users.get(1))
+                    .score(5.0)
+                    .tags("좋아요2")
+                    .content("iOS 개발 추천 강의2")
+                    .build(),
+            Review.builder()
+                    .lecture(lectures.get(4))
+                    .user(users.get(2))
+                    .score(5.0)
+                    .tags("좋아요3")
+                    .content("iOS 개발 추천 강의3")
+                    .build(),
+            Review.builder()
+                    .lecture(lectures.get(2))
+                    .user(users.get(2))
+                    .score(5.0)
+                    .tags("좋아요4")
+                    .content("스프링 개발 추천 강의")
+                    .build(),
+            Review.builder()
+                    .lecture(lectures.get(2))
+                    .user(users.get(1))
+                    .score(5.0)
+                    .tags("좋아요5")
+                    .content("스프링 개발 추천 강의")
+                    .build(),
+            Review.builder()
+                    .lecture(lectures.get(3))
+                    .user(users.get(0))
+                    .score(5.0)
+                    .tags("좋아요")
+                    .content("리액트 네이티브 개발 추천 강의")
+                    .build(),
+            Review.builder()
+                    .lecture(lectures.get(1))
+                    .user(users.get(0))
+                    .score(5.0)
+                    .tags("좋아요")
+                    .content("스프링 개발 추천 강의")
+                    .build());
+
     @BeforeEach
     void beforeAll() {
-        lectureRepository.saveAll(LECTURES);
+        lectureRepository.saveAll(lectures);
+        userRepository.saveAll(users);
+        bookmarkRepository.saveAll(bookmarks);
+        reviewRepository.saveAll(reviews);
     }
 
     @DisplayName("강의 검색 - 카테고리 없음, 키워드 없음")
@@ -218,6 +313,63 @@ class LectureQueryRepositoryTest {
         // then
         Assertions.assertThat(lectures.getTotalPages()).isEqualTo(2);
         Assertions.assertThat(lectures.getTotalElements()).isEqualTo(3);
+    }
+
+    @DisplayName("강의 검색 - 북마크수 오름 차순")
+    @Test
+    void findAll11() {
+        Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
+                null,
+                null,
+                0,
+                2,
+                "bookmark,asc");
+        List<Lecture> content = lectures.getContent();
+        Assertions.assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(3).getTitle());
+        Assertions.assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(4).getTitle());
+    }
+
+    @DisplayName("강의 검색 - 북마크수 내림 차순")
+    @Test
+    void findAll12() {
+        Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
+                null,
+                null,
+                0,
+                2,
+                "bookmark,desc");
+        List<Lecture> content = lectures.getContent();
+        Assertions.assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(0).getTitle());
+        Assertions.assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(1).getTitle());
+    }
+
+    @DisplayName("강의 검색 - 리뷰수 오름 차순")
+    @Test
+    void findAll13() {
+        Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
+                null,
+                null,
+                0,
+                2,
+                "review,asc");
+        List<Lecture> content = lectures.getContent();
+        Assertions.assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(0).getTitle());
+        Assertions.assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(1).getTitle());
+    }
+
+    @DisplayName("강의 검색 - 리뷰수 내림 차순")
+    @Test
+    @Commit
+    void findAll14() {
+        Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
+                null,
+                null,
+                0,
+                5,
+                "review,desc");
+        List<Lecture> content = lectures.getContent();
+        Assertions.assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(4).getTitle());
+        Assertions.assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(2).getTitle());
     }
 
     @RequiredArgsConstructor

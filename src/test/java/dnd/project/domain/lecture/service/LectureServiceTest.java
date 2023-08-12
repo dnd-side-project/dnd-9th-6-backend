@@ -28,7 +28,7 @@ class LectureServiceTest {
     @Autowired
     LectureRepository lectureRepository;
 
-    static final List<Lecture> LECTURES = List.of(
+    List<Lecture> lectures = List.of(
             Lecture.builder()
                     .title("스프링 부트 - 핵심 원리와 활용")
                     .source("Inflearn")
@@ -97,7 +97,7 @@ class LectureServiceTest {
 
     @BeforeEach
     void beforeAll() {
-        lectureRepository.saveAll(LECTURES);
+        lectureRepository.saveAll(lectures);
     }
 
     @DisplayName("강의 검색 - 메인 카테고리, 서브 카테고리가 유효하지 않을 때")
@@ -152,6 +152,6 @@ class LectureServiceTest {
                 10,
                 null);
 
-        Assertions.assertThat(response.getLectures().size()).isEqualTo(LECTURES.size());
+        Assertions.assertThat(response.getLectures().size()).isEqualTo(lectures.size());
     }
 }
