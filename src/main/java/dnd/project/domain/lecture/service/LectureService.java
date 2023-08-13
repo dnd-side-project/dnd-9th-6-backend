@@ -3,7 +3,10 @@ package dnd.project.domain.lecture.service;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.entity.LectureCategory;
 import dnd.project.domain.lecture.repository.LectureQueryRepository;
+import dnd.project.domain.lecture.repository.LectureRepository;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
+import dnd.project.domain.lecture.response.LectureReadResponse;
+import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.user.entity.Users;
@@ -15,19 +18,55 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static dnd.project.global.common.Result.*;
 
 @RequiredArgsConstructor
 @Service
 public class LectureService {
-    private static final Integer MAX_SIZE = 100;
+    private static final Integer LECTURE_MAX_SIZE = 100;
+    private static final Integer LECTURE_DEFAULT_SIZE = 10;
+    private static final Integer LECTURE_MIN_SIZE = 10;
+    private static final Integer LECTURE_REVIEW_MAX_SIZE = 10;
+    private static final Integer LECTURE_REVIEW_DEFAULT_SIZE = 5;
+    private static final Integer LECTURE_REVIEW_MIN_SIZE = 1;
 
-    private static final Integer DEFAULT_SIZE = 10;
-    private static final Integer MIN_SIZE = 10;
     private final LectureQueryRepository lectureQueryRepository;
+    private final LectureRepository lectureRepository;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public LectureReviewListReadResponse getLectureReviews(Long id,
+                                                           String searchKeyword,
+                                                           Integer page,
+                                                           Integer size,
+                                                           String sort) {
+
+        if (size == null) {
+            size = LECTURE_REVIEW_DEFAULT_SIZE;
+        } else if (size < LECTURE_REVIEW_MIN_SIZE) {
+            size = LECTURE_REVIEW_MIN_SIZE;
+        } else if (size > LECTURE_REVIEW_MAX_SIZE) {
+            size = LECTURE_REVIEW_MAX_SIZE;
+        }
+
+        if (page == null) {
+            page = 0;
+        }
+
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(id, searchKeyword, page, size, sort);
+
+        List<Review> content = reviews.getContent();
+        int totalPages = reviews.getTotalPages();
+        long totalElements = reviews.getTotalElements();
+        int pageSize = reviews.getPageable().getPageSize();
+        int pageNumber = reviews.getPageable().getPageNumber();
+
+        return LectureReviewListReadResponse.of(totalPages, pageNumber, pageSize, totalElements, content);
+    }
 
     @Transactional(readOnly = true)
     public LectureListReadResponse getLectures(Integer mainCategoryId,
@@ -38,11 +77,11 @@ public class LectureService {
                                                String sort) {
 
         if (size == null) {
-            size = DEFAULT_SIZE;
-        } else if (size < MIN_SIZE) {
-            size = MIN_SIZE;
-        } else if (size > MAX_SIZE) {
-            size = MAX_SIZE;
+            size = LECTURE_DEFAULT_SIZE;
+        } else if (size < LECTURE_MIN_SIZE) {
+            size = LECTURE_MIN_SIZE;
+        } else if (size > LECTURE_MAX_SIZE) {
+            size = LECTURE_MAX_SIZE;
         }
 
         if (page == null) {

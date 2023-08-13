@@ -5,14 +5,15 @@ import dnd.project.domain.bookmark.entity.Bookmark;
 import dnd.project.domain.bookmark.repository.BookmarkRepository;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.review.entity.LikeReview;
 import dnd.project.domain.review.entity.Review;
+import dnd.project.domain.review.repository.LikeReviewRepository;
 import dnd.project.domain.review.repository.ReviewRepository;
 import dnd.project.domain.user.entity.Authority;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
-import org.springframework.test.annotation.Commit;
 
 import java.util.List;
 
@@ -44,166 +44,20 @@ class LectureQueryRepositoryTest {
     BookmarkRepository bookmarkRepository;
     @Autowired
     ReviewRepository reviewRepository;
-
-    List<Lecture> lectures = List.of(
-            Lecture.builder()
-                    .title("스프링 부트 - 핵심 원리와 활용")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("99000")
-                    .name("김영한")
-                    .mainCategory("프로그래밍")
-                    .subCategory("웹")
-                    .keywords("스프링,스프링부트")
-                    .content("실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .title("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("99,000")
-                    .name("김영한")
-                    .mainCategory("프로그래밍")
-                    .subCategory("웹")
-                    .keywords("스프링,스프링MVC")
-                    .content("웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .title("스프링 DB 2편 - 데이터 접근 활용 기술")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("99,000")
-                    .name("김영한")
-                    .mainCategory("프로그래밍")
-                    .subCategory("웹")
-                    .keywords("스프링,DB")
-                    .content("백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .title("배달앱 클론코딩 [with React Native]")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("71,500")
-                    .name("조현영")
-                    .mainCategory("프로그래밍")
-                    .subCategory("앱")
-                    .keywords("리액트 네이티브")
-                    .content("리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .title("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("205,700")
-                    .name("앨런(Allen)")
-                    .mainCategory("프로그래밍")
-                    .subCategory("앱")
-                    .keywords("iOS")
-                    .content("탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초")
-                    .imageUrl("url")
-                    .build()
-    );
-
-    List<Users> users = List.of(
-            Users.builder().email("user1@gmail.com").password("").nickName("user1").build(),
-            Users.builder().email("user2@gmail.com").password("").nickName("user2").build(),
-            Users.builder().email("user3@gmail.com").password("").nickName("user3").build());
-
-    // Lecture 0(3개), Lecture 2(1개), Lecture 1(1개), Lecture 3(0개), Lecture 4(0개)
-    List<Bookmark> bookmarks = List.of(
-            Bookmark.builder()
-                    .lecture(lectures.get(0))
-                    .user(users.get(0))
-                    .build(),
-            Bookmark.builder()
-                    .lecture(lectures.get(0))
-                    .user(users.get(1))
-                    .build(),
-            Bookmark.builder()
-                    .lecture(lectures.get(0))
-                    .user(users.get(2))
-                    .build(),
-            Bookmark.builder()
-                    .lecture(lectures.get(2))
-                    .user(users.get(1))
-                    .build(),
-            Bookmark.builder()
-                    .lecture(lectures.get(1))
-                    .user(users.get(2))
-                    .build());
-
-    // Lecture 4(3개), Lecture 2(2개), Lecture 3(1개), Lecture 1(1개), Lecture 0(0개)
-    List<Review> reviews = List.of(
-            Review.builder()
-                    .lecture(lectures.get(4))
-                    .user(users.get(0))
-                    .score(5.0)
-                    .tags("좋아요")
-                    .content("iOS 개발 추천 강의")
-                    .build(),
-            Review.builder()
-                    .lecture(lectures.get(4))
-                    .user(users.get(1))
-                    .score(5.0)
-                    .tags("좋아요2")
-                    .content("iOS 개발 추천 강의2")
-                    .build(),
-            Review.builder()
-                    .lecture(lectures.get(4))
-                    .user(users.get(2))
-                    .score(5.0)
-                    .tags("좋아요3")
-                    .content("iOS 개발 추천 강의3")
-                    .build(),
-            Review.builder()
-                    .lecture(lectures.get(2))
-                    .user(users.get(2))
-                    .score(5.0)
-                    .tags("좋아요4")
-                    .content("스프링 개발 추천 강의")
-                    .build(),
-            Review.builder()
-                    .lecture(lectures.get(2))
-                    .user(users.get(1))
-                    .score(5.0)
-                    .tags("좋아요5")
-                    .content("스프링 개발 추천 강의")
-                    .build(),
-            Review.builder()
-                    .lecture(lectures.get(3))
-                    .user(users.get(0))
-                    .score(5.0)
-                    .tags("좋아요")
-                    .content("리액트 네이티브 개발 추천 강의")
-                    .build(),
-            Review.builder()
-                    .lecture(lectures.get(1))
-                    .user(users.get(0))
-                    .score(5.0)
-                    .tags("좋아요")
-                    .content("스프링 개발 추천 강의")
-                    .build());
-
-    @BeforeEach
-    void beforeAll() {
-        lectureRepository.saveAll(lectures);
-        userRepository.saveAll(users);
-        bookmarkRepository.saveAll(bookmarks);
-        reviewRepository.saveAll(reviews);
-    }
+    @Autowired
+    LikeReviewRepository likeReviewRepository;
 
     @DisplayName("강의 검색 - 카테고리 없음, 키워드 없음")
     @Test
     void findAll1() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, null, 0, 2, null);
 
@@ -216,6 +70,13 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll2() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, "스프링", 0, 2, null);
 
@@ -228,6 +89,13 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll3() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, "김영한", 0, 2, null);
 
@@ -240,6 +108,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll4() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, "iOS", 0, 2, null);
 
@@ -252,6 +128,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll5() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, "백엔드", 0, 2, null);
 
@@ -264,6 +148,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll6() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, "앱", 0, 2, null);
 
@@ -276,6 +168,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll7() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, "네이티브", 0, 2, null);
 
@@ -288,6 +188,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll8() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍", null, null, 0, 2, null);
 
@@ -300,6 +208,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll9() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "앱", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "앱", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍", "앱", null, 0, 2, null);
 
@@ -312,6 +228,14 @@ class LectureQueryRepositoryTest {
     @Test
     void findAll10() {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "앱", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "앱", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
         // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍", "웹", null, 0, 2, null);
 
@@ -323,58 +247,725 @@ class LectureQueryRepositoryTest {
     @DisplayName("강의 검색 - 북마크수 오름 차순")
     @Test
     void findAll11() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Bookmark> totalBookmarks = List.of(
+                getBookMark(totalLectures.get(0), totalUsers.get(0)),
+                getBookMark(totalLectures.get(0), totalUsers.get(1)),
+                getBookMark(totalLectures.get(0), totalUsers.get(2)),
+                getBookMark(totalLectures.get(2), totalUsers.get(1)),
+                getBookMark(totalLectures.get(1), totalUsers.get(2)));
+        bookmarkRepository.saveAll(totalBookmarks);
+
+        // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
                 null,
                 null,
                 0,
                 2,
                 "bookmark,asc");
+
+        // then
         List<Lecture> content = lectures.getContent();
-        assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(3).getTitle());
-        assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(4).getTitle());
+        assertThat(content.get(0).getTitle()).isEqualTo(totalLectures.get(3).getTitle());
+        assertThat(content.get(1).getTitle()).isEqualTo(totalLectures.get(4).getTitle());
     }
 
     @DisplayName("강의 검색 - 북마크수 내림 차순")
     @Test
     void findAll12() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Bookmark> totalBookmarks = List.of(
+                getBookMark(totalLectures.get(0), totalUsers.get(0)),
+                getBookMark(totalLectures.get(0), totalUsers.get(1)),
+                getBookMark(totalLectures.get(0), totalUsers.get(2)),
+                getBookMark(totalLectures.get(2), totalUsers.get(1)),
+                getBookMark(totalLectures.get(1), totalUsers.get(2)));
+        bookmarkRepository.saveAll(totalBookmarks);
+
+        // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
                 null,
                 null,
                 0,
                 2,
                 "bookmark,desc");
+
+        // then
         List<Lecture> content = lectures.getContent();
-        assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(0).getTitle());
-        assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(1).getTitle());
+        assertThat(content.get(0).getTitle()).isEqualTo(totalLectures.get(0).getTitle());
+        assertThat(content.get(1).getTitle()).isEqualTo(totalLectures.get(1).getTitle());
     }
 
     @DisplayName("강의 검색 - 리뷰수 오름 차순")
     @Test
     void findAll13() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
                 null,
                 null,
                 0,
                 2,
                 "review,asc");
+
+        // then
         List<Lecture> content = lectures.getContent();
-        assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(0).getTitle());
-        assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(1).getTitle());
+        assertThat(content.get(0).getTitle()).isEqualTo(totalLectures.get(0).getTitle());
+        assertThat(content.get(1).getTitle()).isEqualTo(totalLectures.get(1).getTitle());
     }
 
     @DisplayName("강의 검색 - 리뷰수 내림 차순")
     @Test
-    @Commit
     void findAll14() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
         Page<Lecture> lectures = lectureQueryRepository.findAll("프로그래밍",
                 null,
                 null,
                 0,
                 5,
                 "review,desc");
+
+        // then
         List<Lecture> content = lectures.getContent();
-        assertThat(content.get(0).getTitle()).isEqualTo(this.lectures.get(4).getTitle());
-        assertThat(content.get(1).getTitle()).isEqualTo(this.lectures.get(2).getTitle());
+        assertThat(content.get(0).getTitle()).isEqualTo(totalLectures.get(4).getTitle());
+        assertThat(content.get(1).getTitle()).isEqualTo(totalLectures.get(2).getTitle());
+    }
+
+    @DisplayName("리뷰 검색 - 기본 ID 오름 차순")
+    @Test
+    void findAll15() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                null);
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의1");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 평점 오름 차순")
+    @Test
+    void findAll16() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                "score,asc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의3");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 평점 내림 차순")
+    @Test
+    void findAll17() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                "score,desc");
+
+        List<Review> content = reviews.getContent();
+
+        // then
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의1");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 작성일 오름 차순")
+    @Test
+    void findAll18() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                "createdDate,asc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의1");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 작성일 내림 차순")
+    @Test
+    void findAll19() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                "createdDate,desc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의3");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 추천 오름 차순")
+    @Test
+    void findAll20() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        List<LikeReview> likeReviews = List.of(
+                getLikeReview(totalReviews.get(6), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(4), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(0), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(2), totalUsers.get(0)));
+        likeReviewRepository.saveAll(likeReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                "like,asc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의1");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의3");
+    }
+
+    @DisplayName("리뷰 검색 - 추천 내림 차순")
+    @Test
+    void findAll21() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        List<LikeReview> likeReviews = List.of(
+                getLikeReview(totalReviews.get(6), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(4), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(0), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(2), totalUsers.get(0)));
+        likeReviewRepository.saveAll(likeReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                "like,desc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의2");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의1");
+    }
+
+    @DisplayName("리뷰 검색 - 평점 오름 차순")
+    @Test
+    void findAll22() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(2).getId(),
+                null,
+                0,
+                2,
+                "score,asc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("스프링 개발 추천 강의2");
+        assertThat(content.get(1).getContent()).isEqualTo("스프링 개발 추천 강의1");
+    }
+
+    @DisplayName("리뷰 검색 - 평점 내림 차순")
+    @Test
+    void findAll23() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(2).getId(),
+                null,
+                0,
+                2,
+                "score,desc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("스프링 개발 추천 강의1");
+        assertThat(content.get(1).getContent()).isEqualTo("스프링 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 평점 내림 차순, 검색 키워드")
+    @Test
+    void findAll24() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(2).getId(),
+                "스프링 개발 추천 강의2",
+                0,
+                2,
+                "score,desc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(1);
+        assertThat(content.get(0).getContent()).isEqualTo("스프링 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 추천 오름 차순")
+    @Test
+    void findAll25() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        List<LikeReview> likeReviews = List.of(
+                getLikeReview(totalReviews.get(6), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(4), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(0), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(2), totalUsers.get(0)));
+        likeReviewRepository.saveAll(likeReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(2).getId(),
+                null,
+                0,
+                2,
+                "like,asc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("스프링 개발 추천 강의1");
+        assertThat(content.get(1).getContent()).isEqualTo("스프링 개발 추천 강의2");
+    }
+
+    @DisplayName("리뷰 검색 - 추천 내림 차순")
+    @Test
+    void findAll26() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), totalUsers.get(0), 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), totalUsers.get(1), 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), totalUsers.get(2), 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), totalUsers.get(2), 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), totalUsers.get(1), 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), totalUsers.get(0), 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), totalUsers.get(0), 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        List<LikeReview> likeReviews = List.of(
+                getLikeReview(totalReviews.get(6), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(6), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(5), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(4), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(0)),
+                getLikeReview(totalReviews.get(1), totalUsers.get(1)),
+                getLikeReview(totalReviews.get(0), totalUsers.get(2)),
+                getLikeReview(totalReviews.get(2), totalUsers.get(0)));
+        likeReviewRepository.saveAll(likeReviews);
+
+        // when
+        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(2).getId(),
+                null,
+                0,
+                2,
+                "like,desc");
+
+        // then
+        List<Review> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("스프링 개발 추천 강의2");
+        assertThat(content.get(1).getContent()).isEqualTo("스프링 개발 추천 강의1");
     }
 
     @DisplayName("강의 Scope 비로그인 조회 - 랜덤한 별점 4.0 이상 수강 후기들")
@@ -682,6 +1273,27 @@ class LectureQueryRepositoryTest {
                 .build();
     }
 
+    private static Lecture getLecture(String title,
+                                      String price,
+                                      String name,
+                                      String mainCategory,
+                                      String subCategory,
+                                      String keywords,
+                                      String content) {
+        return Lecture.builder()
+                .title(title)
+                .source("출처")
+                .url("URL")
+                .price(price)
+                .name(name)
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
+                .keywords(keywords)
+                .content(content)
+                .imageUrl("이미지 URL")
+                .build();
+    }
+
     private Users saveUser(String email, String nickname) {
         return Users.builder()
                 .email(email)
@@ -701,6 +1313,29 @@ class LectureQueryRepositoryTest {
                 .nickName(nickname)
                 .interests(interests)
                 .authority(Authority.ROLE_USER)
+                .build();
+    }
+
+    private static Bookmark getBookMark(Lecture lecture, Users user) {
+        return Bookmark.builder()
+                .lecture(lecture)
+                .user(user)
+                .build();
+    }
+
+    private static Review getReview(Lecture lecture, Users user, Double score, String tags, String content) {
+        return Review.builder()
+                .lecture(lecture)
+                .user(user)
+                .score(score)
+                .tags(tags)
+                .content(content)
+                .build();
+    }
+
+    private static LikeReview getLikeReview(Review review, Users user) {
+        return LikeReview.builder().review(review)
+                .users(user)
                 .build();
     }
 

@@ -20,6 +20,7 @@ import java.util.List;
 
 import static dnd.project.domain.bookmark.entity.QBookmark.bookmark;
 import static dnd.project.domain.lecture.entity.QLecture.lecture;
+import static dnd.project.domain.review.entity.QLikeReview.likeReview;
 import static dnd.project.domain.review.entity.QReview.review;
 import static dnd.project.domain.user.entity.QUsers.users;
 
@@ -51,7 +52,6 @@ public class LectureQueryRepository {
                     .offset(page)
                     .limit(size)
                     .fetch();
-
         } else if ("bookmark,asc".equals(sort) || "bookmark,desc".equals(sort)) {
             content = queryFactory.select(lecture)
                     .from(lecture)
@@ -74,7 +74,6 @@ public class LectureQueryRepository {
                     .limit(size)
                     .fetch();
         }
-
 
         Long totalCount = queryFactory.select(lecture.count())
                 .from(lecture)
@@ -135,6 +134,72 @@ public class LectureQueryRepository {
                 .fetch();
     }
 
+    public Double findReviewAverageScoreById(Long id) {
+        Double score = queryFactory.select(review.score.avg())
+                .from(review)
+                .where(review.lecture.id.eq(id))
+                .fetchOne();
+        return score == null ? 0 : score;
+    }
+
+    public Long findReviewCountById(Long id) {
+        Long count = queryFactory.select(review.count())
+                .from(review)
+                .where(review.lecture.id.eq(id))
+                .fetchOne();
+        return count == null ? 0L : count;
+    }
+
+    public List<String> findAllReviewTagsById(Long id) {
+        return queryFactory.select(review.tags)
+                .from(review)
+                .where(review.lecture.id.eq(id))
+                .fetch();
+    }
+
+    public Page<Review> findAllReviewsById(Long id,
+                                           String searchKeyword,
+                                           Integer page,
+                                           Integer size,
+                                           String sort) {
+
+        List<Review> content;
+
+        if ("like,asc".equals(sort) || "like,desc".equals(sort)) {
+            content = queryFactory.select(review)
+                    .from(review)
+                    .innerJoin(review.user, users).fetchJoin()
+                    .leftJoin(likeReview).on(review.id.eq(likeReview.review.id))
+                    .where(review.lecture.id.eq(id), likeReviewSearchKeyword(searchKeyword))
+                    .groupBy(review.id)
+                    .orderBy(reviewSort(sort), defaultReviewSort())
+                    .offset(page)
+                    .limit(size)
+                    .fetch();
+        } else {
+            content = queryFactory.selectFrom(review)
+                    .innerJoin(review.user, users).fetchJoin()
+                    .where(review.lecture.id.eq(id), likeReviewSearchKeyword(searchKeyword))
+                    .orderBy(reviewSort(sort), defaultReviewSort())
+                    .offset(page)
+                    .limit(size)
+                    .fetch();
+        }
+
+        Long totalCount = queryFactory.select(review.count())
+                .from(review)
+                .where(likeSearchKeyword(searchKeyword))
+                .fetchOne();
+
+        if (totalCount == null) {
+            totalCount = 0L;
+        }
+
+        return new PageImpl<>(content,
+                PageRequest.of(page, size),
+                totalCount);
+    }
+
     private BooleanExpression equalsMainCategory(String mainCategory) {
         if (!StringUtils.hasText(mainCategory)) {
             return null;
@@ -186,5 +251,35 @@ public class LectureQueryRepository {
 
     private OrderSpecifier<Long> defaultSort() {
         return lecture.id.asc();
+    }
+
+    private BooleanExpression likeReviewSearchKeyword(String searchKeyword) {
+
+        if (!StringUtils.hasText(searchKeyword)) {
+            return null;
+        }
+
+        return review.content.contains(searchKeyword);
+    }
+
+    private OrderSpecifier<?> reviewSort(String sort) {
+
+        if (!StringUtils.hasText(sort)) {
+            return defaultReviewSort();
+        }
+
+        return switch (sort) {
+            case "like,asc" -> likeReview.id.count().asc();
+            case "like,desc" -> likeReview.id.count().desc();
+            case "score,asc" -> review.score.asc();
+            case "score,desc" -> review.score.desc();
+            case "createdDate,asc" -> review.createdDate.asc();
+            case "createdDate,desc" -> review.createdDate.desc();
+            default -> defaultReviewSort();
+        };
+    }
+
+    private OrderSpecifier<Long> defaultReviewSort() {
+        return review.id.asc();
     }
 }
