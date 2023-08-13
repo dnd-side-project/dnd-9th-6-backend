@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.project.domain.lecture.entity.Lecture;
+import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.entity.Review;
 import lombok.RequiredArgsConstructor;
@@ -157,34 +158,30 @@ public class LectureQueryRepository {
                 .fetch();
     }
 
-    public Page<Review> findAllReviewsById(Long id,
-                                           String searchKeyword,
-                                           Integer page,
-                                           Integer size,
-                                           String sort) {
+    public Page<LectureReviewListReadResponse.ReviewInfo> findAllReviewsById(Long id,
+                                                                             String searchKeyword,
+                                                                             Integer page,
+                                                                             Integer size,
+                                                                             String sort) {
 
-        List<Review> content;
-
-        if ("like,asc".equals(sort) || "like,desc".equals(sort)) {
-            content = queryFactory.select(review)
-                    .from(review)
-                    .innerJoin(review.user, users).fetchJoin()
-                    .leftJoin(likeReview).on(review.id.eq(likeReview.review.id))
-                    .where(review.lecture.id.eq(id), likeReviewSearchKeyword(searchKeyword))
-                    .groupBy(review.id)
-                    .orderBy(reviewSort(sort), defaultReviewSort())
-                    .offset(page)
-                    .limit(size)
-                    .fetch();
-        } else {
-            content = queryFactory.selectFrom(review)
-                    .innerJoin(review.user, users).fetchJoin()
-                    .where(review.lecture.id.eq(id), likeReviewSearchKeyword(searchKeyword))
-                    .orderBy(reviewSort(sort), defaultReviewSort())
-                    .offset(page)
-                    .limit(size)
-                    .fetch();
-        }
+        List<LectureReviewListReadResponse.ReviewInfo> content = queryFactory.select(
+                        Projections.constructor(LectureReviewListReadResponse.ReviewInfo.class,
+                                review.id,
+                                users.nickName,
+                                review.tags,
+                                review.content,
+                                review.createdDate,
+                                review.score,
+                                likeReview.id.count()))
+                .from(review)
+                .innerJoin(review.user, users)
+                .leftJoin(likeReview).on(review.id.eq(likeReview.review.id))
+                .where(review.lecture.id.eq(id), likeReviewSearchKeyword(searchKeyword))
+                .groupBy(review.id)
+                .orderBy(reviewSort(sort), defaultReviewSort())
+                .offset(page)
+                .limit(size)
+                .fetch();
 
         Long totalCount = queryFactory.select(review.count())
                 .from(review)
@@ -235,8 +232,10 @@ public class LectureQueryRepository {
         }
 
         return switch (sort) {
-            case "price,asc" -> lecture.price.castToNum(Integer.class).asc();
-            case "price,desc" -> lecture.price.castToNum(Integer.class).desc();
+            case "price,asc" ->
+                    Expressions.stringTemplate("function('replace', {0}, {1}, {2})", lecture.price, ",", "").castToNum(Integer.class).asc();
+            case "price,desc" ->
+                    Expressions.stringTemplate("function('replace', {0}, {1}, {2})", lecture.price, ",", "").castToNum(Integer.class).desc();
             case "title,asc" -> lecture.title.asc();
             case "title,desc" -> lecture.title.desc();
             case "name,asc" -> lecture.name.asc();

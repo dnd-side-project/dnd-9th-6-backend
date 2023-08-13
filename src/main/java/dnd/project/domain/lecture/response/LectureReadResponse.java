@@ -21,12 +21,12 @@ public class LectureReadResponse {
     private final String imageUrl;
     private final Long reviewCount;
     private final Double averageScore;
-    private final List<Tag> tags;
+    private final List<TagGroup> tagGroups;
 
     public static LectureReadResponse of(Lecture lecture,
                                          Long reviewCount,
                                          Double averageScore,
-                                         List<Tag> tags) {
+                                         List<TagGroup> tagGroups) {
 
         return new LectureReadResponse(lecture.getId(),
                 lecture.getTitle(),
@@ -39,13 +39,20 @@ public class LectureReadResponse {
                 lecture.getImageUrl(),
                 reviewCount,
                 averageScore,
-                tags);
+                tagGroups);
     }
 
     @Getter
     @RequiredArgsConstructor
-    public static class Tag {
+    public static class TagGroup {
         private final String name;
-        private final String count;
+        private final List<Tag> tags;
+
+        @Getter
+        @RequiredArgsConstructor
+        public static class Tag {
+            private final String name;
+            private final Integer count;
+        }
     }
 }

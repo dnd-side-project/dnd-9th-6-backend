@@ -1,14 +1,12 @@
 package dnd.project.domain.lecture.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import dnd.project.domain.review.entity.Review;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,21 +19,26 @@ public class LectureReviewListReadResponse {
     private final List<ReviewInfo> reviews;
 
     @Getter
-    @RequiredArgsConstructor
     public static class ReviewInfo {
         private final Long id;
         private final String nickname;
-        private final List<String> tags;
+        private final List<String> tags = new ArrayList<>();
         private final String content;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private final LocalDateTime createdDate;
+        private final Double score;
+        private final Long likeCount;
 
-        public static ReviewInfo from(Review review) {
-            return new ReviewInfo(review.getId(),
-                    review.getUser().getNickName(),
-                    Arrays.stream(review.getTags().split(",")).toList(),
-                    review.getContent(),
-                    review.getCreatedDate());
+        public ReviewInfo(Long id, String nickname, String tags, String content, LocalDateTime createdDate, Double score, Long likeCount) {
+            this.id = id;
+            this.nickname = nickname;
+            for (String tag : tags.split(",")) {
+                this.tags.add(tag.trim());
+            }
+            this.content = content;
+            this.createdDate = createdDate;
+            this.score = score;
+            this.likeCount = likeCount;
         }
     }
 
@@ -43,13 +46,11 @@ public class LectureReviewListReadResponse {
                                                    Integer pageNumber,
                                                    Integer pageSize,
                                                    Long totalElements,
-                                                   List<Review> reviews) {
+                                                   List<ReviewInfo> reviewInfos) {
         return new LectureReviewListReadResponse(totalPages,
                 pageNumber,
                 pageSize,
                 totalElements,
-                reviews.stream()
-                        .map(LectureReviewListReadResponse.ReviewInfo::from)
-                        .collect(Collectors.toList()));
+                reviewInfos);
     }
 }

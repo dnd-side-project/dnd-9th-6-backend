@@ -9,6 +9,7 @@ import dnd.project.domain.lecture.response.LectureReadResponse;
 import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.entity.Review;
+import dnd.project.domain.review.entity.ReviewTag;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.global.common.exception.CustomException;
@@ -17,10 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static dnd.project.global.common.Result.*;
 
@@ -37,6 +36,72 @@ public class LectureService {
     private final LectureQueryRepository lectureQueryRepository;
     private final LectureRepository lectureRepository;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public LectureReadResponse getLecture(Long id) {
+
+        Lecture lecture = lectureRepository.findById(id)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_LECTURE));
+
+        Long reviewCount = lectureQueryRepository.findReviewCountById(id);
+
+        Double averageScore = lectureQueryRepository.findReviewAverageScoreById(id);
+        Double roundedAverageScore = Math.round(averageScore * 2) / 2.0;
+
+        // tagType 리스트
+        Set<String> tagTypes = Arrays.stream(ReviewTag.values())
+                .map(ReviewTag::getType)
+                .collect(Collectors.toSet());
+
+        // tagName 리스트
+        List<String> tagNames = Arrays.stream(ReviewTag.values())
+                .map(ReviewTag::getName)
+                .toList();
+
+        // (Key:tagName, Value:tagType)인 Map
+        Map<String, String> tagNameTypeMap = Arrays.stream(ReviewTag.values()).
+                collect(Collectors.toMap(ReviewTag::getName,
+                        ReviewTag::getType));
+
+        // 전체 태그를 "," 로 구분하여 자르고 각 키워드 별 카운트
+        List<String> tagsList = lectureQueryRepository.findAllReviewTagsById(id);
+
+        // 카운트 0 초기화
+        Map<String, Integer> tagCountMap = new HashMap<>();
+        for (String tagName : tagNames) {
+            tagCountMap.put(tagName, 0);
+        }
+
+        for (String tags : tagsList) {
+            for (String tag : tags.split(",")) {
+                tag = tag.trim();
+                Integer count = tagCountMap.getOrDefault(tag, 0);
+                tagCountMap.put(tag, count + 1);
+            }
+        }
+
+        Map<String, List<LectureReadResponse.TagGroup.Tag>> result = new HashMap<>();
+
+        for (String tagType : tagTypes) {
+            result.put(tagType, new ArrayList<>());
+        }
+
+        for (Map.Entry<String, Integer> entry : tagCountMap.entrySet()) {
+            String tagName = entry.getKey();
+            Integer tagCount = entry.getValue();
+            String tagType = tagNameTypeMap.get(tagName);
+            if (tagType != null && result.containsKey(tagType)) {
+                result.get(tagType).add(new LectureReadResponse.TagGroup.Tag(tagName, tagCount));
+            }
+        }
+
+        List<LectureReadResponse.TagGroup> tagGroups = result.entrySet().stream()
+                .map(response ->
+                        new LectureReadResponse.TagGroup(response.getKey(), response.getValue()))
+                .toList();
+
+        return LectureReadResponse.of(lecture, reviewCount, roundedAverageScore, tagGroups);
+    }
 
     @Transactional(readOnly = true)
     public LectureReviewListReadResponse getLectureReviews(Long id,
@@ -57,9 +122,9 @@ public class LectureService {
             page = 0;
         }
 
-        Page<Review> reviews = lectureQueryRepository.findAllReviewsById(id, searchKeyword, page, size, sort);
+        Page<LectureReviewListReadResponse.ReviewInfo> reviews = lectureQueryRepository.findAllReviewsById(id, searchKeyword, page, size, sort);
 
-        List<Review> content = reviews.getContent();
+        List<LectureReviewListReadResponse.ReviewInfo> content = reviews.getContent();
         int totalPages = reviews.getTotalPages();
         long totalElements = reviews.getTotalElements();
         int pageSize = reviews.getPageable().getPageSize();
@@ -204,4 +269,5 @@ public class LectureService {
                 () -> new CustomException(NOT_FOUND_USER)
         );
     }
+
 }

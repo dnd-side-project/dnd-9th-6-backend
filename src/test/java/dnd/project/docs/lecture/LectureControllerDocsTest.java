@@ -4,16 +4,24 @@ import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.controller.LectureController;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
+import dnd.project.domain.lecture.response.LectureReadResponse;
+import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.lecture.service.LectureService;
+import dnd.project.domain.review.entity.ReviewTag;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.print.DocFlavor;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -26,86 +34,15 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LectureControllerDocsTest extends RestDocsSupport {
 
     private final LectureService lectureService = mock(LectureService.class);
-
-    static final List<Lecture> LECTURES = List.of(
-            Lecture.builder()
-                    .id(1L)
-                    .title("스프링 부트 - 핵심 원리와 활용")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("99000")
-                    .name("김영한")
-                    .mainCategory("프로그래밍")
-                    .subCategory("웹")
-                    .keywords("스프링,스프링부트")
-                    .content("실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .id(2L)
-                    .title("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("99,000")
-                    .name("김영한")
-                    .mainCategory("프로그래밍")
-                    .subCategory("웹")
-                    .keywords("스프링,스프링MVC")
-                    .content("웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .id(3L)
-                    .title("스프링 DB 2편 - 데이터 접근 활용 기술")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("99,000")
-                    .name("김영한")
-                    .mainCategory("프로그래밍")
-                    .subCategory("웹")
-                    .keywords("스프링,DB")
-                    .content("백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .id(4L)
-                    .title("배달앱 클론코딩 [with React Native]")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("71,500")
-                    .name("조현영")
-                    .mainCategory("프로그래밍")
-                    .subCategory("앱")
-                    .keywords("리액트 네이티브")
-                    .content("리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다.")
-                    .imageUrl("url")
-                    .build(),
-
-            Lecture.builder()
-                    .id(5L)
-                    .title("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지")
-                    .source("Inflearn")
-                    .url("url")
-                    .price("205,700")
-                    .name("앨런(Allen)")
-                    .mainCategory("프로그래밍")
-                    .subCategory("앱")
-                    .keywords("iOS")
-                    .content("탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초")
-                    .imageUrl("url")
-                    .build()
-    );
 
     @Override
     protected Object initController() {
@@ -114,8 +51,16 @@ public class LectureControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("강의 검색 API")
     @Test
-    void addBookmark() throws Exception {
+    void getLectures() throws Exception {
         // given
+        List<Lecture> totalLectures = List.of(
+                getLecture(1L, "스프링 부트 - 핵심 원리와 활용", "99000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture(2L, "스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture(3L, "스프링 DB 2편 - 데이터 접근 활용 기술", "99000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture(4L, "배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture(5L, "앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+
+
         given(lectureService.getLectures(any(), any(), any(), any(), any(), any()))
                 .willReturn(
                         LectureListReadResponse.of(
@@ -123,7 +68,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 1,
                                 10,
                                 100L,
-                                LECTURES
+                                totalLectures
                         ));
 
         // when // then
@@ -178,7 +123,8 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("한 페이지의 데이터 개수"),
                                 fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
                                         .description("검색 데이터 개수"),
-
+                                fieldWithPath("data.lectures[]").type(JsonFieldType.ARRAY)
+                                        .description("강의 목록"),
                                 fieldWithPath("data.lectures[].id").type(JsonFieldType.NUMBER)
                                         .description("강의 ID"),
                                 fieldWithPath("data.lectures[].title").type(JsonFieldType.STRING)
@@ -199,6 +145,186 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("강의 썸네일 URL")
                         )
                 ));
+    }
+
+    @DisplayName("강의 상세 조회 API")
+    @Test
+    void getLecture() throws Exception {
+
+        // Given
+        Lecture lecture = getLecture(1L,
+                "스프링 부트 - 핵심 원리와 활용",
+                "99,000",
+                "김영한",
+                "프로그래밍",
+                "웹",
+                "스프링,스프링부트",
+                "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다.");
+
+        // tagType 리스트
+        Set<String> tagTypes = Arrays.stream(ReviewTag.values())
+                .map(ReviewTag::getType)
+                .collect(Collectors.toSet());
+
+        List<LectureReadResponse.TagGroup> tagGroups = new ArrayList<>();
+        for (String tagType : tagTypes) {
+            List<String> tagNames = Arrays.stream(ReviewTag.values())
+                    .filter(tag -> tag.getType().equals(tagType))
+                    .map(ReviewTag::getName)
+                    .toList();
+
+            List<LectureReadResponse.TagGroup.Tag> tagList = new ArrayList<>();
+            for (int i = 0; i < tagNames.size(); i++) {
+                tagList.add(new LectureReadResponse.TagGroup.Tag(tagNames.get(i), i));
+            }
+            tagGroups.add(new LectureReadResponse.TagGroup(tagType, tagList));
+        }
+
+        given(lectureService.getLecture(any()))
+                .willReturn(LectureReadResponse.of(
+                        lecture,
+                        3L,
+                        4.5,
+                        tagGroups
+                ));
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/lectures/{id}", 1)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("get-lecture",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("id")
+                                .description("강의 ID")),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                        .description("강의 ID"),
+                                fieldWithPath("data.title").type(JsonFieldType.STRING)
+                                        .description("강의 제목"),
+                                fieldWithPath("data.source").type(JsonFieldType.STRING)
+                                        .description("강의 플랫폼"),
+                                fieldWithPath("data.url").type(JsonFieldType.STRING)
+                                        .description("강의 URL"),
+                                fieldWithPath("data.price").type(JsonFieldType.STRING)
+                                        .description("강의 가격"),
+                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                        .description("강사 이름"),
+                                fieldWithPath("data.mainCategory").type(JsonFieldType.STRING)
+                                        .description("강의 메인 카테고리"),
+                                fieldWithPath("data.subCategory").type(JsonFieldType.STRING)
+                                        .description("강의 서브 카테고리"),
+                                fieldWithPath("data.imageUrl").type(JsonFieldType.STRING)
+                                        .description("강의 썸네일 URL"),
+                                fieldWithPath("data.reviewCount").type(JsonFieldType.NUMBER)
+                                        .description("리뷰 전체 개수"),
+                                fieldWithPath("data.averageScore").type(JsonFieldType.NUMBER)
+                                        .description("강의 평점"),
+                                fieldWithPath("data.tagGroups[]").type(JsonFieldType.ARRAY)
+                                        .description("강의 태그 그룹 목록"),
+                                fieldWithPath("data.tagGroups[].name").type(JsonFieldType.STRING)
+                                        .description("강의 태그 타입 이름"),
+                                fieldWithPath("data.tagGroups[].tags[]").type(JsonFieldType.ARRAY)
+                                        .description("강의 태그 목록"),
+                                fieldWithPath("data.tagGroups[].tags[].name").type(JsonFieldType.STRING)
+                                        .description("강의 태그 이름"),
+                                fieldWithPath("data.tagGroups[].tags[].count").type(JsonFieldType.NUMBER)
+                                        .description("강의 태그 개수")
+                        )
+                ));
+    }
+
+    @DisplayName("강의 상세 리뷰 조회 API")
+    @Test
+    void getLectureReviews() throws Exception {
+
+        // given
+        given(lectureService.getLectureReviews(any(), any(), any(), any(), any()))
+                .willReturn(LectureReviewListReadResponse.of(
+                        10,
+                        1,
+                        5,
+                        50L,
+                        List.of(
+                                new LectureReviewListReadResponse.ReviewInfo(1L,
+                                        "user1", "뛰어난 강의력, 커리큘럼과 똑같아요, 보통이에요",
+                                        "스프링 개발 추천 강의1",
+                                        LocalDateTime.of(2023, 8, 14, 13, 0),
+                                        4.5,
+                                        5L),
+                                new LectureReviewListReadResponse.ReviewInfo(2L,
+                                        "user2",
+                                        "듣기 좋은 목소리,내용이 자세해요",
+                                        "스프링 개발 추천 강의1",
+                                        LocalDateTime.of(2023, 8, 14, 13, 0),
+                                        5.0,
+                                        2L),
+                                new LectureReviewListReadResponse.ReviewInfo(3L,
+                                        "user3",
+                                        "듣기 좋은 목소리,도움이 많이 됐어요",
+                                        "스프링 개발 추천 강의1",
+                                        LocalDateTime.of(2023, 8, 14, 13, 0),
+                                        3.5,
+                                        1L),
+                                new LectureReviewListReadResponse.ReviewInfo(4L,
+                                        "user4",
+                                        "뛰어난 강의력,구성이 알차요,도움이 많이 됐어요",
+                                        "스프링 개발 추천 강의1",
+                                        LocalDateTime.of(2023, 8, 14, 13, 0),
+                                        4.5,
+                                        4L),
+                                new LectureReviewListReadResponse.ReviewInfo(5L,
+                                        "user5",
+                                        "뛰어난 강의력,이해가 잘돼요,보통이에요",
+                                        "스프링 개발 추천 강의1",
+                                        LocalDateTime.of(2023, 8, 14, 13, 0),
+                                        4.0,
+                                        3L))));
+
+        // when & then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/lectures/{id}/reviews", 1)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("get-lecture-reviews",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("id")
+                                .description("강의 ID")),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
+                                        .description("검색 페이지 수"),
+                                fieldWithPath("data.pageNumber").type(JsonFieldType.NUMBER)
+                                        .description("현재 페이지 번호"),
+                                fieldWithPath("data.pageSize").type(JsonFieldType.NUMBER)
+                                        .description("한 페이지의 데이터 개수"),
+                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
+                                        .description("검색 데이터 개수"),
+                                fieldWithPath("data.reviews[]").type(JsonFieldType.ARRAY)
+                                        .description("후기 목록"),
+                                fieldWithPath("data.reviews[].id").type(JsonFieldType.NUMBER)
+                                        .description("후기 ID"),
+                                fieldWithPath("data.reviews[].nickname").type(JsonFieldType.STRING)
+                                        .description("후기 작성자 닉네임"),
+                                fieldWithPath("data.reviews[].tags[]").type(JsonFieldType.ARRAY)
+                                        .description("후기 태그 목록"),
+                                fieldWithPath("data.reviews[].content").type(JsonFieldType.STRING)
+                                        .description("후기 내용"),
+                                fieldWithPath("data.reviews[].createdDate").type(JsonFieldType.STRING)
+                                        .description("후기 생성일"),
+                                fieldWithPath("data.reviews[].score").type(JsonFieldType.NUMBER)
+                                        .description("후기 점수"),
+                                fieldWithPath("data.reviews[].likeCount").type(JsonFieldType.NUMBER)
+                                        .description("후기 추천수"))));
     }
 
     @DisplayName("scope 페이지 추천 강의 조회 API")
@@ -304,5 +430,28 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("강사 이름")
                         )
                 ));
+    }
+
+    private static Lecture getLecture(Long id,
+                                      String title,
+                                      String price,
+                                      String name,
+                                      String mainCategory,
+                                      String subCategory,
+                                      String keywords,
+                                      String content) {
+        return Lecture.builder()
+                .id(id)
+                .title(title)
+                .source("출처")
+                .url("URL")
+                .price(price)
+                .name(name)
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
+                .keywords(keywords)
+                .content(content)
+                .imageUrl("이미지 URL")
+                .build();
     }
 }
