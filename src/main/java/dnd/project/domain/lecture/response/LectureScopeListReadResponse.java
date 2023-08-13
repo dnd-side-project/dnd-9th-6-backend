@@ -61,18 +61,5 @@ public class LectureScopeListReadResponse {
         private Double score;
         private String content;
         private String tags;
-
-        public static DetailReview toEntity(Review review, Users user, Lecture lecture) {
-            return DetailReview.builder()
-                    .id(review.getId())
-                    .lectureTitle(lecture.getTitle())
-                    .imageUrl(user.getImageUrl())
-                    .userName(user.getNickName())
-                    .createdDate(review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                    .score(review.getScore())
-                    .content(review.getContent())
-                    .tags(review.getTags())
-                    .build();
-        }
     }
 }

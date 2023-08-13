@@ -1,18 +1,13 @@
 package dnd.project.domain.lecture.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.MathExpressions;
-import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
-import dnd.project.domain.review.entity.Review;
-import dnd.project.domain.user.entity.QUsers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,7 +24,6 @@ import static dnd.project.domain.user.entity.QUsers.users;
 @RequiredArgsConstructor
 @Repository
 public class LectureQueryRepository {
-
 
     private final JPAQueryFactory queryFactory;
 
@@ -66,12 +60,22 @@ public class LectureQueryRepository {
     }
 
     // Scope 별점 4.0 이상 랜덤 후기들
-    public List<Review> findByHighScores(String interests) {
+    public List<LectureScopeListReadResponse.DetailReview> findByHighScores(String interests) {
         String[] interestsArr = interests != null ? interests.split(",") : null;
         return queryFactory
-                .selectFrom(review)
-                .innerJoin(review.lecture, lecture).fetchJoin()
-                .innerJoin(review.user, users).fetchJoin()
+                .select(Projections.fields(LectureScopeListReadResponse.DetailReview.class,
+                        review.id.as("id"),
+                        review.lecture.title.as("lectureTitle"),
+                        review.user.imageUrl.as("imageUrl"),
+                        review.user.nickName.as("userName"),
+                        Expressions.stringTemplate("TO_CHAR({0}, 'yyyy-MM-dd')", review.createdDate).as("createdDate"),
+                        review.score.as("score"),
+                        review.content.as("content"),
+                        review.tags.as("tags")
+                ))
+                .from(review)
+                .innerJoin(review.lecture, lecture)
+                .innerJoin(review.user, users)
                 .where(
                         review.score.goe(4.0),
                         equalsMainCategoryWithInterests(interestsArr))
@@ -79,6 +83,7 @@ public class LectureQueryRepository {
                 .limit(10)
                 .fetch();
     }
+
 
     private BooleanExpression equalsMainCategoryWithInterests(String[] interestsArr) {
         if (interestsArr == null) {
