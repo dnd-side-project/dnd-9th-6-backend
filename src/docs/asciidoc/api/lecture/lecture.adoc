@@ -1,3 +1,4 @@
+
 === 강의 검색 API
 
 ==== HTTP Request QueryParameter
@@ -7,4 +8,14 @@ include::{snippets}/get-lectures/query-parameters.adoc[]
 ==== HTTP Response Body
 include::{snippets}/get-lectures/http-response.adoc[]
 include::{snippets}/get-lectures/response-fields.adoc[]
+
+=== (Scope it) 별점 높은 수강 후기들 & 강의력 좋은 강의 조회 API
+
+==== HTTP Request Headers
+include::{snippets}/scope-main/request-headers.adoc[]
+include::{snippets}/scope-main/http-request.adoc[]
+
+==== HTTP Response body
+include::{snippets}/scope-main/http-response.adoc[]
+include::{snippets}/scope-main/response-fields.adoc[]
 
