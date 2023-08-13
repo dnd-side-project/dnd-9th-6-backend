@@ -64,7 +64,7 @@ class ReviewServiceTest {
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
 
         ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
+                new ReviewRequest.Create(lecture.getId(), 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
 
         // when
         ReviewResponse.Create response =
@@ -89,7 +89,7 @@ class ReviewServiceTest {
         Review review = saveReview(lecture, user, 4.0, "");
 
         ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
+                new ReviewRequest.Create(lecture.getId(), 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
 
         // when // then
         assertThatThrownBy(() -> reviewService.createReview(request.toServiceRequest(), user.getId()))
@@ -149,6 +149,8 @@ class ReviewServiceTest {
         Users user1 = saveUser("test1@test.com", "test", "test", ROLE_USER);
         Users user2 = saveUser("test2@test.com", "test", "test", ROLE_USER);
         Review review = saveReview(lecture, user1, 4.0, "");
+
+        redisDao.deleteValues(user2.getId() + " like");
 
         // when
         ReviewResponse.ToggleLike response =
@@ -263,18 +265,18 @@ class ReviewServiceTest {
 
         // then
         assertThat(response)
-                .extracting("review.reviewId", "review.score", "review.likes", "isAddLike")
+                .extracting("review.reviewId", "lecture.mainCategory", "review.score", "review.likes", "isAddLike")
                 .contains(
-                        tuple(review12.getId(), 2.0, 0, false),
-                        tuple(review11.getId(), 2.0, 1, true),
-                        tuple(review10.getId(), 0.5, 0, false),
-                        tuple(review9.getId(), 1.0, 0, false),
-                        tuple(review8.getId(), 1.5, 0, false),
-                        tuple(review7.getId(), 2.5, 0, false),
-                        tuple(review6.getId(), 5.0, 0, false),
-                        tuple(review5.getId(), 4.0, 0, false),
-                        tuple(review4.getId(), 3.0, 0, false),
-                        tuple(review3.getId(), 3.5, 0, false)
+                        tuple(review12.getId(), "프로그래밍", 2.0, 0, false),
+                        tuple(review11.getId(), "프로그래밍", 2.0, 1, true),
+                        tuple(review10.getId(), "프로그래밍", 0.5, 0, false),
+                        tuple(review9.getId(), "프로그래밍", 1.0, 0, false),
+                        tuple(review8.getId(), "프로그래밍", 1.5, 0, false),
+                        tuple(review7.getId(), "프로그래밍", 2.5, 0, false),
+                        tuple(review6.getId(), "프로그래밍", 5.0, 0, false),
+                        tuple(review5.getId(), "프로그래밍", 4.0, 0, false),
+                        tuple(review4.getId(), "프로그래밍", 3.0, 0, false),
+                        tuple(review3.getId(), "프로그래밍", 3.5, 0, false)
                 );
     }
 
@@ -339,7 +341,7 @@ class ReviewServiceTest {
                 );
     }
 
-    @DisplayName("유저가 자신이 남긴 후기를 본다.")
+    @DisplayName("유저가 자신이 작성한 후기를 본다.")
     @Test
     void readMyReviews() {
         // given
@@ -349,25 +351,34 @@ class ReviewServiceTest {
         lectureRepository.saveAll(List.of(lecture1, lecture2, lecture3));
 
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+        Users user2 = saveUser("test2@test.com", "test", "test", ROLE_USER);
 
         Review review1 = toEntityReview(lecture1, user, 4.5, "아주 재밌습니다.");
         Review review2 = toEntityReview(lecture2, user, 4.0, "아주 재밌습니다.");
         Review review3 = toEntityReview(lecture3, user, 5.0, "아주 재밌습니다.");
+
         reviewRepository.saveAll(List.of(review1, review2, review3));
 
         entityManager.flush();
         entityManager.clear();
+
+        likeReviewRepository.save(
+                LikeReview.builder()
+                        .users(user2)
+                        .review(review3)
+                        .build()
+        );
 
         // when
         List<ReviewResponse.ReadMyDetails> response = reviewService.readMyReviews(user.getId());
 
         // then
         assertThat(response)
-                .extracting("review.reviewId", "review.score", "lecture.title")
+                .extracting("review.reviewId", "review.likes", "review.score", "lecture.title")
                 .contains(
-                        tuple(review1.getId(), 4.5, "실용적인 테스트 가이드1"),
-                        tuple(review2.getId(), 4.0, "실용적인 테스트 가이드2"),
-                        tuple(review3.getId(), 5.0, "실용적인 테스트 가이드3")
+                        tuple(review1.getId(), 0, 4.5, "실용적인 테스트 가이드1"),
+                        tuple(review2.getId(), 0, 4.0, "실용적인 테스트 가이드2"),
+                        tuple(review3.getId(), 1, 5.0, "실용적인 테스트 가이드3")
                 );
     }
 

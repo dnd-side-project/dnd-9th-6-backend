@@ -1,18 +1,17 @@
 package dnd.project.domain.review.repository;
 
+import dnd.project.domain.TestQuerydslConfig;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.repository.LectureRepository;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.user.entity.Authority;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +19,12 @@ import java.util.List;
 
 import static dnd.project.domain.user.entity.Authority.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@Import(TestQuerydslConfig.class)
 @Transactional
 class ReviewRepositoryTest {
-
-    @Autowired
-    private EntityManager entityManager;
 
     @Autowired
     private UserRepository userRepository;
@@ -69,7 +65,7 @@ class ReviewRepositoryTest {
         );
 
         // when
-        List<Review> reviews = reviewRepository.findByRecentReview(PageRequest.of(0, 10));
+        List<Review> reviews = reviewRepository.findByRecentReview();
 
         // then
         assertThat(reviews)
@@ -121,3 +117,4 @@ class ReviewRepositoryTest {
         );
     }
 }
+

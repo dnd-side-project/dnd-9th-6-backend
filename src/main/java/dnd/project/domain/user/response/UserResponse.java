@@ -3,6 +3,8 @@ package dnd.project.domain.user.response;
 import dnd.project.domain.user.entity.Users;
 import lombok.*;
 
+import java.util.Optional;
+
 
 public class UserResponse {
 
@@ -12,6 +14,7 @@ public class UserResponse {
     @Builder
     public static class Login {
         private Long id;
+        private String imageUrl;
         private String email;
         private String name;
         private Boolean isRegister;
@@ -21,6 +24,7 @@ public class UserResponse {
         public static Login response(Users user, String atk, String rtk, Boolean isRegister) {
             return Login.builder()
                     .id(user.getId())
+                    .imageUrl(user.getImageUrl())
                     .email(user.getEmail())
                     .name(user.getNickName())
                     .isRegister(isRegister)
@@ -59,5 +63,6 @@ public class UserResponse {
     public static class OAuth {
         private String email;
         private String name;
+        private Optional<String> profileImageUrl;
     }
 }

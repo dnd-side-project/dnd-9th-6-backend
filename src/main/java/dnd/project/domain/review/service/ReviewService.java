@@ -13,7 +13,6 @@ import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.redis.RedisDao;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +46,10 @@ public class ReviewService {
             throw new CustomException(ALREADY_CREATED_REVIEW);
         }
 
+        List<String> tags = request.getTags();
+
         Review review = reviewRepository.save(
-                toEntityReview(request.getScore(), request.getTags(), request.getContent(), user, lecture)
+                toEntityReview(request.getScore(), String.join(",", tags), request.getContent(), user, lecture)
         );
 
         return ReviewResponse.Create.response(review, lecture, user);
@@ -109,37 +110,44 @@ public class ReviewService {
     // 최근 올라온 후기 조회 API
     public List<ReviewResponse.ReadDetails> readRecentReview(Long userId) {
         List<Review> reviews =
-                reviewRepository.findByRecentReview(PageRequest.of(0, 10));
+                reviewRepository.findByRecentReview();
 
-        if (userId == null) {
-            return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
-                    review, review.getLecture(), review.getUser(), false)
-            ).toList();
-        } else {
-            return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
-                    review,
-                    review.getLecture(),
-                    review.getUser(),
-                    review.getLikeReviews().stream()
-                            .anyMatch(likeReview -> likeReview.getUsers().getId().equals(userId)))
-            ).toList();
-        }
+        return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
+                review,
+                review.getLecture(),
+                review.getUser(),
+                checkLiked(userId, review))
+        ).toList();
     }
 
     // 내 후기 조회 API
     public List<ReviewResponse.ReadMyDetails> readMyReviews(Long userId) {
-        Users user = reviewRepository.findByMyReview(userId);
+        List<Review> reviews = reviewRepository.findByMyReview(userId);
 
-        if (user.getReviews().isEmpty()) {
+        if (reviews.isEmpty()) {
             throw new CustomException(NOT_CREATED_REVIEW);
         }
 
-        return user.getReviews().stream().map(review -> ReviewResponse.ReadMyDetails.response(
+        return reviews.stream().map(review -> ReviewResponse.ReadMyDetails.response(
                 review, review.getLecture()
         )).toList();
     }
 
     // method
+
+    private static boolean checkLiked(Long userId, Review review) {
+        boolean isLiked;
+        if (userId == null) {
+            isLiked = false;
+        } else {
+            isLiked = review.getLikeReviews().stream()
+                    .anyMatch(likeReview -> likeReview.getUsers()
+                            .getId()
+                            .equals(userId)
+                    );
+        }
+        return isLiked;
+    }
 
     private static LikeReview toEntityLikeReview(Review review, Users user) {
         return LikeReview.builder()

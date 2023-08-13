@@ -4,6 +4,10 @@ import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.entity.LectureCategory;
 import dnd.project.domain.lecture.repository.LectureQueryRepository;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
+import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.review.entity.Review;
+import dnd.project.domain.user.entity.Users;
+import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,17 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
-import static dnd.project.global.common.Result.NOT_FOUND_MAIN_AND_SUB_CATEGORY;
-import static dnd.project.global.common.Result.NOT_FOUND_MAIN_CATEGORY;
+import static dnd.project.global.common.Result.*;
 
 @RequiredArgsConstructor
 @Service
 public class LectureService {
-
     private static final Integer MAX_SIZE = 100;
+
     private static final Integer DEFAULT_SIZE = 10;
     private static final Integer MIN_SIZE = 10;
     private final LectureQueryRepository lectureQueryRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public LectureListReadResponse getLectures(Integer mainCategoryId,
@@ -58,12 +62,27 @@ public class LectureService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public LectureScopeListReadResponse getScopeLectures(Long userId) {
+        Users user = getUserOrAnonymous(userId);
+
+        // 별점 높은 수강 후기들 -> 4.0 이상 랜덤
+        List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
+                getHighScoreReviews(user.getInterests());
+
+        // 강의력 좋은 순
+        List<LectureScopeListReadResponse.DetailLecture> bestLectures =
+                lectureQueryRepository.findByBestLectures(user.getInterests());
+
+        return LectureScopeListReadResponse.response(highScoreReviews, bestLectures, user);
+    }
+
     private LectureListReadResponse getLecturesFromMainSubCategory(Integer mainCategoryId,
-                                                                  Integer subCategoryId,
-                                                                  String searchKeyword,
-                                                                  Integer page,
-                                                                  Integer size,
-                                                                  String sort) {
+                                                                   Integer subCategoryId,
+                                                                   String searchKeyword,
+                                                                   Integer page,
+                                                                   Integer size,
+                                                                   String sort) {
 
         LectureCategory category = findMainSubCategory(mainCategoryId, subCategoryId);
         String mainCategoryName = category.getMainCategoryName();
@@ -81,10 +100,10 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromMainCategory(Integer mainCategoryId,
-                                                               String searchKeyword,
-                                                               Integer page,
-                                                               Integer size,
-                                                               String sort) {
+                                                                String searchKeyword,
+                                                                Integer page,
+                                                                Integer size,
+                                                                String sort) {
 
         String mainCategoryName = findMainCategoryName(mainCategoryId);
 
@@ -100,9 +119,9 @@ public class LectureService {
     }
 
     private LectureListReadResponse getLecturesFromAllCategory(String searchKeyword,
-                                                              Integer page,
-                                                              Integer size,
-                                                              String sort) {
+                                                               Integer page,
+                                                               Integer size,
+                                                               String sort) {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, searchKeyword, page, size, sort);
 
@@ -129,5 +148,21 @@ public class LectureService {
                 .findAny()
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MAIN_CATEGORY));
         return category.getMainCategoryName();
+    }
+
+    private List<LectureScopeListReadResponse.DetailReview> getHighScoreReviews(String interests) {
+        return lectureQueryRepository.findByHighScores(interests).stream()
+                .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
+                        review, review.getUser(), review.getLecture())
+                ).toList();
+    }
+
+    private Users getUserOrAnonymous(Long userId) {
+        if (userId == null) {
+            return Users.builder().build();
+        }
+        return userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER)
+        );
     }
 }

@@ -4,20 +4,26 @@ import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.controller.LectureController;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
+import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.lecture.service.LectureService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.print.DocFlavor;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -177,6 +183,111 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("강의 서브 카테고리"),
                                 fieldWithPath("data.lectures[].imageUrl").type(JsonFieldType.STRING)
                                         .description("강의 썸네일 URL")
+                        )
+                ));
+    }
+
+    @DisplayName("scope 페이지 추천 강의 조회 API")
+    @Test
+    void getScopeLectures() throws Exception {
+        // given
+        // 후기 높은 리뷰 생성
+        LectureScopeListReadResponse.DetailReview detailReview1 = new LectureScopeListReadResponse.DetailReview(
+                1L, "The RED : 백엔드 에센셜 : 대용량 서비스를 위한 아키텍처 with Redis by 강대명", "https://fastcampus.co.kr/dev_red_kdm",
+                "김준환", "2023-08-08", 4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,구성이 알차요,도움이 많이 됐어요"
+        );
+
+        LectureScopeListReadResponse.DetailReview detailReview2 = new LectureScopeListReadResponse.DetailReview(
+                2L, "MSA 환경의 효율적인 DevOps를 위한 Istio", "https://fastcampus.co.kr/dev_online_istio",
+                "천현우", "2023-07-23", 4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요"
+        );
+
+        LectureScopeListReadResponse.DetailReview detailReview3 = new LectureScopeListReadResponse.DetailReview(
+                3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "https://i.namu.wiki/i/U_ewityI8zmTrUbeUAD8IksVCqy8bRFvGev3Dqpp_10Fu-Tr1zidmr6bcdy9d_UEbuGj_uD3OkimkvUh_8t23ehmymYsoNyWwJG_rkubdG2LbwCUdGz3ug-_NjFhQHjz4aXHvuiRGIeiXJRk66CPdw.webp",
+                "하예은", "2023-08-23", 5.0, "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요"
+        );
+
+        List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
+                List.of(detailReview1, detailReview2, detailReview3);
+
+        // 추천 강의 생성
+        LectureScopeListReadResponse.DetailLecture detailLecture1 = new LectureScopeListReadResponse.DetailLecture(
+                1L, "https://fastcampus.co.kr/dev_online_linux", "리눅스 실전 정복 올인원 패키지 Online.", "박수현,원규연"
+        );
+
+        LectureScopeListReadResponse.DetailLecture detailLecture2 = new LectureScopeListReadResponse.DetailLecture(
+                2L, "https://fastcampus.co.kr/data_online_msignature", "초격차 패키지 : 50개 프로젝트로 완벽하게 끝내는 머신러닝 SIGNATURE", "박지환,안건이,박창용,김원균"
+        );
+
+        LectureScopeListReadResponse.DetailLecture detailLecture3 = new LectureScopeListReadResponse.DetailLecture(
+                3L, "https://i.namu.wiki/i/Z6zyrokfaBgMqSMZdsGZXZ2u8CeM9ZOuyIgihmxorIVVNicpOtOcsF0P-LyBmH3pMbApRXnGQBAkvAN7JJQkU_GEmALHdP7l1R7oTHYp6MZKhF8aZ5TDc6kMSUB2Y60aZDSUnIcHwZzT4C5N7XkowQ.webp", "영국 요리가 맛없다는 편견은 그만! 영국 왕실 특별 대접 레시피 패키지", "케빈 데브라위너"
+        );
+
+        List<LectureScopeListReadResponse.DetailLecture> bestLectures = List.of(detailLecture1, detailLecture2, detailLecture3);
+
+        given(lectureService.getScopeLectures(any()))
+                .willReturn(
+                        LectureScopeListReadResponse.builder()
+                                .isAnonymous(false)
+                                .userName("클래스코프")
+                                .interests("요리,프로그래밍")
+                                .highScoreReviews(highScoreReviews)
+                                .bestLectures(bestLectures)
+                                .build()
+                );
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/lectures/scope")
+                                .header("Authorization", "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("scope-main",
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization")
+                                        .description("발급된 JWT AccessToken / NULL 허용")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data.isAnonymous").type(BOOLEAN)
+                                        .description("비로그인 유저 여부"),
+                                fieldWithPath("data.userName").type(STRING)
+                                        .description("유저 네임 / 비로그인 값 : 'anonymous'"),
+                                fieldWithPath("data.interests").type(STRING)
+                                        .description("유저 관심분야 / 비로그인 값 : 'anonymous'"),
+                                fieldWithPath("data.highScoreReviews[]").type(ARRAY)
+                                        .description("별점 높은 수강 후기 리스트"),
+                                fieldWithPath("data.highScoreReviews[].id").type(NUMBER)
+                                        .description("후기 ID"),
+                                fieldWithPath("data.highScoreReviews[].lectureTitle").type(STRING)
+                                        .description("강의 제목"),
+                                fieldWithPath("data.highScoreReviews[].imageUrl").type(STRING)
+                                        .description("유저 프로필 이미지 URL"),
+                                fieldWithPath("data.highScoreReviews[].userName").type(STRING)
+                                        .description("유저 이름"),
+                                fieldWithPath("data.highScoreReviews[].createdDate").type(STRING)
+                                        .description("후기 작성 날짜"),
+                                fieldWithPath("data.highScoreReviews[].score").type(NUMBER)
+                                        .description("후기 점수"),
+                                fieldWithPath("data.highScoreReviews[].content").type(STRING)
+                                        .description("후기 내용"),
+                                fieldWithPath("data.highScoreReviews[].tags").type(STRING)
+                                        .description("후기 태그"),
+                                fieldWithPath("data.bestLectures[]").type(ARRAY)
+                                        .description("강의력 좋은 강의 리스트"),
+                                fieldWithPath("data.bestLectures[].id").type(NUMBER)
+                                        .description("강의 Id"),
+                                fieldWithPath("data.bestLectures[].imageUrl").type(STRING)
+                                        .description("강의 이미지 URL"),
+                                fieldWithPath("data.bestLectures[].title").type(STRING)
+                                        .description("강의 제목"),
+                                fieldWithPath("data.bestLectures[].name").type(STRING)
+                                        .description("강사 이름")
                         )
                 ));
     }
