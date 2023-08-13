@@ -1,5 +1,6 @@
 package dnd.project.domain.review.repository;
 
+import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.entity.Review;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,5 @@ import java.util.List;
 public interface ReviewQueryRepository {
     List<Review> findByRecentReview();
     List<Review> findByMyReview(Long userId);
+    List<LectureScopeListReadResponse.DetailReview> findByKeyword(String keyword);
 }

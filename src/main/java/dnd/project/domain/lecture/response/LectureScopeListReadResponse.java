@@ -3,10 +3,7 @@ package dnd.project.domain.lecture.response;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.user.entity.Users;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
