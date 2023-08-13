@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,7 +18,7 @@ class ReviewControllerTest extends ControllerTestSupport {
     @Test
     void createReview() throws Exception {
         // given
-        ReviewRequest.Create request = new ReviewRequest.Create(1L, 4.0, "빠른 답변,이해가 잘돼요,보통이에요", null);
+        ReviewRequest.Create request = new ReviewRequest.Create(1L, 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
 
         // when // then
         mockMvc.perform(

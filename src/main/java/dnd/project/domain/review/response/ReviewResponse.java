@@ -1,6 +1,8 @@
 package dnd.project.domain.review.response;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.user.entity.Users;
@@ -10,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class ReviewResponse {
 
@@ -83,6 +87,7 @@ public class ReviewResponse {
                     )
                     .lecture(Lectures.builder()
                             .lectureId(lecture.getId())
+                            .mainCategory(lecture.getMainCategory())
                             .title(lecture.getTitle())
                             .imageUrl(lecture.getImageUrl())
                             .name(lecture.getName())
@@ -147,6 +152,8 @@ public class ReviewResponse {
     @Builder
     public static class Lectures {
         private Long lectureId;
+        @JsonInclude(NON_NULL)
+        private String mainCategory;
         private String title;
         private String imageUrl;
         private String name;

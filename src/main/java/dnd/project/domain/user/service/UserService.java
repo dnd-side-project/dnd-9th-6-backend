@@ -44,9 +44,12 @@ public class UserService {
         // OAuth 로그인 진행
         boolean isRegister = false;
         UserResponse.OAuth socialLoginUser = toSocialLogin(code, platform);
+        String profileImageUrl = socialLoginUser.getProfileImageUrl().orElse("default.png");
+
         Users userEntity = Users.builder()
                 .email(socialLoginUser.getEmail())
                 .nickName(socialLoginUser.getName())
+                .imageUrl(profileImageUrl)
                 .password(passwordEncoder.encode(platform.name()))
                 .authority(Authority.ROLE_USER)
                 .build();
