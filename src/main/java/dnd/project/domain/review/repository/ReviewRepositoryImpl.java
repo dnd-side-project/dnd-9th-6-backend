@@ -66,6 +66,8 @@ public class ReviewRepositoryImpl implements ReviewQueryRepository {
                         review.tags.as("tags")
                         ))
                 .from(review)
+                .innerJoin(review.lecture,lecture)
+                .innerJoin(review.user, users)
                 .where(review.tags.contains(keyword))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(10)
