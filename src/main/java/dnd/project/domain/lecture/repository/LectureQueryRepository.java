@@ -65,20 +65,31 @@ public class LectureQueryRepository {
                 totalCount);
     }
 
-    // Scope 별점 높은 수강 후기들
-    public List<Review> findByHighScores() {
+    // Scope 별점 4.0 이상 랜덤 후기들
+    public List<Review> findByHighScores(String interests) {
+        String[] interestsArr = interests != null ? interests.split(",") : null;
         return queryFactory
                 .selectFrom(review)
                 .innerJoin(review.lecture, lecture).fetchJoin()
                 .innerJoin(review.user, users).fetchJoin()
-                .where(review.score.goe(4.0))
+                .where(
+                        review.score.goe(4.0),
+                        equalsMainCategoryWithInterests(interestsArr))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(10)
                 .fetch();
     }
 
+    private BooleanExpression equalsMainCategoryWithInterests(String[] interestsArr) {
+        if (interestsArr == null) {
+            return null;
+        }
+        return lecture.mainCategory.in(interestsArr);
+    }
+
     // Scope 강의력 좋은 순 정렬
-    public List<LectureScopeListReadResponse.DetailLecture> findByBestLectures() {
+    public List<LectureScopeListReadResponse.DetailLecture> findByBestLectures(String interests) {
+        String[] interestsArr = interests != null ? interests.split(",") : null;
         return queryFactory
                 .select(Projections.fields(LectureScopeListReadResponse.DetailLecture.class,
                         lecture.id.as("id"),
@@ -89,7 +100,9 @@ public class LectureQueryRepository {
                 .from(lecture)
                 .leftJoin(lecture.reviews, review)
                 .groupBy(lecture)
-                .where(review.tags.contains("뛰어난 강의력"))
+                .where(review.tags.contains("뛰어난 강의력"),
+                        equalsMainCategoryWithInterests(interestsArr)
+                )
                 .orderBy(review.tags.contains("뛰어난 강의력").count().desc())
                 .limit(6)
                 .fetch();
