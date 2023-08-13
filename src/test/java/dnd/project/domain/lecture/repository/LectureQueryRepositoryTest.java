@@ -235,9 +235,9 @@ class LectureQueryRepositoryTest {
         assertThat(lectures.getTotalElements()).isEqualTo(3);
     }
 
-    @DisplayName("강의 Scope 조회 - 랜덤한 별점 4.0 이상 수강 후기들")
+    @DisplayName("강의 Scope 비로그인 조회 - 랜덤한 별점 4.0 이상 수강 후기들")
     @Test
-    void findByHighScores() {
+    void findByHighScoresWithNotLogin() {
         // given
 
         // 사용자 생성
@@ -287,7 +287,7 @@ class LectureQueryRepositoryTest {
 
         // when
         List<LectureScopeListReadResponse.DetailReview> detailReviews =
-                lectureQueryRepository.findByHighScores().stream()
+                lectureQueryRepository.findByHighScores(null).stream()
                         .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
                                 review, review.getUser(), review.getLecture())
                         ).toList();
@@ -303,9 +303,76 @@ class LectureQueryRepositoryTest {
                 );
     }
 
-    @DisplayName("강의 Scope 조회 - 강의력 좋은 순")
+    @DisplayName("강의 Scope 로그인 후 조회 - 랜덤한 별점 4.0 이상 수강 후기들")
     @Test
-    void findByBestLectures() {
+    void findByHighScoresWithLogin() {
+        // given
+
+        // 사용자 생성
+        Users user1 = saveUser("test1@test.com", "테스터1", "요리,프로그래밍");
+        Users user2 = saveUser("test2@test.com", "테스터2");
+        Users user3 = saveUser("test3@test.com", "테스터3");
+        userRepository.saveAll(List.of(user1, user2, user3));
+
+        // 강의 생성
+        Lecture lecture1 = getLecture("웹 디자인의 기초", "프로그래밍");
+        Lecture lecture2 = getLecture("자바 프로그래밍 실전 입문", "프로그래밍");
+        Lecture lecture3 = getLecture("맛있는 파스타 요리", "요리");
+        Lecture lecture4 = getLecture("게임 개발의 첫걸음", "게임");
+        Lecture lecture5 = getLecture("그림으로 배우는 일본어", "디자인");
+        Lecture lecture6 = getLecture("프론트엔드 개발 마스터 클래스", "프로그래밍");
+        Lecture lecture7 = getLecture("컴퓨터 비전 기초", "프로그래밍");
+        Lecture lecture8 = getLecture("디지털 아트 워크샵", "디자인");
+        Lecture lecture9 = getLecture("영화 속 레시피", "요리");
+        Lecture lecture10 = getLecture("모바일 게임 디자인", "디자인");
+        Lecture lecture11 = getLecture("너무 쉬운 스프링 개발서", "프로그래밍");
+        Lecture lecture12 = getLecture("파이썬 프로그래밍 기초", "프로그래밍");
+
+        lectureRepository.saveAll(List.of(
+                lecture1, lecture2, lecture3,
+                lecture4, lecture5, lecture6,
+                lecture7, lecture8, lecture9,
+                lecture10, lecture11, lecture12));
+
+
+        // 리뷰 생성
+        Review review1 = getReview(lecture1, user1, 5.0, "강의력 좋은, ", "내용이 알찹니다!");
+        Review review2 = getReview(lecture2, user1, 0.5, "도움이 안되었어요, ", "윽... 너무별로");
+        Review review3 = getReview(lecture3, user2, 1.0, "도움이 안되었어요, ", "소리가 안들리는데요");
+        Review review4 = getReview(lecture4, user1, 4.5, "강의력 좋은, 이해가 잘돼요", "내용이 알찹니다!");
+        Review review5 = getReview(lecture5, user1, 1.5, "매우 적극적, ", "내용이 알찹니다!");
+        Review review6 = getReview(lecture6, user1, 2.0, "매우 적극적, 도움이 많이 됐어요, ", "내용이 알찹니다!");
+        Review review7 = getReview(lecture7, user1, 2.5, "내용이 자세해요", "내용이 알찹니다!");
+        Review review8 = getReview(lecture8, user1, 3.5, "강의력 좋은, 듣기 좋은 목소리", "내용이 알찹니다!");
+        Review review9 = getReview(lecture9, user1, 4.0, "듣기 좋은 목소리", "내용이 알찹니다!");
+        Review review10 = getReview(lecture10, user1, 3.0, "보통이에요, ", "내용이 알찹니다!");
+
+        reviewRepository.saveAll(List.of(
+                review1, review2, review3, review4,
+                review5, review6, review7, review8,
+                review9, review10
+        ));
+
+        // when
+        List<LectureScopeListReadResponse.DetailReview> detailReviews =
+                lectureQueryRepository.findByHighScores(user1.getInterests()).stream()
+                        .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
+                                review, review.getUser(), review.getLecture())
+                        ).toList();
+
+        // then
+        assertThat(detailReviews)
+                .hasSize(2)
+                .extracting("id", "score")
+                .contains(
+                        tuple(review1.getId(), review1.getScore()),
+                        tuple(review9.getId(), review9.getScore())
+                );
+    }
+
+    @DisplayName("강의 Scope 관심분야 Null 조회 - 강의력 좋은 순")
+    @Test
+    void findByBestLecturesWithNotLogin() {
         // given
 
         // 사용자 생성
@@ -362,7 +429,7 @@ class LectureQueryRepositoryTest {
 
         // when
         List<LectureScopeListReadResponse.DetailLecture> detailLectures =
-                lectureQueryRepository.findByBestLectures();
+                lectureQueryRepository.findByBestLectures(null);
 
         // then
         assertThat(detailLectures)
@@ -372,6 +439,77 @@ class LectureQueryRepositoryTest {
                         tuple(lecture1.getId(), lecture1.getTitle()),
                         tuple(lecture7.getId(), lecture7.getTitle()),
                         tuple(lecture8.getId(), lecture8.getTitle())
+                );
+    }
+
+    @DisplayName("강의 Scope 조회 - 강의력 좋은 순")
+    @Test
+    void findByBestLecturesWithLogin() {
+        // given
+        // 사용자 생성
+        Users user1 = saveUser("test1@test.com", "테스터1","요리,프로그래밍");
+        Users user2 = saveUser("test2@test.com", "테스터2");
+        Users user3 = saveUser("test3@test.com", "테스터3");
+
+        userRepository.saveAll(List.of(user1, user2, user3));
+
+        // 강의 생성
+        Lecture lecture1 = getLecture("웹 디자인의 기초", "프로그래밍");
+        Lecture lecture2 = getLecture("자바 프로그래밍 실전 입문", "프로그래밍");
+        Lecture lecture3 = getLecture("맛있는 파스타 요리", "요리");
+        Lecture lecture4 = getLecture("게임 개발의 첫걸음", "게임");
+        Lecture lecture5 = getLecture("그림으로 배우는 일본어", "디자인");
+        Lecture lecture6 = getLecture("프론트엔드 개발 마스터 클래스", "프로그래밍");
+        Lecture lecture7 = getLecture("컴퓨터 비전 기초", "프로그래밍");
+        Lecture lecture8 = getLecture("디지털 아트 워크샵", "디자인");
+        Lecture lecture9 = getLecture("영화 속 레시피", "요리");
+        Lecture lecture10 = getLecture("모바일 게임 디자인", "디자인");
+        Lecture lecture11 = getLecture("너무 쉬운 스프링 개발서", "프로그래밍");
+        Lecture lecture12 = getLecture("파이썬 프로그래밍 기초", "프로그래밍");
+
+        lectureRepository.saveAll(List.of(
+                lecture1, lecture2, lecture3,
+                lecture4, lecture5, lecture6,
+                lecture7, lecture8, lecture9,
+                lecture10, lecture11, lecture12));
+
+        // 리뷰 생성
+        // 우선순위 2
+        Review review1a = getReview(lecture1, user1, 5.0, "이해가 잘돼요, ", "내용이 알찹니다!");
+        Review review1b = getReview(lecture1, user2, 5.0, "뛰어난 강의력, ", "아주 퍼펙트한 강의 이군요");
+        Review review1c = getReview(lecture1, user3, 5.0, "뛰어난 강의력, ", "이 강의를 듣고 개념이 달라졌습니다.");
+
+        // 우선순위 1
+        Review review4a = getReview(lecture4, user1, 4.5, "뛰어난 강의력, 이해가 잘돼요", "내용이 알찹니다!");
+        Review review4b = getReview(lecture4, user2, 5.0, "뛰어난 강의력, 매우 적극적", "내용이 알찹니다!");
+        Review review4c = getReview(lecture4, user3, 5.0, "뛰어난 강의력, ", "내용이 알찹니다!");
+
+        // 우선순위 3
+        Review review7a = getReview(lecture7, user1, 4.0, "내용이 자세해요", "내용이 알찹니다!");
+        Review review7b = getReview(lecture7, user2, 3.5, "뛰어난 강의력, ", "내용이 알찹니다!");
+        Review review7c = getReview(lecture7, user3, 4.0, "내용이 자세해요, ", "내용이 알찹니다!");
+
+        // 우선순위 4
+        Review review8 = getReview(lecture8, user1, 3.5, "뛰어난 강의력, 듣기 좋은 목소리", "내용이 알찹니다!");
+
+        reviewRepository.saveAll(List.of(
+                review1a, review1b, review1c,
+                review4a, review4b, review4c,
+                review7a, review7b, review7c,
+                review8
+        ));
+
+        // when
+        List<LectureScopeListReadResponse.DetailLecture> detailLectures =
+                lectureQueryRepository.findByBestLectures(user1.getInterests());
+
+        // then
+        assertThat(detailLectures)
+                .extracting("id", "title")
+                .hasSize(2)
+                .containsExactly(
+                        tuple(lecture1.getId(), lecture1.getTitle()),
+                        tuple(lecture7.getId(), lecture7.getTitle())
                 );
     }
 
@@ -409,6 +547,17 @@ class LectureQueryRepositoryTest {
                 .imageUrl("이미지 URL ")
                 .nickName(nickname)
                 .interests("관심사1, 관심사2")
+                .authority(Authority.ROLE_USER)
+                .build();
+    }
+
+    private Users saveUser(String email, String nickname, String interests) {
+        return Users.builder()
+                .email(email)
+                .password("password")
+                .imageUrl("이미지 URL ")
+                .nickName(nickname)
+                .interests(interests)
                 .authority(Authority.ROLE_USER)
                 .build();
     }

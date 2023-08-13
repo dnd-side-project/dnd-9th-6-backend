@@ -128,4 +128,17 @@ class LectureControllerTest extends ControllerTestSupport {
                         "배달앱 클론코딩 [with React Native]",
                         "앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지")));
     }
+
+    @DisplayName("scope 페이지 추천 강의 조회 API")
+    @Test
+    void getScopeLectures() throws Exception {
+        // given
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/lectures/scope")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
