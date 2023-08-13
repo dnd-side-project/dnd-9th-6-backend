@@ -50,7 +50,7 @@ include::{snippets}/toggle-like/form-parameters.adoc[]
 include::{snippets}/toggle-like/http-response.adoc[]
 include::{snippets}/toggle-like/response-fields.adoc[]
 
-=== 최근 올라온 후기 조회 API
+=== (Scope) 최근 올라온 후기 조회 API
 
 ==== HTTP Request body
 include::{snippets}/recent-review/http-request.adoc[]
@@ -68,3 +68,13 @@ include::{snippets}/read-my-review/http-request.adoc[]
 ==== HTTP Response body
 include::{snippets}/read-my-review/http-response.adoc[]
 include::{snippets}/read-my-review/response-fields.adoc[]
+
+=== (Scope) 후기 키워드 조회 API
+
+==== HTTP Request body
+include::{snippets}/read-review-keyword/http-request.adoc[]
+include::{snippets}/read-review-keyword/request-fields.adoc[]
+
+==== HTTP Response body
+include::{snippets}/read-review-keyword/http-response.adoc[]
+include::{snippets}/read-review-keyword/response-fields.adoc[]
