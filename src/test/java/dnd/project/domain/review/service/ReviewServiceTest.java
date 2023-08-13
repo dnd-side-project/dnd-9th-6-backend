@@ -150,7 +150,8 @@ class ReviewServiceTest {
         Users user2 = saveUser("test2@test.com", "test", "test", ROLE_USER);
         Review review = saveReview(lecture, user1, 4.0, "");
 
-        redisDao.deleteValues(user2.getId() + " like");
+        String isAddLikeKey = String.format("%s : %s", review.getId(), user2.getId());
+        redisDao.deleteValues(isAddLikeKey);
 
         // when
         ReviewResponse.ToggleLike response =
@@ -161,7 +162,7 @@ class ReviewServiceTest {
                 .extracting("reviewId", "userId", "isCancelled")
                 .contains(review.getId(), user2.getId(), false);
 
-        redisDao.deleteValues(user2.getId() + " like");
+        redisDao.deleteValues(isAddLikeKey);
     }
 
     @DisplayName("유저가 후기에 남긴 좋아요를 취소한다.")
@@ -178,7 +179,7 @@ class ReviewServiceTest {
                         .review(review)
                         .build()
         );
-        redisDao.setValues(user2.getId() + " like", "Y");
+        redisDao.setValues(String.format("%s : %s", review.getId(), user2.getId()), "Y");
 
         entityManager.flush();
         entityManager.clear();
@@ -201,13 +202,6 @@ class ReviewServiceTest {
         Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
         Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
         Review review = saveReview(lecture, user, 4.0, "");
-        likeReviewRepository.save(
-                LikeReview.builder()
-                        .users(user)
-                        .review(review)
-                        .build()
-        );
-        redisDao.setValues(user.getId() + " like", "Y");
 
         entityManager.flush();
         entityManager.clear();
