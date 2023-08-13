@@ -150,6 +150,8 @@ class ReviewServiceTest {
         Users user2 = saveUser("test2@test.com", "test", "test", ROLE_USER);
         Review review = saveReview(lecture, user1, 4.0, "");
 
+        redisDao.deleteValues(user2.getId() + " like");
+
         // when
         ReviewResponse.ToggleLike response =
                 reviewService.toggleLikeReview(review.getId(), user2.getId());
