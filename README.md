@@ -17,6 +17,7 @@
   </tr>
   <tr>
     <td align="center">
+       <a href="https://github.com/nefertirii">nefertirii</a>
     </td>
     <td align="center">
       <a href="https://github.com/1000kkannoo">1000kkannoo</a>

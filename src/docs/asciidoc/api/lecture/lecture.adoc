@@ -9,6 +9,26 @@ include::{snippets}/get-lectures/query-parameters.adoc[]
 include::{snippets}/get-lectures/http-response.adoc[]
 include::{snippets}/get-lectures/response-fields.adoc[]
 
+=== 강의 상세 조회 API
+
+==== HTTP Request QueryParameter
+include::{snippets}/get-lecture/http-request.adoc[]
+include::{snippets}/get-lecture/path-parameters.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/get-lecture/http-response.adoc[]
+include::{snippets}/get-lecture/response-fields.adoc[]
+
+=== 강의 상세 리뷰 조회 API
+
+==== HTTP Request QueryParameter
+include::{snippets}/get-lecture-reviews/http-request.adoc[]
+include::{snippets}/get-lecture-reviews/path-parameters.adoc[]
+
+==== HTTP Response Body
+include::{snippets}/get-lecture-reviews/http-response.adoc[]
+include::{snippets}/get-lecture-reviews/response-fields.adoc[]
+
 === (Scope it) 별점 높은 수강 후기들 & 강의력 좋은 강의 조회 API
 
 ==== HTTP Request Headers
