@@ -38,4 +38,16 @@ class BookmarkControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("내 북마크 조회 API")
+    @Test
+    void readMyBookmark() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/auth/bookmark")
+                                .header("Authorization", "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
