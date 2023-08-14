@@ -91,7 +91,7 @@ public class ReviewService {
             throw new CustomException(NOT_MY_REVIEW_LIKE);
         }
         // Redis 를 통한 좋아요 등록 여부 확인
-        String isAddLikeKey = userId + " like";
+        String isAddLikeKey = String.format("%s : %s", reviewId, userId);
         Optional<String> isAddLike = Optional.ofNullable(redisDao.getValues(isAddLikeKey));
 
         Boolean isCancelled;
