@@ -25,7 +25,7 @@ public class BookmarkRepositoryImpl implements BookmarkCustomRepository {
                 .select(Projections.fields(BookmarkResponse.Detail.class,
                         bookmark.id.as("bookmarkId"),
                         bookmark.lecture.id.as("lectureId"),
-                        bookmark.lecture.name.as("name").as("name"),
+                        bookmark.lecture.name.as("name"),
                         bookmark.lecture.imageUrl.as("lectureImageUrl"),
                         bookmark.lecture.source.as("source"),
                         bookmark.lecture.title.as("title"),
