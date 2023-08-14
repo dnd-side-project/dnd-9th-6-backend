@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static dnd.project.domain.user.entity.Authority.ROLE_USER;
@@ -108,14 +110,16 @@ class ReviewRepositoryTest {
                 reviewRepository.findByKeyword("커리큘럼과 똑같아요");
 
         // then
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
         assertThat(detailReviews)
                 .extracting("id", "lectureTitle", "userName", "score", "createdDate")
                 .contains(
-                        tuple(review3.getId(), review3.getLecture().getTitle(), "test", review3.getScore(), "2023-08-13"),
-                        tuple(review6.getId(), review6.getLecture().getTitle(), "test", review6.getScore(), "2023-08-13"),
-                        tuple(review7.getId(), review7.getLecture().getTitle(), "test", review7.getScore(), "2023-08-13"),
-                        tuple(review9.getId(), review9.getLecture().getTitle(), "test", review9.getScore(), "2023-08-13"),
-                        tuple(review12.getId(), review12.getLecture().getTitle(), "test", review12.getScore(), "2023-08-13")
+                        tuple(review3.getId(), review3.getLecture().getTitle(), "test", review3.getScore(), now),
+                        tuple(review6.getId(), review6.getLecture().getTitle(), "test", review6.getScore(), now),
+                        tuple(review7.getId(), review7.getLecture().getTitle(), "test", review7.getScore(), now),
+                        tuple(review9.getId(), review9.getLecture().getTitle(), "test", review9.getScore(), now),
+                        tuple(review12.getId(), review12.getLecture().getTitle(), "test", review12.getScore(), now)
                 );
     }
 
