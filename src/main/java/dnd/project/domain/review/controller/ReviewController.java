@@ -1,7 +1,6 @@
 package dnd.project.domain.review.controller;
 
 import dnd.project.domain.review.request.ReviewRequest;
-import dnd.project.domain.review.response.ReviewResponse;
 import dnd.project.domain.review.service.ReviewService;
 import dnd.project.global.common.CustomResponseEntity;
 import jakarta.validation.Valid;
@@ -11,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static dnd.project.domain.lecture.response.LectureScopeListReadResponse.DetailReview;
+import static dnd.project.domain.review.response.ReviewResponse.*;
+
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
@@ -19,7 +21,7 @@ public class ReviewController {
 
     // 후기 작성 API
     @PostMapping("/review")
-    public CustomResponseEntity<ReviewResponse.Create> createReview(
+    public CustomResponseEntity<Create> createReview(
             @RequestBody @Valid ReviewRequest.Create request, @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.createReview(request.toServiceRequest(), userId));
@@ -35,7 +37,7 @@ public class ReviewController {
 
     // 후기 수정 API
     @PatchMapping("/review")
-    public CustomResponseEntity<ReviewResponse.Create> updateReview(
+    public CustomResponseEntity<Create> updateReview(
             @RequestBody @Valid ReviewRequest.Update request, @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.updateReview(request.toServiceRequest(), userId));
@@ -43,7 +45,7 @@ public class ReviewController {
 
     // 후기 좋아요 및 취소 API
     @PostMapping("/review/like")
-    public CustomResponseEntity<ReviewResponse.ToggleLike> toggleLikeReview(
+    public CustomResponseEntity<ToggleLike> toggleLikeReview(
             @RequestParam Long reviewId, @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.toggleLikeReview(reviewId, userId));
@@ -51,7 +53,7 @@ public class ReviewController {
 
     // 최근 올라온 후기 조회 API
     @GetMapping("/review/recent")
-    public CustomResponseEntity<List<ReviewResponse.ReadDetails>> readRecentReview(
+    public CustomResponseEntity<List<ReadDetails>> readRecentReview(
             @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.readRecentReview(userId));
@@ -59,9 +61,17 @@ public class ReviewController {
 
     // 내 후기 조회 API
     @GetMapping("/review")
-    public CustomResponseEntity<List<ReviewResponse.ReadMyDetails>> readMyReviews(
+    public CustomResponseEntity<List<ReadMyDetails>> readMyReviews(
             @AuthenticationPrincipal Long userId
     ) {
         return CustomResponseEntity.success(reviewService.readMyReviews(userId));
+    }
+
+    // 후기 키워드 검색 API
+    @GetMapping("/review/keyword")
+    public CustomResponseEntity<List<DetailReview>> readKeywordReview(
+            @RequestBody @Valid ReviewRequest.Keyword request
+    ) {
+        return CustomResponseEntity.success(reviewService.readKeywordReview(request));
     }
 }

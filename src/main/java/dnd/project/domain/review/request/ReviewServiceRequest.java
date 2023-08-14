@@ -40,4 +40,12 @@ public class ReviewServiceRequest {
 
         private Optional<String> content;
     }
+
+    @AllArgsConstructor(access = PRIVATE)
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class Keyword {
+        private String keyword;
+    }
 }

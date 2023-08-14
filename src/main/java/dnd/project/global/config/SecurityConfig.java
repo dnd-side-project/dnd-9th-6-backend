@@ -54,7 +54,7 @@ public class SecurityConfig {
                                 "/api/v1/version", "/auth","/auth/admin",
                                 "/login/kakao", "/login/google", "/docs/*",
                                 "/lectures","/lectures/scope",
-                                "/review/recent"
+                                "/review/recent","/review/keyword"
                         )
                         .permitAll()
                 )

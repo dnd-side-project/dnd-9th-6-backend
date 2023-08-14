@@ -2,10 +2,13 @@ package dnd.project.domain.review.service;
 
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.repository.LectureRepository;
+import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.lecture.response.LectureScopeListReadResponse.DetailReview;
 import dnd.project.domain.review.entity.LikeReview;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.review.repository.LikeReviewRepository;
 import dnd.project.domain.review.repository.ReviewRepository;
+import dnd.project.domain.review.request.ReviewRequest;
 import dnd.project.domain.review.request.ReviewServiceRequest;
 import dnd.project.domain.review.response.ReviewResponse;
 import dnd.project.domain.user.entity.Users;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static dnd.project.domain.review.response.ReviewResponse.*;
 import static dnd.project.global.common.Result.*;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -37,7 +41,7 @@ public class ReviewService {
 
     // 후기 작성 API
     @Transactional
-    public ReviewResponse.Create createReview(ReviewServiceRequest.Create request, Long userId) {
+    public Create createReview(ReviewServiceRequest.Create request, Long userId) {
         Users user = getUser(userId);
         Lecture lecture = getLecture(request.getLectureId());
         Boolean isCreated = reviewRepository.existsByLectureAndUser(lecture, user);
@@ -52,7 +56,7 @@ public class ReviewService {
                 toEntityReview(request.getScore(), String.join(",", tags), request.getContent(), user, lecture)
         );
 
-        return ReviewResponse.Create.response(review, lecture, user);
+        return Create.response(review, lecture, user);
     }
 
     // 후기 삭제 API
@@ -68,18 +72,18 @@ public class ReviewService {
 
     // 후기 수정 API
     @Transactional
-    public ReviewResponse.Create updateReview(ReviewServiceRequest.Update request, Long userId) {
+    public Create updateReview(ReviewServiceRequest.Update request, Long userId) {
         Review review = getReview(request.getReviewId());
 
         notMatchedUserValidate(userId, review);
 
         review.toUpdateReview(request.getScore(), request.getTags(), request.getContent().orElse(""));
-        return ReviewResponse.Create.response(review, review.getLecture(), review.getUser());
+        return Create.response(review, review.getLecture(), review.getUser());
     }
 
     // 후기 좋아요 및 취소 API
     @Transactional
-    public ReviewResponse.ToggleLike toggleLikeReview(Long reviewId, Long userId) {
+    public ToggleLike toggleLikeReview(Long reviewId, Long userId) {
         Review review = getReview(reviewId);
         Users user = getUser(userId);
 
@@ -104,15 +108,15 @@ public class ReviewService {
             isCancelled = FALSE;
         }
 
-        return ReviewResponse.ToggleLike.response(review, user, isCancelled);
+        return ToggleLike.response(review, user, isCancelled);
     }
 
     // 최근 올라온 후기 조회 API
-    public List<ReviewResponse.ReadDetails> readRecentReview(Long userId) {
+    public List<ReadDetails> readRecentReview(Long userId) {
         List<Review> reviews =
                 reviewRepository.findByRecentReview();
 
-        return reviews.stream().map(review -> ReviewResponse.ReadDetails.response(
+        return reviews.stream().map(review -> ReadDetails.response(
                 review,
                 review.getLecture(),
                 review.getUser(),
@@ -121,16 +125,21 @@ public class ReviewService {
     }
 
     // 내 후기 조회 API
-    public List<ReviewResponse.ReadMyDetails> readMyReviews(Long userId) {
+    public List<ReadMyDetails> readMyReviews(Long userId) {
         List<Review> reviews = reviewRepository.findByMyReview(userId);
 
         if (reviews.isEmpty()) {
             throw new CustomException(NOT_CREATED_REVIEW);
         }
 
-        return reviews.stream().map(review -> ReviewResponse.ReadMyDetails.response(
+        return reviews.stream().map(review -> ReadMyDetails.response(
                 review, review.getLecture()
         )).toList();
+    }
+
+    // 후기 키워드 조회 API
+    public List<DetailReview> readKeywordReview(ReviewRequest.Keyword request) {
+        return reviewRepository.findByKeyword(request.getKeyword());
     }
 
     // method
@@ -190,6 +199,7 @@ public class ReviewService {
     private Users getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_USER)
+
         );
     }
 }

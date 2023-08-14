@@ -166,13 +166,14 @@ public class LectureService {
         }
     }
 
+    // Scope 메인 페이지 조회 API
     @Transactional(readOnly = true)
     public LectureScopeListReadResponse getScopeLectures(Long userId) {
         Users user = getUserOrAnonymous(userId);
 
         // 별점 높은 수강 후기들 -> 4.0 이상 랜덤
-        List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
-                getHighScoreReviews(user.getInterests());
+        List<LectureScopeListReadResponse.DetailReview> highScoreReviews
+                = lectureQueryRepository.findByHighScores(user.getInterests());
 
         // 강의력 좋은 순
         List<LectureScopeListReadResponse.DetailLecture> bestLectures =
@@ -252,13 +253,6 @@ public class LectureService {
                 .findAny()
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MAIN_CATEGORY));
         return category.getMainCategoryName();
-    }
-
-    private List<LectureScopeListReadResponse.DetailReview> getHighScoreReviews(String interests) {
-        return lectureQueryRepository.findByHighScores(interests).stream()
-                .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
-                        review, review.getUser(), review.getLecture())
-                ).toList();
     }
 
     private Users getUserOrAnonymous(Long userId) {

@@ -61,4 +61,18 @@ public class ReviewRequest {
                     .build();
         }
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class Keyword {
+        @NotNull
+        private String keyword;
+
+        public ReviewServiceRequest.Keyword toServiceRequest() {
+            return ReviewServiceRequest.Keyword.builder()
+                    .keyword(keyword)
+                    .build();
+        }
+    }
 }

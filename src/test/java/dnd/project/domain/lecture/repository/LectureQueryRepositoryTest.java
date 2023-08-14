@@ -1082,11 +1082,7 @@ class LectureQueryRepositoryTest {
         ));
 
         // when
-        List<LectureScopeListReadResponse.DetailReview> detailReviews =
-                lectureQueryRepository.findByHighScores(null).stream()
-                        .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
-                                review, review.getUser(), review.getLecture())
-                        ).toList();
+        List<LectureScopeListReadResponse.DetailReview> detailReviews = lectureQueryRepository.findByHighScores(null);
 
         // then
         assertThat(detailReviews)
@@ -1151,10 +1147,7 @@ class LectureQueryRepositoryTest {
 
         // when
         List<LectureScopeListReadResponse.DetailReview> detailReviews =
-                lectureQueryRepository.findByHighScores(user1.getInterests()).stream()
-                        .map(review -> LectureScopeListReadResponse.DetailReview.toEntity(
-                                review, review.getUser(), review.getLecture())
-                        ).toList();
+                lectureQueryRepository.findByHighScores(user1.getInterests());
 
         // then
         assertThat(detailReviews)

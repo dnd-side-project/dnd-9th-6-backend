@@ -29,7 +29,6 @@ import static dnd.project.domain.user.entity.QUsers.users;
 @Repository
 public class LectureQueryRepository {
 
-
     private final JPAQueryFactory queryFactory;
 
     public Page<Lecture> findAll(String mainCategory,
@@ -93,12 +92,22 @@ public class LectureQueryRepository {
     }
 
     // Scope 별점 4.0 이상 랜덤 후기들
-    public List<Review> findByHighScores(String interests) {
+    public List<LectureScopeListReadResponse.DetailReview> findByHighScores(String interests) {
         String[] interestsArr = interests != null ? interests.split(",") : null;
         return queryFactory
-                .selectFrom(review)
-                .innerJoin(review.lecture, lecture).fetchJoin()
-                .innerJoin(review.user, users).fetchJoin()
+                .select(Projections.fields(LectureScopeListReadResponse.DetailReview.class,
+                        review.id.as("id"),
+                        review.lecture.title.as("lectureTitle"),
+                        review.user.imageUrl.as("imageUrl"),
+                        review.user.nickName.as("userName"),
+                        Expressions.stringTemplate("TO_CHAR({0}, 'yyyy-MM-dd')", review.createdDate).as("createdDate"),
+                        review.score.as("score"),
+                        review.content.as("content"),
+                        review.tags.as("tags")
+                ))
+                .from(review)
+                .innerJoin(review.lecture, lecture)
+                .innerJoin(review.user, users)
                 .where(
                         review.score.goe(4.0),
                         equalsMainCategoryWithInterests(interestsArr))
@@ -106,6 +115,7 @@ public class LectureQueryRepository {
                 .limit(10)
                 .fetch();
     }
+
 
     private BooleanExpression equalsMainCategoryWithInterests(String[] interestsArr) {
         if (interestsArr == null) {
