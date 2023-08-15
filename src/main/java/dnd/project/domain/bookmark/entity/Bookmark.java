@@ -1,5 +1,6 @@
 package dnd.project.domain.bookmark.entity;
 
+import dnd.project.domain.BaseEntity;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.user.entity.Users;
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor
 @Getter
 @Builder
-public class Bookmark {
+public class Bookmark extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,4 +31,5 @@ public class Bookmark {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
+
 }
