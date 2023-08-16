@@ -38,3 +38,4 @@
 
 ## ⚙️ Software Architecture
 
+![software-dnd](https://github.com/dnd-side-project/dnd-9th-6-backend/assets/98201708/4dd3c836-9351-4d7d-a84b-5b3ef1a59484)
