@@ -43,6 +43,7 @@ public class LectureScopeListReadResponse {
     @Builder
     public static class DetailLecture {
         private Long id;
+        private String source;
         private String imageUrl;
         private String title;
         private String name;
