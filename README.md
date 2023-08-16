@@ -1,4 +1,5 @@
-# 📚 온라인 통합 강의 서비스
+# 🔍 편리한 강의 탐색, Classcope
+![검색화면](https://github.com/dnd-side-project/dnd-9th-6-backend/assets/98201708/17e5ceb6-e84e-4c9a-a2e3-604f3f23cd00)
 
 ## 📈 About Service
 
