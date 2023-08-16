@@ -451,7 +451,7 @@ class LectureServiceTest {
     private static Lecture getLecture(String randomLectureTitle, String randomMainCategory) {
         return Lecture.builder()
                 .title(randomLectureTitle)
-                .source("출처")
+                .source("coloso")
                 .url("URL")
                 .price("가격")
                 .name("이름")

@@ -130,6 +130,7 @@ public class LectureQueryRepository {
         return queryFactory
                 .select(Projections.fields(LectureScopeListReadResponse.DetailLecture.class,
                         lecture.id.as("id"),
+                        lecture.source.as("source"),
                         lecture.imageUrl.as("imageUrl"),
                         lecture.title.as("title"),
                         lecture.name.as("name")
