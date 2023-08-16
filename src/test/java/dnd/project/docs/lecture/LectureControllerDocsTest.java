@@ -352,15 +352,15 @@ public class LectureControllerDocsTest extends RestDocsSupport {
 
         // 추천 강의 생성
         LectureScopeListReadResponse.DetailLecture detailLecture1 = new LectureScopeListReadResponse.DetailLecture(
-                1L, "https://fastcampus.co.kr/dev_online_linux", "리눅스 실전 정복 올인원 패키지 Online.", "박수현,원규연"
+                1L, "coloso", "https://fastcampus.co.kr/dev_online_linux", "리눅스 실전 정복 올인원 패키지 Online.", "박수현,원규연"
         );
 
         LectureScopeListReadResponse.DetailLecture detailLecture2 = new LectureScopeListReadResponse.DetailLecture(
-                2L, "https://fastcampus.co.kr/data_online_msignature", "초격차 패키지 : 50개 프로젝트로 완벽하게 끝내는 머신러닝 SIGNATURE", "박지환,안건이,박창용,김원균"
+                2L, "coloso", "https://fastcampus.co.kr/data_online_msignature", "초격차 패키지 : 50개 프로젝트로 완벽하게 끝내는 머신러닝 SIGNATURE", "박지환,안건이,박창용,김원균"
         );
 
         LectureScopeListReadResponse.DetailLecture detailLecture3 = new LectureScopeListReadResponse.DetailLecture(
-                3L, "https://i.namu.wiki/i/Z6zyrokfaBgMqSMZdsGZXZ2u8CeM9ZOuyIgihmxorIVVNicpOtOcsF0P-LyBmH3pMbApRXnGQBAkvAN7JJQkU_GEmALHdP7l1R7oTHYp6MZKhF8aZ5TDc6kMSUB2Y60aZDSUnIcHwZzT4C5N7XkowQ.webp", "영국 요리가 맛없다는 편견은 그만! 영국 왕실 특별 대접 레시피 패키지", "케빈 데브라위너"
+                3L, "coloso", "https://i.namu.wiki/i/Z6zyrokfaBgMqSMZdsGZXZ2u8CeM9ZOuyIgihmxorIVVNicpOtOcsF0P-LyBmH3pMbApRXnGQBAkvAN7JJQkU_GEmALHdP7l1R7oTHYp6MZKhF8aZ5TDc6kMSUB2Y60aZDSUnIcHwZzT4C5N7XkowQ.webp", "영국 요리가 맛없다는 편견은 그만! 영국 왕실 특별 대접 레시피 패키지", "케빈 데브라위너"
         );
 
         List<LectureScopeListReadResponse.DetailLecture> bestLectures = List.of(detailLecture1, detailLecture2, detailLecture3);
@@ -422,6 +422,8 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("강의력 좋은 강의 리스트"),
                                 fieldWithPath("data.bestLectures[].id").type(NUMBER)
                                         .description("강의 Id"),
+                                fieldWithPath("data.bestLectures[].source").type(STRING)
+                                        .description("강의 플랫폼"),
                                 fieldWithPath("data.bestLectures[].imageUrl").type(STRING)
                                         .description("강의 이미지 URL"),
                                 fieldWithPath("data.bestLectures[].title").type(STRING)
