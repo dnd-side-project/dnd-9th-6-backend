@@ -8,7 +8,6 @@ import dnd.project.global.config.redis.RedisDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers(
                                 "/api/v1/version", "/auth","/auth/admin",
-                                "/login/kakao", "/login/google", "/docs/*",
+                                "/auth/signin", "/docs/*",
                                 "/lectures","/lectures/scope",
                                 "/review/recent","/review/keyword"
                         )

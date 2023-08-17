@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum Platform {
-    NAVER, GOOGLE, KAKAO;
+    GOOGLE, KAKAO;
 }

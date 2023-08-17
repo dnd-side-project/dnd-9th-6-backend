@@ -38,7 +38,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
         return new UserController(userService);
     }
 
-    @DisplayName("카카오 로그인 API")
+    @DisplayName("소셜 로그인 API")
     @Test
     void loginByKakao() throws Exception {
         // given
@@ -57,16 +57,19 @@ public class UserControllerDocsTest extends RestDocsSupport {
 
         // when // then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/login/kakao")
+                        RestDocumentationRequestBuilders.get("/auth/signin")
                                 .param("code", "4%2F0AdEu5BVdKyrEElZENWgSJOrJSHUeAjsSJHvWUSi237TQ13FqUfqPOa-ZcES6lGID7DmVaJwSig")
+                                .param("platform","KAKAO")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("login-by-kakao",
+                .andDo(document("login-by-social",
                         preprocessResponse(prettyPrint()),
                         queryParameters(
                                 parameterWithName("code")
-                                        .description("소셜 로그인 후 발급된 인가코드")
+                                        .description("소셜 로그인 후 발급된 인가코드"),
+                                parameterWithName("platform")
+                                        .description("'KAKAO' / 'GOOGLE'")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER)

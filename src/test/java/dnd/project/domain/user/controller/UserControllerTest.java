@@ -1,12 +1,9 @@
 package dnd.project.domain.user.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dnd.project.domain.ControllerTestSupport;
 import dnd.project.domain.user.request.controller.UserRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
@@ -17,14 +14,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserControllerTest extends ControllerTestSupport {
 
-    @DisplayName("카카오 로그인 API")
+    @DisplayName("소셜 로그인 API")
     @Test
     void loginByKakao() throws Exception {
         // given
         // when // then
         mockMvc.perform(
-                        MockMvcRequestBuilders.get("/login/kakao")
+                        MockMvcRequestBuilders.get("/auth/signin")
                                 .param("code", "4%2F0AdEu5BVdKyrEElZENWgSJOrJSHUeAjsSJHvWUSi237TQ13FqUfqPOa-ZcES6lGID7DmVaJwSig")
+                                .param("platform","KAKAO")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
