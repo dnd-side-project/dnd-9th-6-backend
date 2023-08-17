@@ -1,0 +1,61 @@
+=== 성공
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 137
+
+{
+  "code" : 0,
+  "message" : "성공",
+  "data" : {}
+}
+----
+|===
+|Path|Type|Description
+
+|`+code+`
+|`+Number+`
+|상태 코드
+
+|`+message+`
+|`+String+`
+|상태 메세지
+
+|`+data+`
+|`+Obejct+`
+|응답 데이터
+|===
+
+=== 실패
+
+[source,http,options="nowrap"]
+----
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 137
+
+{
+    "result" : {
+        "code" : -1000,
+        "message" : "유저가 서비스의 회원이 아닌 경우"
+    },
+    "debug" : "유저가 서비스의 회원이 아닌 경우"
+}
+----
+
+|===
+|Path|Type|Description
+
+|`+code+`
+|`+Number+`
+|상태 코드
+
+|`+message+`
+|`+String+`
+|상태 메세지
+
+|`+data+`
+|`+Obejct+`
+|응답 데이터
+|===
