@@ -14,6 +14,13 @@ endif::[]
 ec2-52-78-18-124.ap-northeast-2.compute.amazonaws.com
 ----
 
+= 🌐 Common
+== 공통 API 규격
+include::api/common/status.adoc[]
+
+== 응답 상태 코드 및 메세지
+include::api/common/statusDetail.adoc[]
+
 = 📈 API
 
 == Version API
