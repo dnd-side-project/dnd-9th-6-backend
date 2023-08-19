@@ -76,6 +76,7 @@ class ReviewServiceTest {
 //                .contains(
 //                        lecture.getId(), user.getId(), user.getNickName(),
 //                        4.0, "빠른 답변,이해가 잘돼요,보통이에요", "",
+//                        // TODO : now 수정해야됨
 //                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 //                );
 //    }

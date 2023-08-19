@@ -110,6 +110,7 @@ class ReviewRepositoryTest {
 //                reviewRepository.findByKeyword("커리큘럼과 똑같아요");
 //
 //        // then
+            // TODO:NOW 수정해야됨
 //        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 //
 //        assertThat(detailReviews)

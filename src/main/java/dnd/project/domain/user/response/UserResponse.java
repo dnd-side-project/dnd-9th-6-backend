@@ -17,15 +17,19 @@ public class UserResponse {
         private String imageUrl;
         private String email;
         private String name;
+        private String interests;
         private String accessToken;
         private String refreshToken;
 
         public static Login response(Users user, String atk, String rtk) {
+
+            Optional<String> interestsOptional = Optional.ofNullable(user.getInterests());
             return Login.builder()
                     .id(user.getId())
                     .imageUrl(user.getImageUrl())
                     .email(user.getEmail())
                     .name(user.getNickName())
+                    .interests(interestsOptional.orElse(""))
                     .accessToken(atk)
                     .refreshToken(rtk)
                     .build();
