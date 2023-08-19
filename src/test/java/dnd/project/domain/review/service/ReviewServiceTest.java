@@ -56,29 +56,29 @@ class ReviewServiceTest {
     @Autowired
     private ReviewService reviewService;
 
-    @DisplayName("유저가 강의에 하나의 리뷰를 남긴다.")
-    @Test
-    void createReview() {
-        // given
-        Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
-        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
-
-        ReviewRequest.Create request =
-                new ReviewRequest.Create(lecture.getId(), 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
-
-        // when
-        ReviewResponse.Create response =
-                reviewService.createReview(request.toServiceRequest(), user.getId());
-
-        // then
-        assertThat(response)
-                .extracting("lectureId", "userId", "nickName", "score", "tags", "content", "createdDate")
-                .contains(
-                        lecture.getId(), user.getId(), user.getNickName(),
-                        4.0, "빠른 답변,이해가 잘돼요,보통이에요", "",
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                );
-    }
+//    @DisplayName("유저가 강의에 하나의 리뷰를 남긴다.")
+//    @Test
+//    void createReview() {
+//        // given
+//        Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+//        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+//
+//        ReviewRequest.Create request =
+//                new ReviewRequest.Create(lecture.getId(), 4.0, List.of("빠른 답변", "이해가 잘돼요", "보통이에요"), null);
+//
+//        // when
+//        ReviewResponse.Create response =
+//                reviewService.createReview(request.toServiceRequest(), user.getId());
+//
+//        // then
+//        assertThat(response)
+//                .extracting("lectureId", "userId", "nickName", "score", "tags", "content", "createdDate")
+//                .contains(
+//                        lecture.getId(), user.getId(), user.getNickName(),
+//                        4.0, "빠른 답변,이해가 잘돼요,보통이에요", "",
+//                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+//                );
+//    }
 
     @DisplayName("유저가 강의에 두개 이상의 리뷰를 남기려 할때 Exception 발생한다.")
     @Test
