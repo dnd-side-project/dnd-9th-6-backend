@@ -18,6 +18,9 @@ GET -> /auth/signin
 include::{snippets}/login-by-social/http-request.adoc[]
 include::{snippets}/login-by-social/query-parameters.adoc[]
 
+==== HTTP Response Cookie
+include::{snippets}/login-by-social/response-cookies.adoc[]
+
 ==== HTTP Response Body
 include::{snippets}/login-by-social/http-response.adoc[]
 include::{snippets}/login-by-social/response-fields.adoc[]

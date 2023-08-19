@@ -9,8 +9,6 @@ import dnd.project.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
@@ -19,13 +17,16 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
+import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,7 +59,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/auth/signin")
                                 .param("code", "4%2F0AdEu5BVdKyrEElZENWgSJOrJSHUeAjsSJHvWUSi237TQ13FqUfqPOa-ZcES6lGID7DmVaJwSig")
-                                .param("platform","KAKAO")
+                                .param("platform", "KAKAO")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -70,6 +71,8 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                 parameterWithName("platform")
                                         .description("'KAKAO' / 'GOOGLE'")
                         ),
+                        responseCookies(cookieWithName("access_token").description("발급된 JWT AccessToken"),
+                                cookieWithName("refresh_token").description("발급된 JWT RefreshToken")),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER)
                                         .description("상태 코드"),

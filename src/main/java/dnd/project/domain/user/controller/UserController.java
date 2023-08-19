@@ -5,8 +5,11 @@ import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.response.UserResponse;
 import dnd.project.domain.user.service.UserService;
 import dnd.project.global.common.CustomResponseEntity;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,14 +18,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class UserController {
 
+    @Value("${jwt.token-validity-in-seconds}")
+    long tokenValidityInSeconds;
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    long refreshTokenValidityInSeconds;
+
     private final UserService userService;
 
     // 소셜 로그인 API
     @GetMapping("/signin")
     public CustomResponseEntity<UserResponse.Login> loginByOAuth(
-            @RequestParam String code, @RequestParam Platform platform
+            @RequestParam String code, @RequestParam Platform platform,
+            HttpServletResponse response
     ) {
-        return CustomResponseEntity.success(userService.loginByOAuth(code, platform));
+
+        UserResponse.Login loginResponse = userService.loginByOAuth(code, platform);
+        response.addCookie(createCookie("access_token", loginResponse.getAccessToken(), tokenValidityInSeconds));
+        response.addCookie(createCookie("refresh_token", loginResponse.getRefreshToken(), refreshTokenValidityInSeconds));
+
+        return CustomResponseEntity.success(loginResponse);
     }
 
     // 관심분야 추가 요청 API
@@ -49,4 +63,12 @@ public class UserController {
         return CustomResponseEntity.success(userService.updateUser(request.toServiceRequest(), userId));
     }
 
+    private Cookie createCookie(String name, String value, long expiry) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
+        cookie.setHttpOnly(false);
+        cookie.setMaxAge((int) expiry);
+
+        return cookie;
+    }
 }
