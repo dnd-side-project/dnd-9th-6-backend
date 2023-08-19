@@ -31,7 +31,6 @@ public class UserController {
             @RequestParam String code, @RequestParam Platform platform,
             HttpServletResponse response
     ) {
-
         UserResponse.Login loginResponse = userService.loginByOAuth(code, platform);
         response.addCookie(createCookie("access_token", loginResponse.getAccessToken(), tokenValidityInSeconds));
         response.addCookie(createCookie("refresh_token", loginResponse.getRefreshToken(), refreshTokenValidityInSeconds));
