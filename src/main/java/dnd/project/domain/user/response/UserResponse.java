@@ -17,17 +17,15 @@ public class UserResponse {
         private String imageUrl;
         private String email;
         private String name;
-        private Boolean isRegister;
         private String accessToken;
         private String refreshToken;
 
-        public static Login response(Users user, String atk, String rtk, Boolean isRegister) {
+        public static Login response(Users user, String atk, String rtk) {
             return Login.builder()
                     .id(user.getId())
                     .imageUrl(user.getImageUrl())
                     .email(user.getEmail())
                     .name(user.getNickName())
-                    .isRegister(isRegister)
                     .accessToken(atk)
                     .refreshToken(rtk)
                     .build();
@@ -46,12 +44,13 @@ public class UserResponse {
         private String interests;
 
         public static UserResponse.Detail response(Users user) {
+            Optional<String> interestOptional = Optional.ofNullable(user.getInterests());
             return Detail.builder()
                     .id(user.getId())
                     .email(user.getEmail())
                     .nickName(user.getNickName())
                     .imageUrl(user.getImageUrl())
-                    .interests(user.getInterests())
+                    .interests(interestOptional.orElse(""))
                     .build();
         }
     }

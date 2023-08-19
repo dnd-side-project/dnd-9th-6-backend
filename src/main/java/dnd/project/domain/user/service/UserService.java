@@ -42,7 +42,6 @@ public class UserService {
     @Transactional
     public UserResponse.Login loginByOAuth(String code, Platform platform) {
         // OAuth 로그인 진행
-        boolean isRegister = false;
         UserResponse.OAuth socialLoginUser = toSocialLogin(code, platform);
         String profileImageUrl = socialLoginUser.getProfileImageUrl().orElse("default.png");
 
@@ -56,14 +55,8 @@ public class UserService {
 
 
         // 서비스 회원이 아니면 가입
-        Users user;
         Optional<Users> optionalUser = userRepository.findByEmail(userEntity.getEmail());
-        if (optionalUser.isEmpty()) {
-            user = userRepository.save(userEntity);
-            isRegister = true;
-        } else {
-            user = optionalUser.get();
-        }
+        Users user = optionalUser.orElseGet(() -> userRepository.save(userEntity));
 
         // 토큰 발급
         String accessToken = tokenProvider.createToken(
@@ -71,7 +64,7 @@ public class UserService {
         );
         String refreshToken = tokenProvider.createRefreshToken(user.getEmail());
 
-        return UserResponse.Login.response(user, accessToken, refreshToken, isRegister);
+        return UserResponse.Login.response(user, accessToken, refreshToken);
     }
 
     // 관심분야 요청 API

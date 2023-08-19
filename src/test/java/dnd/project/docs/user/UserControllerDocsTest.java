@@ -49,7 +49,6 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                 .imageUrl("https://lh3.googleusercontent.com/a/AAcHTtcvELyELRF2Mzpi8LEnNN4yTZi5PthvLCskaI_gRG7m=s96-c")
                                 .email("dnd-9th-6@gmail.com")
                                 .name("클래스코프")
-                                .isRegister(true)
                                 .accessToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5dS1qdW5nMzE0NzZAbmF2ZXIuY29tIiwiZXhwIjoxNjg5MjYwODM2fQ.cgZ8eFDU_Gz7Z3EghXxoa3v-iXUeQmBZ1AfKCBQZnnqFJ6mqMqGdiTS5uVCF1lIKBarXeD6nEmRZj9Ng94pnHw")
                                 .refreshToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5dS1qdW5nMzE0NzZAbmF2ZXIuY29tIiwiZXhwIjoxNjg5MjYwODM2fQ.cgZ8eFDU_Gz7Z3EghXxoa3v-iXUeQmBZ1AfKCBQZnnqFJ6mqMqGdiTS5uVCF1lIKBarXeD6nEmRZj9Ng94pnHw")
                                 .build()
@@ -84,8 +83,6 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                         .description("유저 이메일"),
                                 fieldWithPath("data.name").type(STRING)
                                         .description("유저 이름"),
-                                fieldWithPath("data.isRegister").type(BOOLEAN)
-                                        .description("첫 로그인(회원가입) 여부"),
                                 fieldWithPath("data.accessToken").type(STRING)
                                         .description("발급된 JWT AccessToken"),
                                 fieldWithPath("data.refreshToken").type(STRING)
@@ -141,7 +138,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         .email("classcope@gmail.com")
                         .nickName("클래스코프")
                         .imageUrl("http://www.aws.../image.png")
-                        .interests("디자인,드로잉")
+                        .interests("디자인,드로잉 / 관심분야 없을시 : 빈 문자열 ")
                         .build());
 
         // when // then

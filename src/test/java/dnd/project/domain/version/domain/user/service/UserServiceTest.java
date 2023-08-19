@@ -90,6 +90,24 @@ class UserServiceTest {
                 );
     }
 
+    @DisplayName("유저가 관심분야가 설정되지 않은 상태에서 자신의 프로필 정보를 확인한다.")
+    @Test
+    void detailUserNotInterest() {
+        // given
+        Users user = saveUserNotInterest();
+
+        // when
+        UserResponse.Detail response = userService.detailUser(user.getId());
+
+        // then
+        assertThat(response)
+                .extracting("id", "email", "nickName", "imageUrl", "interests")
+                .contains(
+                        user.getId(), user.getEmail(), user.getNickName(),
+                        user.getImageUrl(), ""
+                );
+    }
+
     @DisplayName("유저가 자신의 프로필 정보를 수정한다.")
     @Test
     void updateUser() {
@@ -123,4 +141,17 @@ class UserServiceTest {
                         .build()
         );
     }
+    private Users saveUserNotInterest() {
+        return userRepository.save(
+                Users.builder()
+                        .email("test@test.com")
+                        .password("test")
+                        .nickName("test")
+                        .imageUrl("http://aws.amazon...s3/image.png")
+                        .interests(null)
+                        .authority(ROLE_USER)
+                        .build()
+        );
+    }
+
 }
