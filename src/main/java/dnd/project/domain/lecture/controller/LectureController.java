@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 public class LectureController {
@@ -56,11 +58,20 @@ public class LectureController {
                 sort));
     }
 
-    // scope 페이지 추천 강의 조회 API
-    @GetMapping("/lectures/scope")
-    public CustomResponseEntity<LectureScopeListReadResponse> getScopeLectures(
+    // 별점 높은 수강 후기들 조회 API
+    @GetMapping("/lectures/scope/reviews")
+    public CustomResponseEntity<List<LectureScopeListReadResponse.DetailReview>> getScopeReviewsScore(
             @AuthenticationPrincipal Long userId
     ) {
-        return CustomResponseEntity.success(lectureService.getScopeLectures(userId));
+        return CustomResponseEntity.success(lectureService.getScopeReviewsScore(userId));
     }
+
+    // 강의력 좋은 강의 조회 API
+    @GetMapping("/lectures/scope/lectures")
+    public CustomResponseEntity<List<LectureScopeListReadResponse.DetailLecture>> getScopeLecturesBest(
+            @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(lectureService.getScopeLecturesBest(userId));
+    }
+
 }

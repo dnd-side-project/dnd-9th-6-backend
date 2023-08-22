@@ -8,7 +8,6 @@ import dnd.project.domain.lecture.response.LectureListReadResponse;
 import dnd.project.domain.lecture.response.LectureReadResponse;
 import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
-import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.review.entity.ReviewTag;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
@@ -166,20 +165,18 @@ public class LectureService {
         }
     }
 
-    // Scope 메인 페이지 조회 API
+    // Scope 메인 페이지 조회 API - 별점 높은 수강 후기순
     @Transactional(readOnly = true)
-    public LectureScopeListReadResponse getScopeLectures(Long userId) {
+    public List<LectureScopeListReadResponse.DetailReview> getScopeReviewsScore(Long userId) {
         Users user = getUserOrAnonymous(userId);
+        return lectureQueryRepository.findByHighScores(user.getInterests());
+    }
 
-        // 별점 높은 수강 후기들 -> 4.0 이상 랜덤
-        List<LectureScopeListReadResponse.DetailReview> highScoreReviews
-                = lectureQueryRepository.findByHighScores(user.getInterests());
-
-        // 강의력 좋은 순
-        List<LectureScopeListReadResponse.DetailLecture> bestLectures =
-                lectureQueryRepository.findByBestLectures(user.getInterests());
-
-        return LectureScopeListReadResponse.response(highScoreReviews, bestLectures, user);
+    // Scope 메인 페이지 조회 API - 강의력 좋은순
+    @Transactional(readOnly = true)
+    public List<LectureScopeListReadResponse.DetailLecture> getScopeLecturesBest(Long userId) {
+        Users user = getUserOrAnonymous(userId);
+        return lectureQueryRepository.findByBestLectures(user.getInterests());
     }
 
     private LectureListReadResponse getLecturesFromMainSubCategory(Integer mainCategoryId,
