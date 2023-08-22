@@ -201,14 +201,27 @@ class LectureControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.data.reviews[*].id", Matchers.contains(1, 2, 3, 4, 5)));
     }
 
-    @DisplayName("scope 페이지 추천 강의 조회 API")
+    @DisplayName("별점 높은 수강 후기들 조회 API")
     @Test
-    void getScopeLectures() throws Exception {
+    void getScopeReviewsScore() throws Exception {
         // given
 
         // when // then
         mockMvc.perform(
-                        MockMvcRequestBuilders.get("/lectures/scope")
+                        MockMvcRequestBuilders.get("/lectures/scope/reviews")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("강의력 좋은 강의 조회 API")
+    @Test
+    void getScopeLecturesBest() throws Exception {
+        // given
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/lectures/scope/lectures")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
