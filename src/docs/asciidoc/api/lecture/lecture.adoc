@@ -29,13 +29,24 @@ include::{snippets}/get-lecture-reviews/path-parameters.adoc[]
 include::{snippets}/get-lecture-reviews/http-response.adoc[]
 include::{snippets}/get-lecture-reviews/response-fields.adoc[]
 
-=== (Scope it) 별점 높은 수강 후기들 & 강의력 좋은 강의 조회 API
+=== 별점 높은 수강 후기들 조회 API
 
 ==== HTTP Request Headers
-include::{snippets}/scope-main/request-headers.adoc[]
-include::{snippets}/scope-main/http-request.adoc[]
+include::{snippets}/scope-review-score/request-headers.adoc[]
+include::{snippets}/scope-review-score/http-request.adoc[]
 
 ==== HTTP Response body
-include::{snippets}/scope-main/http-response.adoc[]
-include::{snippets}/scope-main/response-fields.adoc[]
+include::{snippets}/scope-review-score/http-response.adoc[]
+include::{snippets}/scope-review-score/response-fields.adoc[]
+
+
+=== 강의력 좋은 강의 조회 API
+
+==== HTTP Request Headers
+include::{snippets}/scope-review-lecture/request-headers.adoc[]
+include::{snippets}/scope-review-lecture/http-request.adoc[]
+
+==== HTTP Response body
+include::{snippets}/scope-review-lecture/http-response.adoc[]
+include::{snippets}/scope-review-lecture/response-fields.adoc[]
 
