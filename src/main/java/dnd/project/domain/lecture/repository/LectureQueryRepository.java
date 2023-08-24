@@ -98,12 +98,12 @@ public class LectureQueryRepository {
                 .select(Projections.fields(LectureScopeListReadResponse.DetailReview.class,
                         review.id.as("id"),
                         review.lecture.title.as("lectureTitle"),
-                        review.user.imageUrl.as("imageUrl"),
                         review.user.nickName.as("userName"),
                         Expressions.stringTemplate("TO_CHAR({0}, 'yyyy-MM-dd')", review.createdDate).as("createdDate"),
                         review.score.as("score"),
                         review.content.as("content"),
-                        review.tags.as("tags")
+                        review.tags.as("tags"),
+                        review.lecture.source.as("source")
                 ))
                 .from(review)
                 .innerJoin(review.lecture, lecture)

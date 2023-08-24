@@ -23,11 +23,11 @@ public class LectureScopeListReadResponse {
     public static class DetailReview {
         private Long id;
         private String lectureTitle;
-        private String imageUrl;
         private String userName;
         private String createdDate;
         private Double score;
         private String content;
         private String tags;
+        private String source;
     }
 }

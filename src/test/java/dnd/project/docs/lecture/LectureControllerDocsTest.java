@@ -331,18 +331,18 @@ public class LectureControllerDocsTest extends RestDocsSupport {
         // given
         // 후기 높은 리뷰 생성
         LectureScopeListReadResponse.DetailReview detailReview1 = new LectureScopeListReadResponse.DetailReview(
-                1L, "The RED : 백엔드 에센셜 : 대용량 서비스를 위한 아키텍처 with Redis by 강대명", "https://fastcampus.co.kr/dev_red_kdm",
-                "김준환", "2023-08-08", 4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,구성이 알차요,도움이 많이 됐어요"
+                1L, "The RED : 백엔드 에센셜 : 대용량 서비스를 위한 아키텍처 with Redis by 강대명", "김준환", "2023-08-08",
+                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,구성이 알차요,도움이 많이 됐어요", "coloso"
         );
 
         LectureScopeListReadResponse.DetailReview detailReview2 = new LectureScopeListReadResponse.DetailReview(
-                2L, "MSA 환경의 효율적인 DevOps를 위한 Istio", "https://fastcampus.co.kr/dev_online_istio",
-                "천현우", "2023-07-23", 4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요"
+                2L, "MSA 환경의 효율적인 DevOps를 위한 Istio", "천현우", "2023-07-23",
+                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요", "coloso"
         );
 
         LectureScopeListReadResponse.DetailReview detailReview3 = new LectureScopeListReadResponse.DetailReview(
-                3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "https://i.namu.wiki/i/U_ewityI8zmTrUbeUAD8IksVCqy8bRFvGev3Dqpp_10Fu-Tr1zidmr6bcdy9d_UEbuGj_uD3OkimkvUh_8t23ehmymYsoNyWwJG_rkubdG2LbwCUdGz3ug-_NjFhQHjz4aXHvuiRGIeiXJRk66CPdw.webp",
-                "하예은", "2023-08-23", 5.0, "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요"
+                3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "하예은", "2023-08-23", 5.0,
+                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요","coloso"
         );
 
         List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
@@ -375,8 +375,6 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         .description("후기 ID"),
                                 fieldWithPath("data[].lectureTitle").type(STRING)
                                         .description("강의 제목"),
-                                fieldWithPath("data[].imageUrl").type(STRING)
-                                        .description("유저 프로필 이미지 URL"),
                                 fieldWithPath("data[].userName").type(STRING)
                                         .description("유저 이름"),
                                 fieldWithPath("data[].createdDate").type(STRING)
@@ -386,7 +384,9 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data[].content").type(STRING)
                                         .description("후기 내용"),
                                 fieldWithPath("data[].tags").type(STRING)
-                                        .description("후기 태그")
+                                        .description("후기 태그"),
+                                fieldWithPath("data[].source").type(STRING)
+                                        .description("강의 플랫폼")
                         )
                 ));
     }

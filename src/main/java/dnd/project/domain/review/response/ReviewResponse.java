@@ -87,15 +87,15 @@ public class ReviewResponse {
                     )
                     .lecture(Lectures.builder()
                             .lectureId(lecture.getId())
+                            .source(lecture.getSource())
                             .mainCategory(lecture.getMainCategory())
                             .title(lecture.getTitle())
-                            .imageUrl(lecture.getImageUrl())
                             .name(lecture.getName())
+                            .imageUrl(lecture.getImageUrl())
                             .build()
                     )
                     .user(User.builder()
                             .userId(users.getId())
-                            .imageUrl(users.getImageUrl())
                             .nickName(users.getNickName())
                             .build()
                     )
@@ -153,6 +153,8 @@ public class ReviewResponse {
     public static class Lectures {
         private Long lectureId;
         @JsonInclude(NON_NULL)
+        private String source;
+        @JsonInclude(NON_NULL)
         private String mainCategory;
         private String title;
         private String imageUrl;
@@ -165,6 +167,7 @@ public class ReviewResponse {
     @Builder
     public static class User {
         private Long userId;
+        @JsonInclude(NON_NULL)
         private String imageUrl;
         private String nickName;
     }
