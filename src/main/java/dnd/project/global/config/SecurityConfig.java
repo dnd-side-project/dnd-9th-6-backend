@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/version", "/auth","/auth/admin",
                                 "/auth/signin", "/docs/*",
-                                "/lectures","/lectures/scope",
+                                "/lectures","/lectures/scope","/lectures/scope/reviews","/lectures/scope/lectures",
                                 "/review/recent","/review/keyword"
                         )
                         .permitAll()
