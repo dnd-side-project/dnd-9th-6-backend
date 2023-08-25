@@ -1,6 +1,9 @@
 package dnd.project.domain.lecture.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 public class LectureScopeListReadResponse {
 
@@ -24,10 +27,10 @@ public class LectureScopeListReadResponse {
         private Long id;
         private String lectureTitle;
         private String userName;
-        private String createdDate;
         private Double score;
         private String content;
         private String tags;
         private String source;
+        private LocalDateTime createdDate;
     }
 }

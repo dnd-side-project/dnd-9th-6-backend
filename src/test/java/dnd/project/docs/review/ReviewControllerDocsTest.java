@@ -14,6 +14,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -455,18 +456,18 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
     void readKeywordReview() throws Exception {
         // given
         LectureScopeListReadResponse.DetailReview detailReview1 = new LectureScopeListReadResponse.DetailReview(
-                1L, "The RED : 백엔드 에센셜 : 대용량 서비스를 위한 아키텍처 with Redis by 강대명", "김준환", "2023-08-08",
-                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,구성이 알차요,도움이 많이 됐어요", "coloso"
+                1L, "The RED : 백엔드 에센셜 : 대용량 서비스를 위한 아키텍처 with Redis by 강대명", "김준환",
+                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,구성이 알차요,도움이 많이 됐어요", "coloso", LocalDateTime.of(2023, 8, 8, 12, 13, 30)
         );
 
         LectureScopeListReadResponse.DetailReview detailReview2 = new LectureScopeListReadResponse.DetailReview(
-                2L, "MSA 환경의 효율적인 DevOps를 위한 Istio", "천현우", "2023-07-23",
-                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요", "coloso"
+                2L, "MSA 환경의 효율적인 DevOps를 위한 Istio", "천현우",
+                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요", "coloso", LocalDateTime.of(2023, 8, 8, 12, 13, 30)
         );
 
         LectureScopeListReadResponse.DetailReview detailReview3 = new LectureScopeListReadResponse.DetailReview(
-                3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "하예은", "2023-08-23", 5.0,
-                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요", "coloso"
+                3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "하예은", 5.0,
+                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요", "coloso",  LocalDateTime.of(2023, 8, 8, 12, 13, 30)
         );
 
         List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
@@ -505,7 +506,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         .description("강의 제목"),
                                 fieldWithPath("data[].userName").type(STRING)
                                         .description("유저 이름"),
-                                fieldWithPath("data[].createdDate").type(STRING)
+                                fieldWithPath("data[].createdDate").type(ARRAY)
                                         .description("후기 작성 날짜"),
                                 fieldWithPath("data[].score").type(NUMBER)
                                         .description("후기 점수"),

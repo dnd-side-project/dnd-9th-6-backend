@@ -99,7 +99,7 @@ public class LectureQueryRepository {
                         review.id.as("id"),
                         review.lecture.title.as("lectureTitle"),
                         review.user.nickName.as("userName"),
-                        Expressions.stringTemplate("TO_CHAR({0}, 'yyyy-MM-dd')", review.createdDate).as("createdDate"),
+                        review.createdDate.as("createdDate"),
                         review.score.as("score"),
                         review.content.as("content"),
                         review.tags.as("tags"),
