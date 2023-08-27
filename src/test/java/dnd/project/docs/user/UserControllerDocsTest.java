@@ -1,5 +1,6 @@
 package dnd.project.docs.user;
 
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.user.config.Platform;
 import dnd.project.domain.user.controller.UserController;
@@ -12,21 +13,19 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import java.util.List;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
-import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,35 +65,36 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(document("login-by-social",
                         preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("code")
-                                        .description("소셜 로그인 후 발급된 인가코드"),
-                                parameterWithName("platform")
-                                        .description("'KAKAO' / 'GOOGLE'")
-                        ),
-                        responseCookies(cookieWithName("access_token").description("발급된 JWT AccessToken"),
-                                cookieWithName("refresh_token").description("발급된 JWT RefreshToken")),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.id").type(NUMBER)
-                                        .description("유저 ID / Long"),
-                                fieldWithPath("data.imageUrl").type(STRING)
-                                        .description("유저 프로필 이미지 URL"),
-                                fieldWithPath("data.email").type(STRING)
-                                        .description("유저 이메일"),
-                                fieldWithPath("data.name").type(STRING)
-                                        .description("유저 이름"),
-                                fieldWithPath("data.interests").type(STRING)
-                                        .description("유저 관심분야 / "),
-                                fieldWithPath("data.accessToken").type(STRING)
-                                        .description("발급된 JWT AccessToken"),
-                                fieldWithPath("data.refreshToken").type(STRING)
-                                        .description("발급된 JWT RefreshToken")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("유저 API")
+                                .summary("소셜 로그인 API")
+                                .queryParameters(
+                                        parameterWithName("code")
+                                                .description("소셜 로그인 후 발급된 인가코드"),
+                                        parameterWithName("platform")
+                                                .description("'KAKAO' / 'GOOGLE'"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.id").type(NUMBER)
+                                                .description("유저 ID / Long"),
+                                        fieldWithPath("data.imageUrl").type(STRING)
+                                                .description("유저 프로필 이미지 URL"),
+                                        fieldWithPath("data.email").type(STRING)
+                                                .description("유저 이메일"),
+                                        fieldWithPath("data.name").type(STRING)
+                                                .description("유저 이름"),
+                                        fieldWithPath("data.interests").type(STRING)
+                                                .description("유저 관심분야 / "),
+                                        fieldWithPath("data.accessToken").type(STRING)
+                                                .description("발급된 JWT AccessToken"),
+                                        fieldWithPath("data.refreshToken").type(STRING)
+                                                .description("발급된 JWT RefreshToken"))
+                                .responseHeaders(
+                                        headerWithName("Set-Cookie").description("access_token, refresh_token"))
+                                .build())));
     }
 
     @DisplayName("관심분야 추가 요청 API")
@@ -106,7 +106,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.post("/auth")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(APPLICATION_JSON)
                 )
@@ -115,23 +115,24 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andDo(document("add-interests",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        requestFields(
-                                fieldWithPath("interests").type(ARRAY)
-                                        .description("선택된 관심분야 / List<String>")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data").type(NULL)
-                                        .description("NULL")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("유저 API")
+                                .summary("관심분야 추가 요청 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .requestFields(
+                                        fieldWithPath("interests").type(ARRAY)
+                                                .description("선택된 관심분야 / List<String>"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data").type(NULL)
+                                                .description("NULL"))
+                                .build())));
     }
 
     @DisplayName("내 프로필 조회하기 API")
@@ -150,33 +151,35 @@ public class UserControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/auth")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("detail-user",
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.id").type(NUMBER)
-                                        .description("유저 ID"),
-                                fieldWithPath("data.email").type(STRING)
-                                        .description("유저 이메일"),
-                                fieldWithPath("data.nickName").type(STRING)
-                                        .description("유저 닉네임"),
-                                fieldWithPath("data.imageUrl").type(STRING)
-                                        .description("유저 프로필 이미지 URL"),
-                                fieldWithPath("data.interests").type(STRING)
-                                        .description("유저 관심분야")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("유저 API")
+                                .summary("내 프로필 조회하기 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.id").type(NUMBER)
+                                                .description("유저 ID"),
+                                        fieldWithPath("data.email").type(STRING)
+                                                .description("유저 이메일"),
+                                        fieldWithPath("data.nickName").type(STRING)
+                                                .description("유저 닉네임"),
+                                        fieldWithPath("data.imageUrl").type(STRING)
+                                                .description("유저 프로필 이미지 URL"),
+                                        fieldWithPath("data.interests").type(STRING)
+                                                .description("유저 관심분야"))
+                                .build())));
     }
 
     @DisplayName("내 정보 수정하기 API")
@@ -198,7 +201,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.patch("/auth")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(APPLICATION_JSON)
                 )
@@ -207,32 +210,33 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andDo(document("update-user",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        requestFields(
-                                fieldWithPath("nickName").type(STRING)
-                                        .description("변경할 닉네임"),
-                                fieldWithPath("interests").type(ARRAY)
-                                        .description("변경할 관심분야 리스트")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.id").type(NUMBER)
-                                        .description("유저 ID"),
-                                fieldWithPath("data.email").type(STRING)
-                                        .description("유저 이메일"),
-                                fieldWithPath("data.nickName").type(STRING)
-                                        .description("유저 닉네임"),
-                                fieldWithPath("data.imageUrl").type(STRING)
-                                        .description("유저 프로필 이미지 URL"),
-                                fieldWithPath("data.interests").type(STRING)
-                                        .description("유저 관심분야")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("유저 API")
+                                .summary("내 정보 수정하기 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .requestFields(
+                                        fieldWithPath("nickName").type(STRING)
+                                                .description("변경할 닉네임"),
+                                        fieldWithPath("interests").type(ARRAY)
+                                                .description("변경할 관심분야 리스트"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.id").type(NUMBER)
+                                                .description("유저 ID"),
+                                        fieldWithPath("data.email").type(STRING)
+                                                .description("유저 이메일"),
+                                        fieldWithPath("data.nickName").type(STRING)
+                                                .description("유저 닉네임"),
+                                        fieldWithPath("data.imageUrl").type(STRING)
+                                                .description("유저 프로필 이미지 URL"),
+                                        fieldWithPath("data.interests").type(STRING)
+                                                .description("유저 관심분야"))
+                                .build())));
     }
 }

@@ -1,5 +1,6 @@
 package dnd.project.docs.version;
 
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dnd.project.docs.RestDocsSupport;
 
 import dnd.project.domain.version.controller.VersionController;
@@ -12,10 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,22 +56,24 @@ public class VersionControllerDocsTest extends RestDocsSupport {
                 .andDo(document("version-check",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("version").type(JsonFieldType.STRING)
-                                        .description("버전 이름"),
-                                fieldWithPath("updateAdminName").type(JsonFieldType.STRING)
-                                        .description("관리자 이름")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.version").type(JsonFieldType.STRING)
-                                        .description("버전 이름"),
-                                fieldWithPath("data.updateAdminName").type(JsonFieldType.STRING)
-                                        .description("관리자 이름")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("테스트 API")
+                                .summary("버전 확인 API")
+                                .requestFields(
+                                        fieldWithPath("version").type(JsonFieldType.STRING)
+                                                .description("버전 이름"),
+                                        fieldWithPath("updateAdminName").type(JsonFieldType.STRING)
+                                                .description("관리자 이름"))
+                                .responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.version").type(JsonFieldType.STRING)
+                                                .description("버전 이름"),
+                                        fieldWithPath("data.updateAdminName").type(JsonFieldType.STRING)
+                                                .description("관리자 이름")
+                                )
+                                .build())));
     }
 }

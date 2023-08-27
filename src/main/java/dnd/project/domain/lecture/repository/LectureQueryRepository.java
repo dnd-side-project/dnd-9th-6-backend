@@ -103,8 +103,7 @@ public class LectureQueryRepository {
                         review.score.as("score"),
                         review.content.as("content"),
                         review.tags.as("tags"),
-                        review.lecture.source.as("source")
-                ))
+                        review.lecture.source.as("source")))
                 .from(review)
                 .innerJoin(review.lecture, lecture)
                 .innerJoin(review.user, users)

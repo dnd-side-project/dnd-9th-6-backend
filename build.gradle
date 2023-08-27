@@ -1,8 +1,19 @@
+import com.sun.security.ntlm.Server
+import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
+buildscript {
+    ext {
+        restdocsApiSpecVersion = '0.17.1'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
-    id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+    id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
 group = 'dnd'
@@ -12,15 +23,26 @@ java {
     sourceCompatibility = '17'
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-    asciidoctorExt
-}
-
 repositories {
     mavenCentral()
+}
+
+
+swaggerSources {
+    sample {
+        setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+    }
+}
+
+openapi3 {
+    servers = [
+            { url = "http://ec2-52-78-18-124.ap-northeast-2.compute.amazonaws.com" },
+            { url = "http://localhost:8080" }
+    ]
+    title = "클래스코프 API 문서"
+    description = "클래스코프 RestDocsWithSwagger Docs"
+    version = "development"
+    format = "yaml"
 }
 
 dependencies {
@@ -55,7 +77,8 @@ dependencies {
 
     // RestDocs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:' + restdocsApiSpecVersion
+    swaggerUI 'org.webjars:swagger-ui:4.11.1'
 
     // JWT
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
@@ -71,32 +94,27 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-ext { // 전역 변수
-    snippetsDir = file('build/generated-snippets')
-}
+tasks.withType(GenerateSwaggerUI) {
+    dependsOn 'openapi3'
+    print("${openapi3.outputDirectory}")
+    doFirst {
+        def swaggerUIFile = file("${openapi3.outputDirectory}/openapi3.yaml")
 
-test {
-    outputs.dir snippetsDir
-}
+        def securitySchemesContent =  "  securitySchemes:\n" +  \
+                                      "    APIKey:\n" +  \
+                                      "      type: apiKey\n" +  \
+                                      "      name: Authorization\n" +  \
+                                      "      in: header\n" + \
+                                      "security:\n" +
+                "  - APIKey: []  # Apply the security scheme here"
 
-asciidoctor {
-    inputs.dir snippetsDir
-    configurations 'asciidoctorExt'
-
-    sources{
-        include("**/index.adoc")
+        swaggerUIFile.append securitySchemesContent
     }
-    baseDirFollowsSourceFile()
-    dependsOn test
 }
 
 bootJar {
-    dependsOn asciidoctor
-    from("${asciidoctor.outputDir}") {
+    dependsOn generateSwaggerUISample
+    from("${generateSwaggerUISample.outputDir}") {
         into 'static/docs'
     }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }

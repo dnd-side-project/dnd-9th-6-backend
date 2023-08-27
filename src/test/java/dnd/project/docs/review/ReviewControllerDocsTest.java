@@ -1,32 +1,32 @@
 package dnd.project.docs.review;
 
 
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.controller.ReviewController;
 import dnd.project.domain.review.request.ReviewRequest;
 import dnd.project.domain.review.response.ReviewResponse;
 import dnd.project.domain.review.service.ReviewService;
-import dnd.project.domain.user.entity.Users;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dnd.project.domain.user.entity.Authority.ROLE_USER;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -68,7 +68,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.post("/review")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(APPLICATION_JSON)
                 )
@@ -77,44 +77,45 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 .andDo(document("create-review",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        requestFields(
-                                fieldWithPath("lectureId").type(NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("score").type(NUMBER)
-                                        .description("후기 점수 / Double 1~5 "),
-                                fieldWithPath("tags").type(ARRAY)
-                                        .description("후기 태그"),
-                                fieldWithPath("content").type(STRING)
-                                        .description("후기 내용")
-                                        .optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.reviewId").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data.lectureId").type(NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("data.userId").type(NUMBER)
-                                        .description("유저 ID"),
-                                fieldWithPath("data.nickName").type(STRING)
-                                        .description("유저 닉네임"),
-                                fieldWithPath("data.score").type(NUMBER)
-                                        .description("후기 점수 / Double"),
-                                fieldWithPath("data.tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("data.content").type(STRING)
-                                        .description("후기 내용 / 없을시 빈 문자열"),
-                                fieldWithPath("data.createdDate").type(STRING)
-                                        .description("후기 작성 날짜")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("후기 작성 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .requestFields(
+                                        fieldWithPath("lectureId").type(NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("score").type(NUMBER)
+                                                .description("후기 점수 / Double 1~5 "),
+                                        fieldWithPath("tags").type(ARRAY)
+                                                .description("후기 태그"),
+                                        fieldWithPath("content").type(STRING)
+                                                .description("후기 내용")
+                                                .optional())
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.reviewId").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data.lectureId").type(NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("data.userId").type(NUMBER)
+                                                .description("유저 ID"),
+                                        fieldWithPath("data.nickName").type(STRING)
+                                                .description("유저 닉네임"),
+                                        fieldWithPath("data.score").type(NUMBER)
+                                                .description("후기 점수 / Double"),
+                                        fieldWithPath("data.tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("data.content").type(STRING)
+                                                .description("후기 내용 / 없을시 빈 문자열"),
+                                        fieldWithPath("data.createdDate").type(STRING)
+                                                .description("후기 작성 날짜"))
+                                .build())));
     }
 
     @DisplayName("후기 삭제 API")
@@ -123,31 +124,32 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
         // given
         // when // then
         mockMvc.perform(
-                        MockMvcRequestBuilders.delete("/review")
-                                .header("Authorization", "Bearer AccessToken")
+                        RestDocumentationRequestBuilders.delete("/review")
+                                .header(AUTHORIZATION, "Bearer {token}")
                                 .param("reviewId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("delete-review",
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        formParameters(
-                                parameterWithName("reviewId")
-                                        .description("후기 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("NULL")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("후기 삭제 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .formParameters(
+                                        parameterWithName("reviewId")
+                                                .description("후기 ID"))
+                                .responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL)
+                                                .description("NULL"))
+                                .build())));
     }
 
     @DisplayName("후기 수정 API")
@@ -174,7 +176,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.patch("/review")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(APPLICATION_JSON)
                 )
@@ -183,44 +185,45 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 .andDo(document("update-review",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        requestFields(
-                                fieldWithPath("reviewId").type(NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("score").type(NUMBER)
-                                        .description("후기 점수 / Double 1~5"),
-                                fieldWithPath("tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("content").type(STRING)
-                                        .description("후기 내용")
-                                        .optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.reviewId").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data.lectureId").type(NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("data.userId").type(NUMBER)
-                                        .description("유저 ID"),
-                                fieldWithPath("data.nickName").type(STRING)
-                                        .description("유저 닉네임"),
-                                fieldWithPath("data.score").type(NUMBER)
-                                        .description("후기 점수 / Double"),
-                                fieldWithPath("data.tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("data.content").type(STRING)
-                                        .description("후기 내용 / 없을시 빈 문자열"),
-                                fieldWithPath("data.createdDate").type(STRING)
-                                        .description("후기 작성 날짜")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("후기 수정 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .requestFields(
+                                        fieldWithPath("reviewId").type(NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("score").type(NUMBER)
+                                                .description("후기 점수 / Double 1~5"),
+                                        fieldWithPath("tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("content").type(STRING)
+                                                .description("후기 내용")
+                                                .optional())
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.reviewId").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data.lectureId").type(NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("data.userId").type(NUMBER)
+                                                .description("유저 ID"),
+                                        fieldWithPath("data.nickName").type(STRING)
+                                                .description("유저 닉네임"),
+                                        fieldWithPath("data.score").type(NUMBER)
+                                                .description("후기 점수 / Double"),
+                                        fieldWithPath("data.tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("data.content").type(STRING)
+                                                .description("후기 내용 / 없을시 빈 문자열"),
+                                        fieldWithPath("data.createdDate").type(STRING)
+                                                .description("후기 작성 날짜"))
+                                .build())));
     }
 
     @DisplayName("후기 좋아요 및 취소 API")
@@ -239,34 +242,35 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.post("/review/like")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                                 .param("reviewId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("toggle-like",
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        formParameters(
-                                parameterWithName("reviewId")
-                                        .description("후기 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.reviewId").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data.userId").type(NUMBER)
-                                        .description("유저 ID"),
-                                fieldWithPath("data.isCancelled").type(BOOLEAN)
-                                        .description("좋아요 취소 여부 ex) 좋아요 등록시 -> false")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("후기 좋아요 및 취소 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .formParameters(
+                                        parameterWithName("reviewId")
+                                                .description("후기 ID"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.reviewId").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data.userId").type(NUMBER)
+                                                .description("유저 ID"),
+                                        fieldWithPath("data.isCancelled").type(BOOLEAN)
+                                                .description("좋아요 취소 여부 ex) 좋아요 등록시 -> false"))
+                                .build())));
     }
 
     @DisplayName("최근 올라온 후기 조회 API")
@@ -291,45 +295,47 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(document("recent-review",
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data[].isAddLike").type(BOOLEAN)
-                                        .description("후기 좋아요 등록 여부"),
-                                fieldWithPath("data[].review.reviewId").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data[].review.score").type(NUMBER)
-                                        .description("후기 점수"),
-                                fieldWithPath("data[].review.content").type(STRING)
-                                        .description("후기 내용"),
-                                fieldWithPath("data[].review.createdDate").type(STRING)
-                                        .description("후기 작성일"),
-                                fieldWithPath("data[].review.tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("data[].review.likes").type(NUMBER)
-                                        .description("후기 좋아요 수"),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("최근 올라온 후기 조회 API")
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data[].isAddLike").type(BOOLEAN)
+                                                .description("후기 좋아요 등록 여부"),
+                                        fieldWithPath("data[].review.reviewId").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data[].review.score").type(NUMBER)
+                                                .description("후기 점수"),
+                                        fieldWithPath("data[].review.content").type(STRING)
+                                                .description("후기 내용"),
+                                        fieldWithPath("data[].review.createdDate").type(STRING)
+                                                .description("후기 작성일"),
+                                        fieldWithPath("data[].review.tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("data[].review.likes").type(NUMBER)
+                                                .description("후기 좋아요 수"),
 
-                                fieldWithPath("data[].lecture.lectureId").type(NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("data[].lecture.source").type(STRING)
-                                        .description("강의 플랫폼"),
-                                fieldWithPath("data[].lecture.mainCategory").type(STRING)
-                                        .description("강의 메인 카테고리"),
-                                fieldWithPath("data[].lecture.title").type(STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data[].lecture.name").type(STRING)
-                                        .description("강사 이름"),
-                                fieldWithPath("data[].lecture.imageUrl").type(STRING)
-                                        .description("강의 이미지 URL"),
+                                        fieldWithPath("data[].lecture.lectureId").type(NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("data[].lecture.source").type(STRING)
+                                                .description("강의 플랫폼"),
+                                        fieldWithPath("data[].lecture.mainCategory").type(STRING)
+                                                .description("강의 메인 카테고리"),
+                                        fieldWithPath("data[].lecture.title").type(STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data[].lecture.name").type(STRING)
+                                                .description("강사 이름"),
+                                        fieldWithPath("data[].lecture.imageUrl").type(STRING)
+                                                .description("강의 이미지 URL"),
 
-                                fieldWithPath("data[].user.userId").type(NUMBER)
-                                        .description("유저 ID"),
-                                fieldWithPath("data[].user.nickName").type(STRING)
-                                        .description("유저 닉네임")
-                        )
-                ));
+                                        fieldWithPath("data[].user.userId").type(NUMBER)
+                                                .description("유저 ID"),
+                                        fieldWithPath("data[].user.nickName").type(STRING)
+                                                .description("유저 닉네임"))
+                                .build())));
     }
 
     @DisplayName("내 후기 조회 API")
@@ -411,44 +417,45 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/review")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("read-my-review",
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data[].review.reviewId").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data[].review.score").type(NUMBER)
-                                        .description("후기 점수"),
-                                fieldWithPath("data[].review.content").type(STRING)
-                                        .description("후기 내용"),
-                                fieldWithPath("data[].review.createdDate").type(STRING)
-                                        .description("후기 작성일"),
-                                fieldWithPath("data[].review.tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("data[].review.likes").type(NUMBER)
-                                        .description("후기 좋아요 수"),
-
-                                fieldWithPath("data[].lecture.lectureId").type(NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("data[].lecture.title").type(STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data[].lecture.name").type(STRING)
-                                        .description("강사 이름"),
-                                fieldWithPath("data[].lecture.imageUrl").type(STRING)
-                                        .description("강의 이미지 URL")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("내 후기 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data[].review.reviewId").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data[].review.score").type(NUMBER)
+                                                .description("후기 점수"),
+                                        fieldWithPath("data[].review.content").type(STRING)
+                                                .description("후기 내용"),
+                                        fieldWithPath("data[].review.createdDate").type(STRING)
+                                                .description("후기 작성일"),
+                                        fieldWithPath("data[].review.tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("data[].review.likes").type(NUMBER)
+                                                .description("후기 좋아요 수"),
+                                        fieldWithPath("data[].lecture.lectureId").type(NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("data[].lecture.title").type(STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data[].lecture.name").type(STRING)
+                                                .description("강사 이름"),
+                                        fieldWithPath("data[].lecture.imageUrl").type(STRING)
+                                                .description("강의 이미지 URL"))
+                                .build())));
     }
 
     @DisplayName("후기 키워드 검색 API")
@@ -467,7 +474,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
 
         LectureScopeListReadResponse.DetailReview detailReview3 = new LectureScopeListReadResponse.DetailReview(
                 3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "하예은", 5.0,
-                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요", "coloso",  LocalDateTime.of(2023, 8, 8, 12, 13, 30)
+                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요", "coloso", LocalDateTime.of(2023, 8, 8, 12, 13, 30)
         );
 
         List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
@@ -489,35 +496,36 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 .andDo(document("read-review-keyword",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("keyword").type(STRING)
-                                        .description("검색 분야")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data[]").type(ARRAY)
-                                        .description("관심 분야 후기 리스트"),
-                                fieldWithPath("data[].id").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data[].lectureTitle").type(STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data[].userName").type(STRING)
-                                        .description("유저 이름"),
-                                fieldWithPath("data[].createdDate").type(ARRAY)
-                                        .description("후기 작성 날짜"),
-                                fieldWithPath("data[].score").type(NUMBER)
-                                        .description("후기 점수"),
-                                fieldWithPath("data[].content").type(STRING)
-                                        .description("후기 내용"),
-                                fieldWithPath("data[].tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("data[].source").type(STRING)
-                                        .description("강의 플랫폼")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("후기 키워드 검색 API")
+                                .requestFields(
+                                        fieldWithPath("keyword").type(STRING)
+                                                .description("검색 분야"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data[]").type(ARRAY)
+                                                .description("관심 분야 후기 리스트"),
+                                        fieldWithPath("data[].id").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data[].lectureTitle").type(STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data[].userName").type(STRING)
+                                                .description("유저 이름"),
+                                        fieldWithPath("data[].createdDate").type(ARRAY)
+                                                .description("후기 작성 날짜"),
+                                        fieldWithPath("data[].score").type(NUMBER)
+                                                .description("후기 점수"),
+                                        fieldWithPath("data[].content").type(STRING)
+                                                .description("후기 내용"),
+                                        fieldWithPath("data[].tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("data[].source").type(STRING)
+                                                .description("강의 플랫폼"))
+                                .build())));
     }
 
     // method

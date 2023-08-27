@@ -1,5 +1,6 @@
 package dnd.project.docs.lecture;
 
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.controller.LectureController;
 import dnd.project.domain.lecture.entity.Lecture;
@@ -21,21 +22,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LectureControllerDocsTest extends RestDocsSupport {
@@ -83,66 +82,67 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(document("get-lectures",
                         preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("mainCategoryId")
-                                        .description("메인 카테고리 ID"),
-                                parameterWithName("subCategoryId")
-                                        .description("서브 카테고리 ID"),
-                                parameterWithName("searchKeyword")
-                                        .description("검색어"),
-                                parameterWithName("page")
-                                        .description("페이지 번호"),
-                                parameterWithName("size")
-                                        .description("한 페이지의 데이터 개수"),
-                                parameterWithName("sort")
-                                        .description("정렬 파라미터,오름차순 또는 내림차순 +\n" +
-                                                "ex) +\n" +
-                                                "price,asc(가격 오름차순) +\n" +
-                                                "price,desc(가격 내림차순) +\n" +
-                                                "title,asc(강의명 오름차순) +\n" +
-                                                "title,desc(강의명 내림차순) +\n" +
-                                                "name,asc(강사명 오름차순) +\n" +
-                                                "name,desc(강사명 내림차순) +\n" +
-                                                "bookmark,asc(북마크수 오름차순) +\n" +
-                                                "bookmark,desc(북마크수 내림차순) +\n" +
-                                                "review,asc(리뷰수 오름차순) +\n" +
-                                                "review,desc(리뷰수 내림차순)")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
-                                        .description("검색 페이지 수"),
-                                fieldWithPath("data.pageNumber").type(JsonFieldType.NUMBER)
-                                        .description("현재 페이지 번호"),
-                                fieldWithPath("data.pageSize").type(JsonFieldType.NUMBER)
-                                        .description("한 페이지의 데이터 개수"),
-                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
-                                        .description("검색 데이터 개수"),
-                                fieldWithPath("data.lectures[]").type(JsonFieldType.ARRAY)
-                                        .description("강의 목록"),
-                                fieldWithPath("data.lectures[].id").type(JsonFieldType.NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("data.lectures[].title").type(JsonFieldType.STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data.lectures[].source").type(JsonFieldType.STRING)
-                                        .description("강의 플랫폼"),
-                                fieldWithPath("data.lectures[].url").type(JsonFieldType.STRING)
-                                        .description("강의 URL"),
-                                fieldWithPath("data.lectures[].price").type(JsonFieldType.STRING)
-                                        .description("강의 가격"),
-                                fieldWithPath("data.lectures[].name").type(JsonFieldType.STRING)
-                                        .description("강사 이름"),
-                                fieldWithPath("data.lectures[].mainCategory").type(JsonFieldType.STRING)
-                                        .description("강의 메인 카테고리"),
-                                fieldWithPath("data.lectures[].subCategory").type(JsonFieldType.STRING)
-                                        .description("강의 서브 카테고리"),
-                                fieldWithPath("data.lectures[].imageUrl").type(JsonFieldType.STRING)
-                                        .description("강의 썸네일 URL")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("강의 API")
+                                .summary("강의 검색 API")
+                                .queryParameters(
+                                        parameterWithName("mainCategoryId")
+                                                .description("메인 카테고리 ID"),
+                                        parameterWithName("subCategoryId")
+                                                .description("서브 카테고리 ID"),
+                                        parameterWithName("searchKeyword")
+                                                .description("검색어"),
+                                        parameterWithName("page")
+                                                .description("페이지 번호"),
+                                        parameterWithName("size")
+                                                .description("한 페이지의 데이터 개수"),
+                                        parameterWithName("sort")
+                                                .description("정렬 파라미터,오름차순 또는 내림차순 +\n" +
+                                                        "ex) +\n" +
+                                                        "price,asc(가격 오름차순) +\n" +
+                                                        "price,desc(가격 내림차순) +\n" +
+                                                        "title,asc(강의명 오름차순) +\n" +
+                                                        "title,desc(강의명 내림차순) +\n" +
+                                                        "name,asc(강사명 오름차순) +\n" +
+                                                        "name,desc(강사명 내림차순) +\n" +
+                                                        "bookmark,asc(북마크수 오름차순) +\n" +
+                                                        "bookmark,desc(북마크수 내림차순) +\n" +
+                                                        "review,asc(리뷰수 오름차순) +\n" +
+                                                        "review,desc(리뷰수 내림차순)"))
+                                .responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
+                                                .description("검색 페이지 수"),
+                                        fieldWithPath("data.pageNumber").type(JsonFieldType.NUMBER)
+                                                .description("현재 페이지 번호"),
+                                        fieldWithPath("data.pageSize").type(JsonFieldType.NUMBER)
+                                                .description("한 페이지의 데이터 개수"),
+                                        fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
+                                                .description("검색 데이터 개수"),
+                                        fieldWithPath("data.lectures[]").type(JsonFieldType.ARRAY)
+                                                .description("강의 목록"),
+                                        fieldWithPath("data.lectures[].id").type(JsonFieldType.NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("data.lectures[].title").type(JsonFieldType.STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data.lectures[].source").type(JsonFieldType.STRING)
+                                                .description("강의 플랫폼"),
+                                        fieldWithPath("data.lectures[].url").type(JsonFieldType.STRING)
+                                                .description("강의 URL"),
+                                        fieldWithPath("data.lectures[].price").type(JsonFieldType.STRING)
+                                                .description("강의 가격"),
+                                        fieldWithPath("data.lectures[].name").type(JsonFieldType.STRING)
+                                                .description("강사 이름"),
+                                        fieldWithPath("data.lectures[].mainCategory").type(JsonFieldType.STRING)
+                                                .description("강의 메인 카테고리"),
+                                        fieldWithPath("data.lectures[].subCategory").type(JsonFieldType.STRING)
+                                                .description("강의 서브 카테고리"),
+                                        fieldWithPath("data.lectures[].imageUrl").type(JsonFieldType.STRING)
+                                                .description("강의 썸네일 URL"))
+                                .build())));
     }
 
     @DisplayName("강의 상세 조회 API")
@@ -194,47 +194,49 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(document("get-lecture",
                         preprocessResponse(prettyPrint()),
-                        pathParameters(parameterWithName("id")
-                                .description("강의 ID")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-                                        .description("강의 ID"),
-                                fieldWithPath("data.title").type(JsonFieldType.STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data.source").type(JsonFieldType.STRING)
-                                        .description("강의 플랫폼"),
-                                fieldWithPath("data.url").type(JsonFieldType.STRING)
-                                        .description("강의 URL"),
-                                fieldWithPath("data.price").type(JsonFieldType.STRING)
-                                        .description("강의 가격"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
-                                        .description("강사 이름"),
-                                fieldWithPath("data.mainCategory").type(JsonFieldType.STRING)
-                                        .description("강의 메인 카테고리"),
-                                fieldWithPath("data.subCategory").type(JsonFieldType.STRING)
-                                        .description("강의 서브 카테고리"),
-                                fieldWithPath("data.imageUrl").type(JsonFieldType.STRING)
-                                        .description("강의 썸네일 URL"),
-                                fieldWithPath("data.reviewCount").type(JsonFieldType.NUMBER)
-                                        .description("리뷰 전체 개수"),
-                                fieldWithPath("data.averageScore").type(JsonFieldType.NUMBER)
-                                        .description("강의 평점"),
-                                fieldWithPath("data.tagGroups[]").type(JsonFieldType.ARRAY)
-                                        .description("강의 태그 그룹 목록"),
-                                fieldWithPath("data.tagGroups[].name").type(JsonFieldType.STRING)
-                                        .description("강의 태그 타입 이름"),
-                                fieldWithPath("data.tagGroups[].tags[]").type(JsonFieldType.ARRAY)
-                                        .description("강의 태그 목록"),
-                                fieldWithPath("data.tagGroups[].tags[].name").type(JsonFieldType.STRING)
-                                        .description("강의 태그 이름"),
-                                fieldWithPath("data.tagGroups[].tags[].count").type(JsonFieldType.NUMBER)
-                                        .description("강의 태그 개수")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("강의 API")
+                                .summary("강의 상세 조회 API")
+                                .pathParameters(parameterWithName("id")
+                                        .description("강의 ID"))
+                                .responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                                .description("강의 ID"),
+                                        fieldWithPath("data.title").type(JsonFieldType.STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data.source").type(JsonFieldType.STRING)
+                                                .description("강의 플랫폼"),
+                                        fieldWithPath("data.url").type(JsonFieldType.STRING)
+                                                .description("강의 URL"),
+                                        fieldWithPath("data.price").type(JsonFieldType.STRING)
+                                                .description("강의 가격"),
+                                        fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                                .description("강사 이름"),
+                                        fieldWithPath("data.mainCategory").type(JsonFieldType.STRING)
+                                                .description("강의 메인 카테고리"),
+                                        fieldWithPath("data.subCategory").type(JsonFieldType.STRING)
+                                                .description("강의 서브 카테고리"),
+                                        fieldWithPath("data.imageUrl").type(JsonFieldType.STRING)
+                                                .description("강의 썸네일 URL"),
+                                        fieldWithPath("data.reviewCount").type(JsonFieldType.NUMBER)
+                                                .description("리뷰 전체 개수"),
+                                        fieldWithPath("data.averageScore").type(JsonFieldType.NUMBER)
+                                                .description("강의 평점"),
+                                        fieldWithPath("data.tagGroups[]").type(JsonFieldType.ARRAY)
+                                                .description("강의 태그 그룹 목록"),
+                                        fieldWithPath("data.tagGroups[].name").type(JsonFieldType.STRING)
+                                                .description("강의 태그 타입 이름"),
+                                        fieldWithPath("data.tagGroups[].tags[]").type(JsonFieldType.ARRAY)
+                                                .description("강의 태그 목록"),
+                                        fieldWithPath("data.tagGroups[].tags[].name").type(JsonFieldType.STRING)
+                                                .description("강의 태그 이름"),
+                                        fieldWithPath("data.tagGroups[].tags[].count").type(JsonFieldType.NUMBER)
+                                                .description("강의 태그 개수"))
+                                .build())));
     }
 
     @DisplayName("강의 상세 리뷰 조회 API")
@@ -292,37 +294,41 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(document("get-lecture-reviews",
                         preprocessResponse(prettyPrint()),
-                        pathParameters(parameterWithName("id")
-                                .description("강의 ID")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
-                                        .description("검색 페이지 수"),
-                                fieldWithPath("data.pageNumber").type(JsonFieldType.NUMBER)
-                                        .description("현재 페이지 번호"),
-                                fieldWithPath("data.pageSize").type(JsonFieldType.NUMBER)
-                                        .description("한 페이지의 데이터 개수"),
-                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
-                                        .description("검색 데이터 개수"),
-                                fieldWithPath("data.reviews[]").type(JsonFieldType.ARRAY)
-                                        .description("후기 목록"),
-                                fieldWithPath("data.reviews[].id").type(JsonFieldType.NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data.reviews[].nickname").type(JsonFieldType.STRING)
-                                        .description("후기 작성자 닉네임"),
-                                fieldWithPath("data.reviews[].tags[]").type(JsonFieldType.ARRAY)
-                                        .description("후기 태그 목록"),
-                                fieldWithPath("data.reviews[].content").type(JsonFieldType.STRING)
-                                        .description("후기 내용"),
-                                fieldWithPath("data.reviews[].createdDate").type(JsonFieldType.STRING)
-                                        .description("후기 생성일"),
-                                fieldWithPath("data.reviews[].score").type(JsonFieldType.NUMBER)
-                                        .description("후기 점수"),
-                                fieldWithPath("data.reviews[].likeCount").type(JsonFieldType.NUMBER)
-                                        .description("후기 추천수"))));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("강의 API")
+                                .summary("강의 상세 리뷰 조회 API")
+                                .pathParameters(parameterWithName("id")
+                                        .description("강의 ID"))
+                                .responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
+                                                .description("검색 페이지 수"),
+                                        fieldWithPath("data.pageNumber").type(JsonFieldType.NUMBER)
+                                                .description("현재 페이지 번호"),
+                                        fieldWithPath("data.pageSize").type(JsonFieldType.NUMBER)
+                                                .description("한 페이지의 데이터 개수"),
+                                        fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
+                                                .description("검색 데이터 개수"),
+                                        fieldWithPath("data.reviews[]").type(JsonFieldType.ARRAY)
+                                                .description("후기 목록"),
+                                        fieldWithPath("data.reviews[].id").type(JsonFieldType.NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data.reviews[].nickname").type(JsonFieldType.STRING)
+                                                .description("후기 작성자 닉네임"),
+                                        fieldWithPath("data.reviews[].tags[]").type(JsonFieldType.ARRAY)
+                                                .description("후기 태그 목록"),
+                                        fieldWithPath("data.reviews[].content").type(JsonFieldType.STRING)
+                                                .description("후기 내용"),
+                                        fieldWithPath("data.reviews[].createdDate").type(JsonFieldType.STRING)
+                                                .description("후기 생성일"),
+                                        fieldWithPath("data.reviews[].score").type(JsonFieldType.NUMBER)
+                                                .description("후기 점수"),
+                                        fieldWithPath("data.reviews[].likeCount").type(JsonFieldType.NUMBER)
+                                                .description("후기 추천수"))
+                                .build())));
     }
 
     @DisplayName("별점 높은 수강 후기들 API")
@@ -337,12 +343,12 @@ public class LectureControllerDocsTest extends RestDocsSupport {
 
         LectureScopeListReadResponse.DetailReview detailReview2 = new LectureScopeListReadResponse.DetailReview(
                 2L, "MSA 환경의 효율적인 DevOps를 위한 Istio", "천현우",
-                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요", "coloso",  LocalDateTime.of(2023, 8, 13, 12, 13, 30)
+                4.5, "강의가 아주 알차고 재밌습니다. 백엔드 개발 화이팅", "뛰어난 강의력,이해가 잘돼요,도움이 많이 됐어요", "coloso", LocalDateTime.of(2023, 8, 13, 12, 13, 30)
         );
 
         LectureScopeListReadResponse.DetailReview detailReview3 = new LectureScopeListReadResponse.DetailReview(
                 3L, "기본적인 양식 요리부터 심화 단계까지 by Erling Haaland", "하예은", 5.0,
-                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요", "coloso",  LocalDateTime.of(2023, 8, 25, 12, 13, 30)
+                "제가 들어본 요리 강의중에 가장 홀란스러운 요리 강의입니다.", "듣기 좋은 목소리,내용이 자세해요,도움이 많이 됐어요", "coloso", LocalDateTime.of(2023, 8, 25, 12, 13, 30)
         );
 
         List<LectureScopeListReadResponse.DetailReview> highScoreReviews =
@@ -354,41 +360,43 @@ public class LectureControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/lectures/scope/reviews")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("scope-review-score",
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken / NULL 허용")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data[]").type(ARRAY)
-                                        .description("별점 높은 수강 후기 리스트"),
-                                fieldWithPath("data[].id").type(NUMBER)
-                                        .description("후기 ID"),
-                                fieldWithPath("data[].lectureTitle").type(STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data[].userName").type(STRING)
-                                        .description("유저 이름"),
-                                fieldWithPath("data[].createdDate").type(ARRAY)
-                                        .description("후기 작성 날짜"),
-                                fieldWithPath("data[].score").type(NUMBER)
-                                        .description("후기 점수"),
-                                fieldWithPath("data[].content").type(STRING)
-                                        .description("후기 내용"),
-                                fieldWithPath("data[].tags").type(STRING)
-                                        .description("후기 태그"),
-                                fieldWithPath("data[].source").type(STRING)
-                                        .description("강의 플랫폼")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("후기 API")
+                                .summary("별점 높은 수강 후기들 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data[]").type(ARRAY)
+                                                .description("별점 높은 수강 후기 리스트"),
+                                        fieldWithPath("data[].id").type(NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data[].lectureTitle").type(STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data[].userName").type(STRING)
+                                                .description("유저 이름"),
+                                        fieldWithPath("data[].createdDate").type(ARRAY)
+                                                .description("후기 작성 날짜"),
+                                        fieldWithPath("data[].score").type(NUMBER)
+                                                .description("후기 점수"),
+                                        fieldWithPath("data[].content").type(STRING)
+                                                .description("후기 내용"),
+                                        fieldWithPath("data[].tags").type(STRING)
+                                                .description("후기 태그"),
+                                        fieldWithPath("data[].source").type(STRING)
+                                                .description("강의 플랫폼"))
+                                .build())));
     }
 
     @DisplayName("강의력 좋은 강의 조회 API")
@@ -416,35 +424,37 @@ public class LectureControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/lectures/scope/lectures")
-                                .header("Authorization", "Bearer AccessToken")
+                                .header(AUTHORIZATION, "Bearer {token}")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("scope-review-lecture",
                         preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Authorization")
-                                        .description("발급된 JWT AccessToken / NULL 허용")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(STRING)
-                                        .description("상태 메세지"),
-                                fieldWithPath("data[]").type(ARRAY)
-                                        .description("강의력 좋은 강의 리스트"),
-                                fieldWithPath("data[].id").type(NUMBER)
-                                        .description("강의 Id"),
-                                fieldWithPath("data[].source").type(STRING)
-                                        .description("강의 플랫폼"),
-                                fieldWithPath("data[].imageUrl").type(STRING)
-                                        .description("강의 이미지 URL"),
-                                fieldWithPath("data[].title").type(STRING)
-                                        .description("강의 제목"),
-                                fieldWithPath("data[].name").type(STRING)
-                                        .description("강사 이름")
-                        )
-                ));
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("강의 API")
+                                .summary("강의력 좋은 강의 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                                .responseFields(
+                                        fieldWithPath("code").type(NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("상태 메세지"),
+                                        fieldWithPath("data[]").type(ARRAY)
+                                                .description("강의력 좋은 강의 리스트"),
+                                        fieldWithPath("data[].id").type(NUMBER)
+                                                .description("강의 Id"),
+                                        fieldWithPath("data[].source").type(STRING)
+                                                .description("강의 플랫폼"),
+                                        fieldWithPath("data[].imageUrl").type(STRING)
+                                                .description("강의 이미지 URL"),
+                                        fieldWithPath("data[].title").type(STRING)
+                                                .description("강의 제목"),
+                                        fieldWithPath("data[].name").type(STRING)
+                                                .description("강사 이름"))
+                                .build())));
     }
 
     private static Lecture getLecture(Long id,
