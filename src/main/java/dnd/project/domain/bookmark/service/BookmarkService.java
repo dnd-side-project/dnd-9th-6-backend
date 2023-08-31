@@ -7,7 +7,6 @@ import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.repository.LectureRepository;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
-import dnd.project.global.common.Result;
 import dnd.project.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

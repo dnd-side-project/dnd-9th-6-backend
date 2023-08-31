@@ -4,7 +4,6 @@ import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.repository.LectureRepository;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
 import dnd.project.domain.lecture.response.LectureReadResponse;
-import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.review.entity.ReviewTag;
 import dnd.project.domain.review.repository.ReviewRepository;
@@ -24,8 +23,6 @@ import java.util.List;
 
 import static dnd.project.global.common.Result.NOT_FOUND_MAIN_AND_SUB_CATEGORY;
 import static dnd.project.global.common.Result.NOT_FOUND_MAIN_CATEGORY;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
 @ActiveProfiles("test")

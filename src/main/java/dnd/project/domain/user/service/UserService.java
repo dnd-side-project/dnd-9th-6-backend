@@ -4,7 +4,6 @@ import dnd.project.domain.user.config.Platform;
 import dnd.project.domain.user.entity.Authority;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
-import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
 import dnd.project.global.common.exception.CustomException;

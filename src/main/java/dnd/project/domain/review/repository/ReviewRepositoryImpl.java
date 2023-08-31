@@ -1,28 +1,19 @@
 package dnd.project.domain.review.repository;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import dnd.project.domain.lecture.entity.QLecture;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
-import dnd.project.domain.review.entity.QLikeReview;
-import dnd.project.domain.review.entity.QReview;
 import dnd.project.domain.review.entity.Review;
-import dnd.project.domain.user.entity.QUsers;
-import dnd.project.domain.user.entity.Users;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import static dnd.project.domain.lecture.entity.QLecture.*;
+import static dnd.project.domain.lecture.entity.QLecture.lecture;
 import static dnd.project.domain.review.entity.QLikeReview.likeReview;
 import static dnd.project.domain.review.entity.QReview.review;
-import static dnd.project.domain.user.entity.QUsers.*;
+import static dnd.project.domain.user.entity.QUsers.users;
 
 @Repository
 @RequiredArgsConstructor

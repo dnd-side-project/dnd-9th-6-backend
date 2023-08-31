@@ -2,7 +2,6 @@ package dnd.project.domain.review.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.user.entity.Users;
