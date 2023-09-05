@@ -1,9 +1,13 @@
 package dnd.project.global.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 
 @Getter
 @Setter
@@ -12,6 +16,7 @@ public class CustomResponseEntity<T> {
 
     private int code;
     private String message;
+    @JsonInclude(NON_NULL)
     private T data;
 
     public static <T> CustomResponseEntity<T> success(T data) {
