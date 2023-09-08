@@ -66,7 +66,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andDo(document("login-by-social",
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("유저 API")
+                                .tag("로그인/회원가입 API")
                                 .summary("소셜 로그인 API")
                                 .queryParameters(
                                         parameterWithName("code")
@@ -116,7 +116,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("유저 API")
+                                .tag("로그인/회원가입 API")
                                 .summary("관심분야 추가 요청 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")
@@ -129,9 +129,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                         fieldWithPath("code").type(NUMBER)
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(STRING)
-                                                .description("상태 메세지"),
-                                        fieldWithPath("data").type(NULL)
-                                                .description("NULL"))
+                                                .description("상태 메세지"))
                                 .build())));
     }
 
@@ -158,7 +156,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andDo(document("detail-user",
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("유저 API")
+                                .tag("프로필 API")
                                 .summary("내 프로필 조회하기 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")
@@ -211,7 +209,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("유저 API")
+                                .tag("프로필 API")
                                 .summary("내 정보 수정하기 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")

@@ -502,7 +502,7 @@ class LectureQueryRepositoryTest {
         assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의1");
         assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
     }
-    
+
     @DisplayName("리뷰 검색 - 평점 오름 차순")
     @Test
     void findReviews2() {
@@ -1294,11 +1294,11 @@ class LectureQueryRepositoryTest {
 
         // then
         assertThat(detailLectures)
-                .extracting("id", "title")
+                .extracting("id", "title", "url")
                 .hasSize(2)
                 .containsExactly(
-                        tuple(lecture1.getId(), lecture1.getTitle()),
-                        tuple(lecture7.getId(), lecture7.getTitle())
+                        tuple(lecture1.getId(), lecture1.getTitle(), "URL"),
+                        tuple(lecture7.getId(), lecture7.getTitle(), "URL")
                 );
     }
 

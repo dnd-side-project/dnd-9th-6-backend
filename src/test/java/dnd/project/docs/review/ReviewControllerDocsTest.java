@@ -144,9 +144,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER)
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
-                                                .description("상태 메세지"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL)
-                                                .description("NULL"))
+                                                .description("상태 메세지"))
                                 .build())));
     }
 
@@ -294,7 +292,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                 .andDo(document("recent-review",
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("후기 API")
+                                .tag("스코프 API")
                                 .summary("최근 올라온 후기 조회 API")
                                 .responseFields(
                                         fieldWithPath("code").type(NUMBER)
@@ -495,7 +493,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("후기 API")
+                                .tag("스코프 API")
                                 .summary("후기 키워드 검색 API")
                                 .requestFields(
                                         fieldWithPath("keyword").type(STRING)

@@ -19,6 +19,7 @@ public class LectureScopeListReadResponse {
         private String imageUrl;
         private String title;
         private String name;
+        private String url;
     }
 
     @AllArgsConstructor
