@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -29,8 +28,10 @@ public class LectureListReadResponse {
         private final String mainCategory;
         private final String subCategory;
         private final String imageUrl;
+        private final Long reviewCount;
+        private final Long bookmarkCount;
 
-        public static LectureInfo from(Lecture lecture) {
+        public static LectureInfo of(Lecture lecture, Long reviewCount, Long bookmarkCount) {
             return new LectureInfo(lecture.getId(),
                     lecture.getTitle(),
                     lecture.getSource(),
@@ -39,7 +40,9 @@ public class LectureListReadResponse {
                     lecture.getName(),
                     lecture.getMainCategory(),
                     lecture.getSubCategory(),
-                    lecture.getImageUrl());
+                    lecture.getImageUrl(),
+                    reviewCount,
+                    bookmarkCount);
         }
     }
 
@@ -47,13 +50,11 @@ public class LectureListReadResponse {
                                              Integer pageNumber,
                                              Integer pageSize,
                                              Long totalElements,
-                                             List<Lecture> lectures) {
+                                             List<LectureInfo> lectures) {
         return new LectureListReadResponse(totalPages,
                 pageNumber,
                 pageSize,
                 totalElements,
-                lectures.stream()
-                        .map(LectureInfo::from)
-                        .collect(Collectors.toList()));
+                lectures);
     }
 }

@@ -1,6 +1,7 @@
 package dnd.project.domain.lecture.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 import static dnd.project.domain.bookmark.entity.QBookmark.bookmark;
 import static dnd.project.domain.lecture.entity.QLecture.lecture;
@@ -29,6 +31,24 @@ import static dnd.project.domain.user.entity.QUsers.users;
 public class LectureQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+
+    public Map<Long, Long> findReviewCount(List<Long> ids) {
+        return queryFactory
+                .from(lecture)
+                .leftJoin(review).on(lecture.id.eq(review.lecture.id))
+                .where(lecture.id.in(ids))
+                .groupBy(lecture.id)
+                .transform(GroupBy.groupBy(lecture.id).as(review.id.count()));
+    }
+
+    public Map<Long, Long> findBookmarkCount(List<Long> ids) {
+        return queryFactory
+                .from(lecture)
+                .leftJoin(bookmark).on(lecture.id.eq(bookmark.lecture.id))
+                .where(lecture.id.in(ids))
+                .groupBy(lecture.id)
+                .transform(GroupBy.groupBy(lecture.id).as(bookmark.id.count()));
+    }
 
     public Page<Lecture> findAll(String mainCategory,
                                  String subCategory,
