@@ -367,7 +367,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                 .andDo(document("scope-review-score",
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("후기 API")
+                                .tag("스코프 API")
                                 .summary("별점 높은 수강 후기들 조회 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")
@@ -431,7 +431,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                 .andDo(document("scope-review-lecture",
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("강의 API")
+                                .tag("스코프 API")
                                 .summary("강의력 좋은 강의 조회 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")

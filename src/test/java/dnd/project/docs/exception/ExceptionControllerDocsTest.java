@@ -37,7 +37,7 @@ public class ExceptionControllerDocsTest extends RestDocsSupport {
                 .willReturn("강의 ID는 필수입니다.");
 
         ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
-                .tag("0. Exception")
+                .tag("예외처리 예시")
                 .summary("Parameter Exception")
                 .description("""
                         상태 코드(고정) / 상태 메세지 \s
@@ -70,7 +70,7 @@ public class ExceptionControllerDocsTest extends RestDocsSupport {
                 .willReturn(NOT_FOUND_USER);
 
         ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
-                .tag("0. Exception")
+                .tag("예외처리 예시")
                 .summary("Custom Exception")
                 .description("""
                         상태 코드 / 상태 메시지 \s
