@@ -144,9 +144,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER)
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
-                                                .description("상태 메세지"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL)
-                                                .description("NULL"))
+                                                .description("상태 메세지"))
                                 .build())));
     }
 

@@ -131,7 +131,8 @@ public class LectureQueryRepository {
                         lecture.source.as("source"),
                         lecture.imageUrl.as("imageUrl"),
                         lecture.title.as("title"),
-                        lecture.name.as("name")
+                        lecture.name.as("name"),
+                        lecture.url.as("url")
                 ))
                 .from(lecture)
                 .leftJoin(lecture.reviews, review)
