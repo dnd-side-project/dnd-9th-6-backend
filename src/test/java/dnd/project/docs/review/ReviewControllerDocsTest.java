@@ -2,6 +2,7 @@ package dnd.project.docs.review;
 
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.controller.ReviewController;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.Schema.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -113,6 +115,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("후기 내용 / 없을시 빈 문자열"),
                                         fieldWithPath("data.createdDate").type(STRING)
                                                 .description("후기 작성 날짜"))
+                                .requestSchema(schema("ReviewRequest.Create"))
+                                .responseSchema(schema("ReviewResponse.Create"))
                                 .build())));
     }
 
@@ -145,6 +149,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description("상태 메세지"))
+                                .responseSchema(schema("Default"))
                                 .build())));
     }
 
@@ -219,6 +224,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("후기 내용 / 없을시 빈 문자열"),
                                         fieldWithPath("data.createdDate").type(STRING)
                                                 .description("후기 작성 날짜"))
+                                .requestSchema(schema("ReviewRequest.Create"))
+                                .responseSchema(schema("ReviewResponse.Create"))
                                 .build())));
     }
 
@@ -266,6 +273,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("유저 ID"),
                                         fieldWithPath("data.isCancelled").type(BOOLEAN)
                                                 .description("좋아요 취소 여부 ex) 좋아요 등록시 -> false"))
+                                .responseSchema(schema("ReviewResponse.ToggleLike"))
                                 .build())));
     }
 
@@ -331,6 +339,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("유저 ID"),
                                         fieldWithPath("data[].user.nickName").type(STRING)
                                                 .description("유저 닉네임"))
+                                .responseSchema(schema("ReviewResponse.ReadDetails"))
                                 .build())));
     }
 
@@ -451,6 +460,7 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("강사 이름"),
                                         fieldWithPath("data[].lecture.imageUrl").type(STRING)
                                                 .description("강의 이미지 URL"))
+                                .responseSchema(schema("ReviewResponse.ReadMyDetails"))
                                 .build())));
     }
 
@@ -521,6 +531,8 @@ public class ReviewControllerDocsTest extends RestDocsSupport {
                                                 .description("후기 태그"),
                                         fieldWithPath("data[].source").type(STRING)
                                                 .description("강의 플랫폼"))
+                                .requestSchema(schema("ReviewRequest.Keyword"))
+                                .responseSchema(schema("LectureScopeListReadResponse.DetailReview"))
                                 .build())));
     }
 

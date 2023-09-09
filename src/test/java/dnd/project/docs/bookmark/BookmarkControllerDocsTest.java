@@ -1,6 +1,7 @@
 package dnd.project.docs.bookmark;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.bookmark.controller.BookmarkController;
 import dnd.project.domain.bookmark.response.BookmarkResponse;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.Schema.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -66,6 +68,7 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description("상태 메세지"))
+                                .responseSchema(schema("Default"))
                                 .build())));
     }
 
@@ -98,6 +101,7 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description("상태 메세지"))
+                                .responseSchema(schema("Default"))
                                 .build())));
     }
 
@@ -178,6 +182,7 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                                                 .description("강의 가격"),
                                         fieldWithPath("data[].addedDate").type(STRING)
                                                 .description("북마크 등록 날짜"))
+                                .responseSchema(schema("BookmarkResponse_Detail"))
                                 .build())));
     }
 }

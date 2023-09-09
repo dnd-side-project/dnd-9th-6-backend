@@ -1,6 +1,7 @@
 package dnd.project.docs.lecture;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.controller.LectureController;
 import dnd.project.domain.lecture.entity.Lecture;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.Schema.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -142,6 +144,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                                 .description("강의 서브 카테고리"),
                                         fieldWithPath("data.lectures[].imageUrl").type(JsonFieldType.STRING)
                                                 .description("강의 썸네일 URL"))
+                                .responseSchema(schema("LectureListReadResponse"))
                                 .build())));
     }
 
@@ -236,6 +239,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                                 .description("강의 태그 이름"),
                                         fieldWithPath("data.tagGroups[].tags[].count").type(JsonFieldType.NUMBER)
                                                 .description("강의 태그 개수"))
+                                .responseSchema(schema("LectureReadResponse"))
                                 .build())));
     }
 
@@ -328,6 +332,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                                 .description("후기 점수"),
                                         fieldWithPath("data.reviews[].likeCount").type(JsonFieldType.NUMBER)
                                                 .description("후기 추천수"))
+                                .responseSchema(schema("LectureReviewListReadResponse"))
                                 .build())));
     }
 
@@ -396,6 +401,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                                 .description("후기 태그"),
                                         fieldWithPath("data[].source").type(STRING)
                                                 .description("강의 플랫폼"))
+                                .responseSchema(schema("LectureScopeListReadResponse.DetailReview"))
                                 .build())));
     }
 
@@ -456,6 +462,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                                 .description("강사 이름"),
                                         fieldWithPath("data[].url").type(STRING)
                                                 .description("강의 URL"))
+                                .responseSchema(schema("LectureScopeListReadResponse.DetailLecture"))
                                 .build())));
     }
 
