@@ -36,7 +36,7 @@ public class LectureListReadResponse {
                     lecture.getTitle(),
                     lecture.getSource(),
                     lecture.getUrl(),
-                    lecture.getPrice(),
+                    lecture.getFormattedPrice(),
                     lecture.getName(),
                     lecture.getMainCategory(),
                     lecture.getSubCategory(),

@@ -126,7 +126,7 @@ class LectureControllerTest extends ControllerTestSupport {
         // given
         Lecture lecture = getLecture(1L,
                 "스프링 부트 - 핵심 원리와 활용",
-                "99,000",
+                "99000",
                 "김영한",
                 "프로그래밍",
                 "웹",
@@ -168,7 +168,7 @@ class LectureControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.data.title").value(lecture.getTitle()))
                 .andExpect(jsonPath("$.data.source").value(lecture.getSource()))
                 .andExpect(jsonPath("$.data.url").value(lecture.getUrl()))
-                .andExpect(jsonPath("$.data.price").value(lecture.getPrice()))
+                .andExpect(jsonPath("$.data.price").value(lecture.getFormattedPrice()))
                 .andExpect(jsonPath("$.data.mainCategory").value(lecture.getMainCategory()))
                 .andExpect(jsonPath("$.data.subCategory").value(lecture.getSubCategory()))
                 .andExpect(jsonPath("$.data.imageUrl").value(lecture.getImageUrl()))
