@@ -1,5 +1,6 @@
 package dnd.project.domain;
 
+import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.project.domain.lecture.repository.LectureQueryRepository;
 import jakarta.persistence.EntityManager;
@@ -14,7 +15,7 @@ public class TestQuerydslConfig {
 
     @Bean
     public JPAQueryFactory queryFactory() {
-        return new JPAQueryFactory(entityManager);
+        return new JPAQueryFactory(JPQLTemplates.DEFAULT, entityManager);
     }
 
     @Bean

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -54,4 +55,14 @@ public class Lecture {
     @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY)
     private List<Review> reviews;
 
+    public String getFormattedPrice() {
+        String priceString = this.price.replaceAll("\\D", "");
+        try {
+            DecimalFormat df = new DecimalFormat("###,###");
+            long price = Long.parseLong(priceString);
+            return df.format(price);
+        } catch (Exception NumberFormatException) {
+            return "0";
+        }
+    }
 }

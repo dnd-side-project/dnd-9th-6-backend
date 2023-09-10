@@ -192,7 +192,20 @@ public class LectureService {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(mainCategoryName, subCategoryName, searchKeyword, page, size, sort);
 
-        List<Lecture> content = lectures.getContent();
+        List<Long> ids = lectures.getContent().stream()
+                .map(Lecture::getId)
+                .toList();
+
+        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
+        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
+
+        List<LectureListReadResponse.LectureInfo> content = lectures.getContent().stream()
+                .map(lecture -> LectureListReadResponse.LectureInfo.of(
+                        lecture,
+                        reviewCount.getOrDefault(lecture.getId(), 0L),
+                        bookmarkCount.getOrDefault(lecture.getId(), 0L)))
+                .collect(Collectors.toList());
+
         int totalPages = lectures.getTotalPages();
         long totalElements = lectures.getTotalElements();
         int pageSize = lectures.getPageable().getPageSize();
@@ -211,7 +224,20 @@ public class LectureService {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(mainCategoryName, null, searchKeyword, page, size, sort);
 
-        List<Lecture> content = lectures.getContent();
+        List<Long> ids = lectures.getContent().stream()
+                .map(Lecture::getId)
+                .toList();
+
+        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
+        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
+
+        List<LectureListReadResponse.LectureInfo> content = lectures.getContent().stream()
+                .map(lecture -> LectureListReadResponse.LectureInfo.of(
+                        lecture,
+                        reviewCount.getOrDefault(lecture.getId(), 0L),
+                        bookmarkCount.getOrDefault(lecture.getId(), 0L)))
+                .collect(Collectors.toList());
+
         int totalPages = lectures.getTotalPages();
         long totalElements = lectures.getTotalElements();
         int pageSize = lectures.getPageable().getPageSize();
@@ -227,7 +253,20 @@ public class LectureService {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, searchKeyword, page, size, sort);
 
-        List<Lecture> content = lectures.getContent();
+        List<Long> ids = lectures.getContent().stream()
+                .map(Lecture::getId)
+                .toList();
+
+        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
+        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
+
+        List<LectureListReadResponse.LectureInfo> content = lectures.getContent().stream()
+                .map(lecture -> LectureListReadResponse.LectureInfo.of(
+                        lecture,
+                        reviewCount.getOrDefault(lecture.getId(), 0L),
+                        bookmarkCount.getOrDefault(lecture.getId(), 0L)))
+                .collect(Collectors.toList());
+
         int totalPages = lectures.getTotalPages();
         long totalElements = lectures.getTotalElements();
         int pageSize = lectures.getPageable().getPageSize();
