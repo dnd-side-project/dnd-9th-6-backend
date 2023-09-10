@@ -1,6 +1,7 @@
 package dnd.project.docs.user;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.user.config.Platform;
 import dnd.project.domain.user.controller.UserController;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.Schema.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -94,6 +96,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                                 .description("발급된 JWT RefreshToken"))
                                 .responseHeaders(
                                         headerWithName("Set-Cookie").description("access_token, refresh_token"))
+                                .responseSchema(schema("UserResponse.Login"))
                                 .build())));
     }
 
@@ -130,6 +133,8 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                                 .description("상태 코드"),
                                         fieldWithPath("message").type(STRING)
                                                 .description("상태 메세지"))
+                                .requestSchema(schema("UserRequest.Interests"))
+                                .responseSchema(schema("Default"))
                                 .build())));
     }
 
@@ -177,6 +182,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                                 .description("유저 프로필 이미지 URL"),
                                         fieldWithPath("data.interests").type(STRING)
                                                 .description("유저 관심분야"))
+                                .responseSchema(schema("UserResponse.Detail"))
                                 .build())));
     }
 
@@ -235,6 +241,8 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                                 .description("유저 프로필 이미지 URL"),
                                         fieldWithPath("data.interests").type(STRING)
                                                 .description("유저 관심분야"))
+                                .requestSchema(schema("UserRequest.Update"))
+                                .responseSchema(schema("UserResponse.Detail"))
                                 .build())));
     }
 }
