@@ -439,7 +439,7 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                                 .description("강의 제목"),
                                         fieldWithPath("data[].userName").type(STRING)
                                                 .description("유저 이름"),
-                                        fieldWithPath("data[].createdDate").type(ARRAY)
+                                        fieldWithPath("data[].createdDate").type(STRING)
                                                 .description("후기 작성 날짜"),
                                         fieldWithPath("data[].score").type(NUMBER)
                                                 .description("후기 점수"),

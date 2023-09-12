@@ -1,5 +1,6 @@
 package dnd.project.domain.lecture.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,6 +35,7 @@ public class LectureScopeListReadResponse {
         private String content;
         private String tags;
         private String source;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDateTime createdDate;
     }
 }

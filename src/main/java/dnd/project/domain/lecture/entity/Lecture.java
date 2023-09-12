@@ -60,7 +60,7 @@ public class Lecture {
         try {
             DecimalFormat df = new DecimalFormat("###,###");
             long price = Long.parseLong(priceString);
-            return df.format(price);
+            return df.format(price) + "원";
         } catch (Exception NumberFormatException) {
             return "0";
         }
