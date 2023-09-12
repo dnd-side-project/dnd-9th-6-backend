@@ -18,6 +18,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:8080/");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:3000/");
+        config.addAllowedOrigin("https://www.classcope.co.kr");
 
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
