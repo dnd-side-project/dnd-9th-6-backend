@@ -16,13 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import static dnd.project.global.common.Result.FAIL;
 
 @Service
 @RequiredArgsConstructor
-public class GoogleLoginService implements OAuth2LoginService{
+public class GoogleLoginService implements OAuth2LoginService {
 
     private final PasswordEncoder passwordEncoder;
     private final GoogleProperties googleProperties;
@@ -48,10 +51,12 @@ public class GoogleLoginService implements OAuth2LoginService{
 
     // Google AccessToken 응답
     private String toRequestAccessToken(String code) {
-        // 발급받은 code -> GET 요청
+        // 발급받은 code -> POST 요청
+        String decode = URLDecoder.decode(code, StandardCharsets.UTF_8);
+
         ResponseEntity<GoogleTokenResponse> response = restTemplate.postForEntity(
                 googleProperties.getRequestTokenUri(),
-                googleProperties.getRequestParameter(code),
+                googleProperties.getRequestParameter(decode),
                 GoogleTokenResponse.class
         );
 
