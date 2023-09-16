@@ -161,6 +161,11 @@ public class LectureService {
             // 메인 + 서브 카테고리 검색
             return getLecturesFromMainSubCategory(mainCategoryId, subCategoryId, searchKeyword, page, size, sort);
         } else if (mainCategoryId != null) {
+
+            if (mainCategoryId == 0) {
+                return getLecturesFromAllCategory(searchKeyword, page, size, sort);
+            }
+
             // 메인 카테고리 검색
             return getLecturesFromMainCategory(mainCategoryId, searchKeyword, page, size, sort);
         } else if (subCategoryId != null) {
