@@ -58,6 +58,8 @@ public class LectureQueryRepository {
                                  String sort) {
 
         List<Lecture> content;
+        long offset = (long) page * size;
+        long limit = size;
 
         if ("review,asc".equals(sort) || "review,desc".equals(sort)) {
             content = queryFactory.select(lecture)
@@ -68,8 +70,8 @@ public class LectureQueryRepository {
                             likeSearchKeyword(searchKeyword))
                     .groupBy(lecture.id)
                     .orderBy(sort(sort), defaultSort())
-                    .offset(page)
-                    .limit(size)
+                    .offset(offset)
+                    .limit(limit)
                     .fetch();
         } else if ("bookmark,asc".equals(sort) || "bookmark,desc".equals(sort)) {
             content = queryFactory.select(lecture)
@@ -80,8 +82,8 @@ public class LectureQueryRepository {
                             likeSearchKeyword(searchKeyword))
                     .groupBy(lecture.id)
                     .orderBy(sort(sort), defaultSort())
-                    .offset(page)
-                    .limit(size)
+                    .offset(offset)
+                    .limit(limit)
                     .fetch();
         } else {
             content = queryFactory.selectFrom(lecture)
@@ -89,8 +91,8 @@ public class LectureQueryRepository {
                             equalsSubCategory(subCategory),
                             likeSearchKeyword(searchKeyword))
                     .orderBy(sort(sort), defaultSort())
-                    .offset(page)
-                    .limit(size)
+                    .offset(offset)
+                    .limit(limit)
                     .fetch();
         }
 
