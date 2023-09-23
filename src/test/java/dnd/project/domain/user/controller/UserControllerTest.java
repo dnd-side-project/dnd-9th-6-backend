@@ -123,4 +123,18 @@ class UserControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("액세스 토큰 재발급 API")
+    @Test
+    void reissue() throws Exception {
+        // given
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/auth/reissue")
+                                .header("REFRESH_TOKEN", "refreshToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
