@@ -279,4 +279,32 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(document);
     }
+
+    @DisplayName("액세스 토큰 재발급 API")
+    @Test
+    void reissue() throws Exception {
+        // given
+        ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
+                .tag("프로필 API")
+                .summary("액세스 토큰 재발급 API")
+                .description("Cookie에 토큰 재발급")
+                .requestHeaders(
+                        headerWithName("REFRESH_TOKEN").description("refreshToken (스웨거 미지원)"))
+                .responseFields(
+                        fieldWithPath("code").type(NUMBER)
+                                .description("상태 코드"),
+                        fieldWithPath("message").type(STRING)
+                                .description("상태 메세지"))
+                .build();
+
+        RestDocumentationResultHandler document = documentHandler("reissue", prettyPrint(), parameters);
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/auth/reissue")
+                                .header("REFRESH_TOKEN", "refreshToken"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document);
+    }
 }
