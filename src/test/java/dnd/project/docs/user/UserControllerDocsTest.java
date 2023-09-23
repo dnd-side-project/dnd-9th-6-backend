@@ -10,7 +10,10 @@ import dnd.project.domain.user.response.UserResponse;
 import dnd.project.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
@@ -244,5 +247,36 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                 .requestSchema(schema("UserRequest.Update"))
                                 .responseSchema(schema("UserResponse.Detail"))
                                 .build())));
+    }
+
+    @DisplayName("로그아웃 API")
+    @Test
+    void logout() throws Exception {
+        // given
+        ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
+                .tag("프로필 API")
+                .summary("로그아웃 API")
+                .requestHeaders(
+                        headerWithName(AUTHORIZATION)
+                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                .responseFields(
+                        fieldWithPath("code").type(NUMBER)
+                                .description("상태 코드"),
+                        fieldWithPath("message").type(STRING)
+                                .description("상태 메세지"))
+                .build();
+
+        RestDocumentationResultHandler document =
+                documentHandler("logout", prettyPrint(), parameters);
+
+        // when // then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.delete("/auth/signout")
+                                .header(AUTHORIZATION, "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document);
     }
 }

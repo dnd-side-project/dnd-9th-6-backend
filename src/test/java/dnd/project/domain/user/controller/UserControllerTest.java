@@ -4,10 +4,12 @@ import dnd.project.domain.ControllerTestSupport;
 import dnd.project.domain.user.request.controller.UserRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,7 +24,7 @@ class UserControllerTest extends ControllerTestSupport {
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/auth/signin")
                                 .param("code", "4%2F0AdEu5BVdKyrEElZENWgSJOrJSHUeAjsSJHvWUSi237TQ13FqUfqPOa-ZcES6lGID7DmVaJwSig")
-                                .param("platform","KAKAO")
+                                .param("platform", "KAKAO")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -106,5 +108,19 @@ class UserControllerTest extends ControllerTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("로그아웃 API")
+    @Test
+    void signout() throws Exception {
+        // given
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/auth/signout")
+                                .header(AUTHORIZATION, "Bearer AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
