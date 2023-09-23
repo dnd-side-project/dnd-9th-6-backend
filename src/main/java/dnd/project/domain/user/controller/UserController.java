@@ -62,6 +62,15 @@ public class UserController {
         return CustomResponseEntity.success(userService.updateUser(request.toServiceRequest(), userId));
     }
 
+    // 로그아웃 API
+    @DeleteMapping("/signout")
+    public CustomResponseEntity<Void> signout(
+            @RequestHeader(value = "Authorization") String atk,
+            @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(userService.signout(atk, userId));
+    }
+
     private Cookie createCookie(String name, String value, long expiry) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");

@@ -6,6 +6,7 @@ import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
+import dnd.project.global.common.RedisService;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import static dnd.project.global.common.Result.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
+    private final RedisService redisService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -125,5 +127,13 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_USER)
         );
+    }
+
+    public Void signout(String atk, Long userId) {
+        Users user = getUser(userId);
+        String decodeAtk = atk.substring(7);
+        Long expiration = tokenProvider.getExpiration(decodeAtk);
+
+        return redisService.logoutFromRedis(user.getEmail(), decodeAtk, expiration);
     }
 }
