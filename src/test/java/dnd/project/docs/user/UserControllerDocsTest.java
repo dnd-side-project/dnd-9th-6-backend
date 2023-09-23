@@ -71,7 +71,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .andDo(document("login-by-social",
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("로그인/회원가입 API")
+                                .tag("계정/보안 API")
                                 .summary("소셜 로그인 API")
                                 .queryParameters(
                                         parameterWithName("code")
@@ -122,7 +122,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("로그인/회원가입 API")
+                                .tag("계정/보안 API")
                                 .summary("관심분야 추가 요청 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")
@@ -254,7 +254,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
     void logout() throws Exception {
         // given
         ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
-                .tag("프로필 API")
+                .tag("계정/보안 API")
                 .summary("로그아웃 API")
                 .requestHeaders(
                         headerWithName(AUTHORIZATION)
@@ -285,7 +285,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
     void reissue() throws Exception {
         // given
         ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
-                .tag("프로필 API")
+                .tag("계정/보안 API")
                 .summary("액세스 토큰 재발급 API")
                 .description("Cookie에 토큰 재발급")
                 .requestHeaders(
