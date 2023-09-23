@@ -7,6 +7,7 @@ import dnd.project.domain.user.repository.UserRepository;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
 import dnd.project.global.common.RedisService;
+import dnd.project.global.common.Result;
 import dnd.project.global.common.exception.CustomException;
 import dnd.project.global.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -135,5 +136,16 @@ public class UserService {
         Long expiration = tokenProvider.getExpiration(decodeAtk);
 
         return redisService.logoutFromRedis(user.getEmail(), decodeAtk, expiration);
+    }
+
+    public String reissue(String rtk) {
+        String email = tokenProvider.getRefreshTokenInfo(rtk);
+        Optional<String> rtkInRedis = redisService.getRefreshToken(email);
+
+        if (rtkInRedis.isEmpty() || rtkInRedis.get().equals(rtk)) {
+            throw new CustomException(NOT_MATCHED_REFRESH_TOKEN);
+        }
+
+        return tokenProvider.reCreateToken(email);
     }
 }

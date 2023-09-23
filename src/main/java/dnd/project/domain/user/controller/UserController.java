@@ -71,6 +71,16 @@ public class UserController {
         return CustomResponseEntity.success(userService.signout(atk, userId));
     }
 
+    // 액세스 토큰 재발급 API
+    @PostMapping("/reissue")
+    public CustomResponseEntity<Void> reissue(
+            @RequestHeader(value = "REFRESH_TOKEN") String rtk,
+            HttpServletResponse response
+    ) {
+        response.addCookie(createCookie("access_token", userService.reissue(rtk), tokenValidityInSeconds));
+        return CustomResponseEntity.success();
+    }
+
     private Cookie createCookie(String name, String value, long expiry) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");

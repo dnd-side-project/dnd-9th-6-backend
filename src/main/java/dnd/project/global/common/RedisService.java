@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,5 +16,9 @@ public class RedisService {
         redisDao.deleteValues(email);
         redisDao.setValues(accessToken, "logout", Duration.ofMillis(accessTokenExpiration));
         return null;
+    }
+
+    public Optional<String> getRefreshToken(String email) {
+        return Optional.ofNullable(redisDao.getValues(email));
     }
 }
