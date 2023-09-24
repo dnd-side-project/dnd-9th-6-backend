@@ -66,12 +66,4 @@ public class ReviewController {
     ) {
         return CustomResponseEntity.success(reviewService.readMyReviews(userId));
     }
-
-    // 후기 키워드 검색 API
-    @GetMapping("/review/keyword")
-    public CustomResponseEntity<List<DetailReview>> readKeywordReview(
-            @RequestBody @Valid ReviewRequest.Keyword request
-    ) {
-        return CustomResponseEntity.success(reviewService.readKeywordReview(request));
-    }
 }

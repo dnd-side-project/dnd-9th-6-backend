@@ -42,26 +42,4 @@ public class ReviewRepositoryImpl implements ReviewQueryRepository {
                 .where(review.user.id.eq(userId))
                 .fetch();
     }
-
-    @Override
-    public List<LectureScopeListReadResponse.DetailReview> findByKeyword(String keyword) {
-        return queryFactory
-                .select(Projections.fields(LectureScopeListReadResponse.DetailReview.class,
-                        review.id.as("id"),
-                        review.lecture.title.as("lectureTitle"),
-                        review.user.nickName.as("userName"),
-                        Expressions.stringTemplate("TO_CHAR({0}, 'yyyy-MM-dd')", review.createdDate).as("createdDate"), // 변경된 부분
-                        review.score.as("score"),
-                        review.content.as("content"),
-                        review.tags.as("tags"),
-                        review.lecture.source.as("source")
-                        ))
-                .from(review)
-                .innerJoin(review.lecture,lecture)
-                .innerJoin(review.user, users)
-                .where(review.tags.contains(keyword))
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(10)
-                .fetch();
-    }
 }

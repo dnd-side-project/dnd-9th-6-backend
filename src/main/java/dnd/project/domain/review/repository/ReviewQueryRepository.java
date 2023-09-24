@@ -10,5 +10,4 @@ import java.util.List;
 public interface ReviewQueryRepository {
     List<Review> findByRecentReview();
     List<Review> findByMyReview(Long userId);
-    List<LectureScopeListReadResponse.DetailReview> findByKeyword(String keyword);
 }

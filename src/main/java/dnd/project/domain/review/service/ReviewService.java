@@ -142,11 +142,6 @@ public class ReviewService {
         )).toList();
     }
 
-    // 후기 키워드 조회 API
-    public List<DetailReview> readKeywordReview(ReviewRequest.Keyword request) {
-        return reviewRepository.findByKeyword(request.getKeyword());
-    }
-
     // method
 
     private static boolean checkLiked(Long userId, Review review) {
