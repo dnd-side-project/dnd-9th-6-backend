@@ -6,19 +6,24 @@ import dnd.project.domain.user.request.controller.UserRequest;
 import dnd.project.domain.user.request.service.UserServiceRequest;
 import dnd.project.domain.user.response.UserResponse;
 import dnd.project.domain.user.service.UserService;
+import dnd.project.global.common.RedisService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static dnd.project.domain.user.entity.Authority.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 
 @SpringBootTest
@@ -34,6 +39,9 @@ class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
+    @MockBean
+    private RedisService redisService;
 
     @DisplayName("유저가 첫 로그인 후 관심분야를 설정한다.")
     @Test
@@ -127,6 +135,22 @@ class UserServiceTest {
                 .contains("클래스코프", "프로그래밍,커리어");
     }
 
+    @DisplayName("유저가 회원탈퇴를 진행한다.")
+    @Test
+    void withdraw() {
+        // given
+        Users user = saveUser();
+        given(redisService.getRefreshToken(any()))
+                .willReturn(Optional.of("REFRESH_TOKEN"));
+
+        // when
+        userService.withdraw("REFRESH_TOKEN", user.getId());
+
+        // then
+        Optional<Users> optionalUser = userRepository.findById(user.getId());
+        assertThat(optionalUser.isEmpty()).isTrue();
+    }
+
     // method
 
     private Users saveUser() {
@@ -141,6 +165,7 @@ class UserServiceTest {
                         .build()
         );
     }
+
     private Users saveUserNotInterest() {
         return userRepository.save(
                 Users.builder()

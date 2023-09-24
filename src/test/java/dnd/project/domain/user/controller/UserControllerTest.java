@@ -4,6 +4,7 @@ import dnd.project.domain.ControllerTestSupport;
 import dnd.project.domain.user.request.controller.UserRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -132,7 +133,22 @@ class UserControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/auth/reissue")
-                                .header("REFRESH_TOKEN", "refreshToken")
+                                .header("REFRESH_TOKEN", "RefreshToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("회원탈퇴 API")
+    @Test
+    void withdraw() throws Exception {
+        // given
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/auth/withdraw")
+                                .header("REFRESH_TOKEN", "RefreshToken")
+                                .header(AUTHORIZATION, "Bearer AccessToken")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
