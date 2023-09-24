@@ -120,7 +120,7 @@ public class LectureQueryRepository {
                 .select(Projections.fields(LectureScopeListReadResponse.DetailReview.class,
                         review.id.as("id"),
                         review.lecture.title.as("lectureTitle"),
-                        selectUser(),
+                        selectUser("userName"),
                         review.createdDate.as("createdDate"),
                         review.score.as("score"),
                         review.content.as("content"),
@@ -137,11 +137,11 @@ public class LectureQueryRepository {
                 .fetch();
     }
 
-    private static StringExpression selectUser() {
+    private static StringExpression selectUser(String keyword) {
         return Expressions.cases()
                 .when(review.user.isNull()).then("탈퇴한 사용자")
                 .otherwise(review.user.nickName)
-                .as("userName");
+                .as(keyword);
     }
 
 
@@ -207,14 +207,14 @@ public class LectureQueryRepository {
         List<LectureReviewListReadResponse.ReviewInfo> content = queryFactory.select(
                         Projections.constructor(LectureReviewListReadResponse.ReviewInfo.class,
                                 review.id,
-                                users.nickName,
+                                selectUser("nickName"),
                                 review.tags,
                                 review.content,
                                 review.createdDate,
                                 review.score,
                                 likeReview.id.count()))
                 .from(review)
-                .innerJoin(review.user, users)
+                .leftJoin(review.user, users)
                 .leftJoin(likeReview).on(review.id.eq(likeReview.review.id))
                 .where(review.lecture.id.eq(id), likeReviewSearchKeyword(searchKeyword))
                 .groupBy(review.id)

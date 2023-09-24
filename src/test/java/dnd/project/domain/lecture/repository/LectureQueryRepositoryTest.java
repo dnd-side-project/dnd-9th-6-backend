@@ -501,6 +501,50 @@ class LectureQueryRepositoryTest {
         assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
     }
 
+    @DisplayName("리뷰 검색 (탈퇴한 사용자) - 기본 ID 오름 차순")
+    @Test
+    void findReviews1withNotUsers() {
+        // given
+        List<Lecture> totalLectures = List.of(
+                getLecture("스프링 부트 - 핵심 원리와 활용", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링부트", "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
+                getLecture("스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,스프링MVC", "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("스프링 DB 2편 - 데이터 접근 활용 기술", "99,000", "김영한", "프로그래밍", "웹", "스프링,DB", "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
+                getLecture("배달앱 클론코딩 [with React Native]", "71,500", "조현영", "프로그래밍", "웹", "리액트 네이티브", "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
+                getLecture("앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지", "205,700", "앨런(Allen)", "프로그래밍", "웹", "iOS", "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"));
+        lectureRepository.saveAll(totalLectures);
+
+        List<Users> totalUsers = List.of(
+                saveUser("user1@gmail.com", "user1"),
+                saveUser("user2@gmail.com", "user2"),
+                saveUser("user3@gmail.com", "user3"));
+        userRepository.saveAll(totalUsers);
+
+        List<Review> totalReviews = List.of(
+                getReview(totalLectures.get(4), null, 5.0, "좋아요1", "iOS 개발 추천 강의1"),
+                getReview(totalLectures.get(4), null, 4.5, "좋아요2", "iOS 개발 추천 강의2"),
+                getReview(totalLectures.get(4), null, 4.0, "좋아요3", "iOS 개발 추천 강의3"),
+                getReview(totalLectures.get(2), null, 3.5, "좋아요4", "스프링 개발 추천 강의1"),
+                getReview(totalLectures.get(2), null, 3.0, "좋아요5", "스프링 개발 추천 강의2"),
+                getReview(totalLectures.get(3), null, 2.5, "좋아요", "리액트 네이티브 개발 추천 강의1"),
+                getReview(totalLectures.get(1), null, 2.0, "좋아요", "스프링 개발 추천 강의"));
+        reviewRepository.saveAll(totalReviews);
+
+        // when
+        Page<LectureReviewListReadResponse.ReviewInfo> reviews = lectureQueryRepository.findAllReviewsById(totalLectures.get(4).getId(),
+                null,
+                0,
+                2,
+                null);
+
+        // then
+        List<LectureReviewListReadResponse.ReviewInfo> content = reviews.getContent();
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).getContent()).isEqualTo("iOS 개발 추천 강의1");
+        assertThat(content.get(0).getNickname()).isEqualTo("탈퇴한 사용자");
+        assertThat(content.get(1).getContent()).isEqualTo("iOS 개발 추천 강의2");
+        assertThat(content.get(1).getNickname()).isEqualTo("탈퇴한 사용자");
+    }
+
     @DisplayName("리뷰 검색 - 평점 오름 차순")
     @Test
     void findReviews2() {
