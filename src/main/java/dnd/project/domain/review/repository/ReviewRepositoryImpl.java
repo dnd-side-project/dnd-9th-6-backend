@@ -27,7 +27,7 @@ public class ReviewRepositoryImpl implements ReviewQueryRepository {
         return queryFactory
                 .selectFrom(review)
                 .innerJoin(review.lecture, lecture).fetchJoin()
-                .innerJoin(review.user, users).fetchJoin()
+                .leftJoin(review.user, users).fetchJoin()
                 .orderBy(review.createdDate.desc())
                 .limit(10)
                 .fetch();

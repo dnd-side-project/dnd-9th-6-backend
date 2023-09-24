@@ -332,6 +332,67 @@ class ReviewServiceTest {
                 );
     }
 
+    @DisplayName("사용자가 로그인 하지 않고 가장 최근 후기(탈퇴한 사용자) 10개를 불러온다.")
+    @Test
+    void readRecentReviewNotLoginAndNotUserReview() {
+        // given
+        Lecture lecture = saveLecture("실용적인 테스트 가이드", "프로그래밍", "백엔드", "테스트,백엔드,스프링,spring");
+        Users user = saveUser("test@test.com", "test", "test", ROLE_USER);
+        Users user2 = saveUser("test2@test.com", "test", "test", ROLE_USER);
+
+        Review review1 = toEntityReview(lecture, null, 4.5, "아주 재밌습니다.");
+        Review review2 = toEntityReview(lecture, null, 2.5, "그럭저럭이네요");
+        Review review3 = toEntityReview(lecture, null, 3.5, "잘 들었습니다.");
+        Review review4 = toEntityReview(lecture, null, 3.0, "들을만 했습니다.");
+        Review review5 = toEntityReview(lecture, null, 4.0, "강의가 알차네요");
+        Review review6 = toEntityReview(lecture, null, 5.0, "정말 퍼펙트한 강의입니다");
+        Review review7 = toEntityReview(lecture, null, 2.5, "그냥..보통");
+        Review review8 = toEntityReview(lecture, null, 1.5, "조금 더 준비를 해야할 것 같네요");
+        Review review9 = toEntityReview(lecture, null, 1.0, "강의가 돈이 약간 아깝습니다.");
+        Review review10 = toEntityReview(lecture, null, 0.5, "돈 버렸네요");
+        Review review11 = toEntityReview(lecture, null, 2.0, "음...");
+        Review review12 = toEntityReview(lecture, null, 2.0, "그냥...그래");
+
+
+        reviewRepository.saveAll(
+                List.of(
+                        review1, review2, review3,
+                        review4, review5, review6,
+                        review7, review8, review9,
+                        review10, review11, review12
+                )
+        );
+
+        likeReviewRepository.save(
+                LikeReview.builder()
+                        .users(user2)
+                        .review(review11)
+                        .build()
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<ReviewResponse.ReadDetails> response = reviewService.readRecentReview(null);
+
+        // then
+        assertThat(response)
+                .extracting("review.reviewId", "review.score", "review.likes", "isAddLike", "user.nickName")
+                .contains(
+                        tuple(review12.getId(), 2.0, 0, false,"탈퇴한 사용자"),
+                        tuple(review11.getId(), 2.0, 1, false,"탈퇴한 사용자"),
+                        tuple(review10.getId(), 0.5, 0, false,"탈퇴한 사용자"),
+                        tuple(review9.getId(), 1.0, 0, false,"탈퇴한 사용자"),
+                        tuple(review8.getId(), 1.5, 0, false,"탈퇴한 사용자"),
+                        tuple(review7.getId(), 2.5, 0, false,"탈퇴한 사용자"),
+                        tuple(review6.getId(), 5.0, 0, false,"탈퇴한 사용자"),
+                        tuple(review5.getId(), 4.0, 0, false,"탈퇴한 사용자"),
+                        tuple(review4.getId(), 3.0, 0, false,"탈퇴한 사용자"),
+                        tuple(review3.getId(), 3.5, 0, false,"탈퇴한 사용자")
+                );
+    }
+
     @DisplayName("유저가 자신이 작성한 후기를 본다.")
     @Test
     void readMyReviews() {

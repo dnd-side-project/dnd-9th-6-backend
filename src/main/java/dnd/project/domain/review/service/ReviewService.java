@@ -117,9 +117,16 @@ public class ReviewService {
         return reviews.stream().map(review -> ReadDetails.response(
                 review,
                 review.getLecture(),
-                review.getUser(),
+                getUserOrNotUser(review),
                 checkLiked(userId, review))
         ).toList();
+    }
+
+    private static Users getUserOrNotUser(Review review) {
+        return Optional.ofNullable(review.getUser()).orElse(Users.builder()
+                .id(-1L)
+                .nickName("탈퇴한 사용자")
+                .build());
     }
 
     // 내 후기 조회 API
