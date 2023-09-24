@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
@@ -299,10 +300,44 @@ public class UserControllerDocsTest extends RestDocsSupport {
 
         RestDocumentationResultHandler document = documentHandler("reissue", prettyPrint(), parameters);
 
+        MockHttpServletRequestBuilder httpRequest = RestDocumentationRequestBuilders.post("/auth/reissue")
+                .header("REFRESH_TOKEN", "RefreshToken");
+
         // when // then
-        mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/auth/reissue")
-                                .header("REFRESH_TOKEN", "refreshToken"))
+        mockMvc.perform(httpRequest)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document);
+    }
+
+    @DisplayName("회원탈퇴 API")
+    @Test
+    void withdraw() throws Exception {
+        // given
+        ResourceSnippetParameters parameters = ResourceSnippetParameters.builder()
+                .tag("계정/보안 API")
+                .summary("회원탈퇴 API")
+                .description("Swagger에서 요청 불가")
+                .requestHeaders(
+                        headerWithName("REFRESH_TOKEN").description("refreshToken (스웨거 미지원)"),
+                        headerWithName("Authorization")
+                                .description("Swagger 요청시 해당 입력칸이 아닌 우측 상단 자물쇠 " +
+                                        "또는 Authorize 버튼을 이용해 토큰을 넣어주세요"))
+                .responseFields(
+                        fieldWithPath("code").type(NUMBER)
+                                .description("상태 코드"),
+                        fieldWithPath("message").type(STRING)
+                                .description("상태 메세지"))
+                .build();
+
+        RestDocumentationResultHandler document = documentHandler("withdraw", prettyPrint(), parameters);
+
+        MockHttpServletRequestBuilder httpRequest = RestDocumentationRequestBuilders.delete("/auth/withdraw")
+                .header("REFRESH_TOKEN", "RefreshToken")
+                .header(AUTHORIZATION, "Bearer AccessToken");
+
+        // when // then
+        mockMvc.perform(httpRequest)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document);
