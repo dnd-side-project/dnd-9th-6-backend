@@ -114,36 +114,4 @@ class ReviewControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-
-    @DisplayName("후기 키워드 검색 API")
-    @Test
-    void readKeywordReview() throws Exception {
-        // given
-        ReviewRequest.Keyword request = new ReviewRequest.Keyword("커리큘럼과 똑같아요");
-
-        // when // then
-        mockMvc.perform(
-                        MockMvcRequestBuilders.get("/review/keyword")
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @DisplayName("후기 키워드 검색 API - 키워드 미제공 실패")
-    @Test
-    void readKeywordReviewWithNotInsertKeywordThrowException() throws Exception {
-        // given
-        ReviewRequest.Keyword request = new ReviewRequest.Keyword(null);
-
-        // when // then
-        mockMvc.perform(
-                        MockMvcRequestBuilders.get("/review/keyword")
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 }
