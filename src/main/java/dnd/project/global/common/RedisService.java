@@ -21,4 +21,8 @@ public class RedisService {
     public Optional<String> getRefreshToken(String email) {
         return Optional.ofNullable(redisDao.getValues(email));
     }
+
+    public void deleteRefreshToken(String email) {
+        redisDao.deleteValues(email);
+    }
 }

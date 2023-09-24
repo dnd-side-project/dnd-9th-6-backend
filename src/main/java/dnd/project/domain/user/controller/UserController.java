@@ -81,6 +81,15 @@ public class UserController {
         return CustomResponseEntity.success();
     }
 
+    // 회원탈퇴 API
+    @DeleteMapping("/withdraw")
+    public CustomResponseEntity<Void> withdraw(
+            @RequestHeader(value = "REFRESH_TOKEN") String rtk,
+            @AuthenticationPrincipal Long userId
+    ) {
+        return CustomResponseEntity.success(userService.withdraw(rtk, userId));
+    }
+
     private Cookie createCookie(String name, String value, long expiry) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");

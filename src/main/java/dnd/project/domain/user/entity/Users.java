@@ -38,7 +38,7 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @OneToMany(mappedBy = "user", fetch = LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY, orphanRemoval = true)
     private List<Bookmark> bookmarks;
 
     @OneToMany(mappedBy = "user", fetch = LAZY)

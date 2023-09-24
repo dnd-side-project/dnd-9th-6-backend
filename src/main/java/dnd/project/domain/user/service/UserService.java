@@ -97,6 +97,44 @@ public class UserService {
         return null;
     }
 
+    // 로그아웃
+    public Void signout(String atk, Long userId) {
+        Users user = getUser(userId);
+        String decodeAtk = atk.substring(7);
+        Long expiration = tokenProvider.getExpiration(decodeAtk);
+
+        return redisService.logoutFromRedis(user.getEmail(), decodeAtk, expiration);
+    }
+
+    // 회원탈퇴
+    @Transactional
+    public Void withdraw(String rtk, Long userId) {
+        Users user = getUser(userId);
+        Optional<String> rtkInRedis = redisService.getRefreshToken(user.getEmail());
+
+        validateRefreshToken(rtk, rtkInRedis);
+
+        redisService.deleteRefreshToken(user.getEmail());
+        userRepository.delete(user);
+        return null;
+    }
+
+    // 토큰 재발급
+    public String reissue(String rtk) {
+        String email = tokenProvider.getRefreshTokenInfo(rtk);
+        Optional<String> rtkInRedis = redisService.getRefreshToken(email);
+
+        validateRefreshToken(rtk, rtkInRedis);
+
+        return tokenProvider.reCreateToken(email);
+    }
+
+    private static void validateRefreshToken(String rtk, Optional<String> rtkInRedis) {
+        if (rtkInRedis.isEmpty() || !rtkInRedis.get().equals(rtk)) {
+            throw new CustomException(NOT_MATCHED_REFRESH_TOKEN);
+        }
+    }
+
     // method
     private UserResponse.OAuth toSocialLogin(String code, Platform platform) {
         UserResponse.OAuth socialLoginUser = null;
@@ -128,24 +166,5 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_USER)
         );
-    }
-
-    public Void signout(String atk, Long userId) {
-        Users user = getUser(userId);
-        String decodeAtk = atk.substring(7);
-        Long expiration = tokenProvider.getExpiration(decodeAtk);
-
-        return redisService.logoutFromRedis(user.getEmail(), decodeAtk, expiration);
-    }
-
-    public String reissue(String rtk) {
-        String email = tokenProvider.getRefreshTokenInfo(rtk);
-        Optional<String> rtkInRedis = redisService.getRefreshToken(email);
-
-        if (rtkInRedis.isEmpty() || rtkInRedis.get().equals(rtk)) {
-            throw new CustomException(NOT_MATCHED_REFRESH_TOKEN);
-        }
-
-        return tokenProvider.reCreateToken(email);
     }
 }
