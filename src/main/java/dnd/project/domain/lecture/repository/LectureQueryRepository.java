@@ -6,6 +6,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
@@ -119,7 +120,7 @@ public class LectureQueryRepository {
                 .select(Projections.fields(LectureScopeListReadResponse.DetailReview.class,
                         review.id.as("id"),
                         review.lecture.title.as("lectureTitle"),
-                        review.user.nickName.as("userName"),
+                        selectUser(),
                         review.createdDate.as("createdDate"),
                         review.score.as("score"),
                         review.content.as("content"),
@@ -127,13 +128,20 @@ public class LectureQueryRepository {
                         review.lecture.source.as("source")))
                 .from(review)
                 .innerJoin(review.lecture, lecture)
-                .innerJoin(review.user, users)
+                .leftJoin(review.user, users)
                 .where(
                         review.score.goe(4.0),
                         equalsMainCategoryWithInterests(interestsArr))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(10)
                 .fetch();
+    }
+
+    private static StringExpression selectUser() {
+        return Expressions.cases()
+                .when(review.user.isNull()).then("탈퇴한 사용자")
+                .otherwise(review.user.nickName)
+                .as("userName");
     }
 
 

@@ -1244,6 +1244,70 @@ class LectureQueryRepositoryTest {
                 );
     }
 
+    @DisplayName("강의 Scope 비로그인 조회 - 랜덤한 별점 4.0 이상 수강 탈퇴한 사용자의 후기들")
+    @Test
+    void findByHighScoresWithNotLoginAndNotUserReview() {
+        // given
+
+        // 사용자 생성
+        Users user1 = saveUser("test1@test.com", "테스터1");
+        Users user2 = saveUser("test2@test.com", "테스터2");
+        Users user3 = saveUser("test3@test.com", "테스터3");
+        userRepository.saveAll(List.of(user1, user2, user3));
+
+        // 강의 생성
+        Lecture lecture1 = getLecture("웹 디자인의 기초", "프로그래밍");
+        Lecture lecture2 = getLecture("자바 프로그래밍 실전 입문", "프로그래밍");
+        Lecture lecture3 = getLecture("맛있는 파스타 요리", "요리");
+        Lecture lecture4 = getLecture("게임 개발의 첫걸음", "게임");
+        Lecture lecture5 = getLecture("그림으로 배우는 일본어", "디자인");
+        Lecture lecture6 = getLecture("프론트엔드 개발 마스터 클래스", "프로그래밍");
+        Lecture lecture7 = getLecture("컴퓨터 비전 기초", "프로그래밍");
+        Lecture lecture8 = getLecture("디지털 아트 워크샵", "디자인");
+        Lecture lecture9 = getLecture("영화 속 레시피", "요리");
+        Lecture lecture10 = getLecture("모바일 게임 디자인", "디자인");
+        Lecture lecture11 = getLecture("너무 쉬운 스프링 개발서", "프로그래밍");
+        Lecture lecture12 = getLecture("파이썬 프로그래밍 기초", "프로그래밍");
+
+        lectureRepository.saveAll(List.of(
+                lecture1, lecture2, lecture3,
+                lecture4, lecture5, lecture6,
+                lecture7, lecture8, lecture9,
+                lecture10, lecture11, lecture12));
+
+
+        // 리뷰 생성
+        Review review1 = getReview(lecture1, null, 5.0, "강의력 좋은, ", "내용이 알찹니다!");
+        Review review2 = getReview(lecture2, null, 0.5, "도움이 안되었어요, ", "윽... 너무별로");
+        Review review3 = getReview(lecture3, null, 1.0, "도움이 안되었어요, ", "소리가 안들리는데요");
+        Review review4 = getReview(lecture4, null, 4.5, "강의력 좋은, 이해가 잘돼요", "내용이 알찹니다!");
+        Review review5 = getReview(lecture5, null, 1.5, "매우 적극적, ", "내용이 알찹니다!");
+        Review review6 = getReview(lecture6, null, 2.0, "매우 적극적, 도움이 많이 됐어요, ", "내용이 알찹니다!");
+        Review review7 = getReview(lecture7, null, 2.5, "내용이 자세해요", "내용이 알찹니다!");
+        Review review8 = getReview(lecture8, null, 3.5, "강의력 좋은, 듣기 좋은 목소리", "내용이 알찹니다!");
+        Review review9 = getReview(lecture9, null, 4.0, "듣기 좋은 목소리", "내용이 알찹니다!");
+        Review review10 = getReview(lecture10, null, 3.0, "보통이에요, ", "내용이 알찹니다!");
+
+        reviewRepository.saveAll(List.of(
+                review1, review2, review3, review4,
+                review5, review6, review7, review8,
+                review9, review10
+        ));
+
+        // when
+        List<LectureScopeListReadResponse.DetailReview> detailReviews = lectureQueryRepository.findByHighScores(null);
+
+        // then
+        assertThat(detailReviews)
+                .hasSize(3)
+                .extracting("id", "score", "userName")
+                .contains(
+                        tuple(review1.getId(), review1.getScore(), "탈퇴한 사용자"),
+                        tuple(review4.getId(), review4.getScore(), "탈퇴한 사용자"),
+                        tuple(review9.getId(), review9.getScore(), "탈퇴한 사용자")
+                );
+    }
+
     @DisplayName("강의 Scope 관심분야 Null 조회 - 강의력 좋은 순")
     @Test
     void findByBestLecturesWithNotLogin() {
