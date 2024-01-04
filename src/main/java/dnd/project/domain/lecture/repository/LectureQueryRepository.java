@@ -70,7 +70,6 @@ public class LectureQueryRepository {
                 .fetch();
     }
 
-
     public List<LectureListReadResponse.LectureInfo.ReviewInfo> findAllReviewsById(Long id) {
 
         return queryFactory.select(
