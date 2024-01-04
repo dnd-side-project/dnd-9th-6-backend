@@ -108,7 +108,7 @@ public class TokenProvider implements InitializingBean {
 
         redisDao.setValues(email, refreshToken, Duration.ofDays(14));
 
-        return  refreshToken;
+        return refreshToken;
     }
 
     public Long getExpiration(String accessToken) {

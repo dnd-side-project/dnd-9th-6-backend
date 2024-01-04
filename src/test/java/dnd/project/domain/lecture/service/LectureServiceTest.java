@@ -4,6 +4,7 @@ import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.repository.LectureRepository;
 import dnd.project.domain.lecture.response.LectureListReadResponse;
 import dnd.project.domain.lecture.response.LectureReadResponse;
+import dnd.project.domain.lecture.response.TagGroup;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.review.entity.ReviewTag;
 import dnd.project.domain.review.repository.ReviewRepository;
@@ -186,12 +187,12 @@ class LectureServiceTest {
 
         Assertions.assertThat(response.getReviewCount()).isEqualTo(3);
 
-        List<LectureReadResponse.TagGroup> tagGroups = response.getTagGroups();
+        List<TagGroup> tagGroups = response.getTagGroups();
         Assertions.assertThat(tagGroups.size()).isEqualTo(3);
         Assertions.assertThat(tagGroups).extracting("name").contains("강사에 대해", "강의내용에 대해", "강의후, 느끼는 변화");
 
-        for (LectureReadResponse.TagGroup tagGroup : tagGroups) {
-            List<LectureReadResponse.TagGroup.Tag> tags = tagGroup.getTags();
+        for (TagGroup tagGroup : tagGroups) {
+            List<TagGroup.Tag> tags = tagGroup.getTags();
 
             if (tagGroup.getName().equals("강사에 대해")) {
                 Assertions.assertThat(tags.size()).isEqualTo(4);

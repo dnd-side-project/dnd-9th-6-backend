@@ -21,7 +21,7 @@ public abstract class BaseEntity {
     private LocalDateTime createdDate;
 
     @PrePersist
-    public void onPrePersist(){
+    public void onPrePersist() {
         this.createdDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }

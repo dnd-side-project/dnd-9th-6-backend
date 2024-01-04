@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 public class CustomException extends RuntimeException {
 
-	private Result result;
-	private String debug;
+    private Result result;
+    private String debug;
 
-	public CustomException(Result result) {
-		this.result = result;
-		this.debug = result.getMessage();
-	}
+    public CustomException(Result result) {
+        this.result = result;
+        this.debug = result.getMessage();
+    }
 }

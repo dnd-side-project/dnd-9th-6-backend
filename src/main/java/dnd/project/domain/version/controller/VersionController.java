@@ -24,7 +24,7 @@ public class VersionController {
 
     @PostMapping("/api/v1/version")
     public CustomResponseEntity<VersionResponse.Update> updateServiceVersion(
-           @Valid @RequestBody VersionRequest.Update request
+            @Valid @RequestBody VersionRequest.Update request
     ) {
         return CustomResponseEntity.success(versionService.updateServiceVersion(request.toServiceRequest()));
     }

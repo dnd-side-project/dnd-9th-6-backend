@@ -1,13 +1,12 @@
 package dnd.project.global.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @Setter

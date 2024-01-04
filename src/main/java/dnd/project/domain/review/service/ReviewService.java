@@ -2,12 +2,10 @@ package dnd.project.domain.review.service;
 
 import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.repository.LectureRepository;
-import dnd.project.domain.lecture.response.LectureScopeListReadResponse.DetailReview;
 import dnd.project.domain.review.entity.LikeReview;
 import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.review.repository.LikeReviewRepository;
 import dnd.project.domain.review.repository.ReviewRepository;
-import dnd.project.domain.review.request.ReviewRequest;
 import dnd.project.domain.review.request.ReviewServiceRequest;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
