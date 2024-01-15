@@ -91,7 +91,7 @@ class UserServiceTest {
 
         // then
         assertThat(response)
-                .extracting("id", "email", "nickName", "imageUrl", "interests")
+                .extracting("id", "email", "name", "imageUrl", "interests")
                 .contains(
                         user.getId(), user.getEmail(), user.getNickName(),
                         user.getImageUrl(), user.getInterests()
@@ -109,7 +109,7 @@ class UserServiceTest {
 
         // then
         assertThat(response)
-                .extracting("id", "email", "nickName", "imageUrl", "interests")
+                .extracting("id", "email", "name", "imageUrl", "interests")
                 .contains(
                         user.getId(), user.getEmail(), user.getNickName(),
                         user.getImageUrl(), ""

@@ -43,7 +43,7 @@ public class UserResponse {
     public static class Detail {
         private Long id;
         private String email;
-        private String nickName;
+        private String name;
         private String imageUrl;
         private String interests;
 
@@ -52,7 +52,7 @@ public class UserResponse {
             return Detail.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .nickName(user.getNickName())
+                    .name(user.getNickName())
                     .imageUrl(user.getImageUrl())
                     .interests(interestOptional.orElse(""))
                     .build();

@@ -1,7 +1,6 @@
 package dnd.project.docs.user;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import com.epages.restdocs.apispec.Schema;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.user.config.Platform;
 import dnd.project.domain.user.controller.UserController;
@@ -10,11 +9,9 @@ import dnd.project.domain.user.response.UserResponse;
 import dnd.project.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
@@ -150,7 +147,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                 .willReturn(UserResponse.Detail.builder()
                         .id(1L)
                         .email("classcope@gmail.com")
-                        .nickName("클래스코프")
+                        .name("클래스코프")
                         .imageUrl("http://www.aws.../image.png")
                         .interests("디자인,드로잉 / 관심분야 없을시 : 빈 문자열 ")
                         .build());
@@ -180,7 +177,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                                 .description("유저 ID"),
                                         fieldWithPath("data.email").type(STRING)
                                                 .description("유저 이메일"),
-                                        fieldWithPath("data.nickName").type(STRING)
+                                        fieldWithPath("data.name").type(STRING)
                                                 .description("유저 닉네임"),
                                         fieldWithPath("data.imageUrl").type(STRING)
                                                 .description("유저 프로필 이미지 URL"),
@@ -200,7 +197,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         UserResponse.Detail.builder()
                                 .id(1L)
                                 .email("classcope@gmail.com")
-                                .nickName("클래스코프")
+                                .name("클래스코프")
                                 .imageUrl("http://www.aws.../image.png")
                                 .interests("프로그래밍,커리어")
                                 .build()
@@ -239,7 +236,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                                 .description("유저 ID"),
                                         fieldWithPath("data.email").type(STRING)
                                                 .description("유저 이메일"),
-                                        fieldWithPath("data.nickName").type(STRING)
+                                        fieldWithPath("data.name").type(STRING)
                                                 .description("유저 닉네임"),
                                         fieldWithPath("data.imageUrl").type(STRING)
                                                 .description("유저 프로필 이미지 URL"),
