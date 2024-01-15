@@ -24,7 +24,11 @@ public class EmbeddedRedisConfig {
     @PostConstruct
     public void redisServer() throws IOException {
         redisServer = new RedisServer(isRedisRunning()? findAvailablePort() : port);
-        redisServer.start();
+        try {
+            redisServer.start();
+        } catch (Exception e) {
+            log.info("이미 실행되고 있습니다.");
+        }
     }
 
     @PreDestroy
