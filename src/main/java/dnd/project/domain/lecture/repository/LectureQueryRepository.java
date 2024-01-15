@@ -9,8 +9,10 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.project.domain.lecture.entity.Lecture;
+import dnd.project.domain.lecture.response.LectureListReadResponse;
 import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
 import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.review.entity.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,6 +51,44 @@ public class LectureQueryRepository {
                 .where(lecture.id.in(ids))
                 .groupBy(lecture.id)
                 .transform(GroupBy.groupBy(lecture.id).as(bookmark.id.count()));
+    }
+
+    public Map<Long, Double> findReviewAverageScore(List<Long> ids) {
+        return queryFactory
+                .from(lecture)
+                .leftJoin(review).on(lecture.id.eq(review.lecture.id))
+                .where(lecture.id.in(ids))
+                .groupBy(lecture.id)
+                .transform(GroupBy.groupBy(lecture.id).as(review.score.avg()));
+    }
+
+    public List<Review> findAllReviewsByIds(List<Long> ids) {
+        return queryFactory
+                .select(review)
+                .from(review)
+                .where(review.lecture.id.in(ids))
+                .fetch();
+    }
+
+    public List<LectureListReadResponse.LectureInfo.ReviewInfo> findAllReviewsById(Long id) {
+
+        return queryFactory.select(
+                        Projections.constructor(LectureListReadResponse.LectureInfo.ReviewInfo.class,
+                                review.id,
+                                selectUser("nickName"),
+                                review.tags,
+                                review.content,
+                                review.createdDate,
+                                review.score,
+                                likeReview.id.count()))
+                .from(review)
+                .leftJoin(review.user, users)
+                .leftJoin(likeReview).on(review.id.eq(likeReview.review.id))
+                .where(review.lecture.id.eq(id))
+                .groupBy(review.id)
+                .orderBy(review.id.desc())
+                .limit(10)
+                .fetch();
     }
 
     public Page<Lecture> findAll(String mainCategory,
@@ -197,6 +237,7 @@ public class LectureQueryRepository {
                 .where(review.lecture.id.eq(id))
                 .fetch();
     }
+
 
     public Page<LectureReviewListReadResponse.ReviewInfo> findAllReviewsById(Long id,
                                                                              String searchKeyword,

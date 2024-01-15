@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static dnd.project.domain.lecture.response.LectureScopeListReadResponse.DetailReview;
 import static dnd.project.domain.review.response.ReviewResponse.*;
 
 @RestController

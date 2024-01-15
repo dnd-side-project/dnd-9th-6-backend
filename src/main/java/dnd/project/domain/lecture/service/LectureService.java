@@ -4,10 +4,8 @@ import dnd.project.domain.lecture.entity.Lecture;
 import dnd.project.domain.lecture.entity.LectureCategory;
 import dnd.project.domain.lecture.repository.LectureQueryRepository;
 import dnd.project.domain.lecture.repository.LectureRepository;
-import dnd.project.domain.lecture.response.LectureListReadResponse;
-import dnd.project.domain.lecture.response.LectureReadResponse;
-import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
-import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.lecture.response.*;
+import dnd.project.domain.review.entity.Review;
 import dnd.project.domain.review.entity.ReviewTag;
 import dnd.project.domain.user.entity.Users;
 import dnd.project.domain.user.repository.UserRepository;
@@ -31,6 +29,15 @@ public class LectureService {
     private static final Integer LECTURE_REVIEW_MAX_SIZE = 10;
     private static final Integer LECTURE_REVIEW_DEFAULT_SIZE = 5;
     private static final Integer LECTURE_REVIEW_MIN_SIZE = 1;
+    private static final Set<String> TAG_TYPES = Arrays.stream(ReviewTag.values())
+            .map(ReviewTag::getType)
+            .collect(Collectors.toSet());
+    private static final List<String> TAG_NAMES = Arrays.stream(ReviewTag.values())
+            .map(ReviewTag::getName)
+            .toList();
+    private static final Map<String, String> TAG_NAME_TYPES = Arrays.stream(ReviewTag.values()).
+            collect(Collectors.toMap(ReviewTag::getName,
+                    ReviewTag::getType));
 
     private final LectureQueryRepository lectureQueryRepository;
     private final LectureRepository lectureRepository;
@@ -47,27 +54,19 @@ public class LectureService {
         Double averageScore = lectureQueryRepository.findReviewAverageScoreById(id);
         Double roundedAverageScore = Math.round(averageScore * 2) / 2.0;
 
-        // tagType 리스트
-        Set<String> tagTypes = Arrays.stream(ReviewTag.values())
-                .map(ReviewTag::getType)
-                .collect(Collectors.toSet());
-
-        // tagName 리스트
-        List<String> tagNames = Arrays.stream(ReviewTag.values())
-                .map(ReviewTag::getName)
-                .toList();
-
-        // (Key:tagName, Value:tagType)인 Map
-        Map<String, String> tagNameTypeMap = Arrays.stream(ReviewTag.values()).
-                collect(Collectors.toMap(ReviewTag::getName,
-                        ReviewTag::getType));
-
-        // 전체 태그를 "," 로 구분하여 자르고 각 키워드 별 카운트
+        // 전체 태그를 "," 로 구분 하여 자르고 각 키워드 별 카운트
         List<String> tagsList = lectureQueryRepository.findAllReviewTagsById(id);
+
+        List<TagGroup> tagGroups = getTagGroups(tagsList);
+
+        return LectureReadResponse.of(lecture, reviewCount, roundedAverageScore, tagGroups);
+    }
+
+    private List<TagGroup> getTagGroups(List<String> tagsList) {
 
         // 카운트 0 초기화
         Map<String, Integer> tagCountMap = new HashMap<>();
-        for (String tagName : tagNames) {
+        for (String tagName : TAG_NAMES) {
             tagCountMap.put(tagName, 0);
         }
 
@@ -79,27 +78,20 @@ public class LectureService {
             }
         }
 
-        Map<String, List<LectureReadResponse.TagGroup.Tag>> result = new HashMap<>();
-
-        for (String tagType : tagTypes) {
-            result.put(tagType, new ArrayList<>());
-        }
+        Map<String, List<TagGroup.Tag>> result = new HashMap<>();
 
         for (Map.Entry<String, Integer> entry : tagCountMap.entrySet()) {
             String tagName = entry.getKey();
             Integer tagCount = entry.getValue();
-            String tagType = tagNameTypeMap.get(tagName);
-            if (tagType != null && result.containsKey(tagType)) {
-                result.get(tagType).add(new LectureReadResponse.TagGroup.Tag(tagName, tagCount));
-            }
+            String tagType = TAG_NAME_TYPES.get(tagName);
+
+            result.computeIfAbsent(tagType, k -> new ArrayList<>())
+                    .add(new TagGroup.Tag(tagName, tagCount));
         }
 
-        List<LectureReadResponse.TagGroup> tagGroups = result.entrySet().stream()
-                .map(response ->
-                        new LectureReadResponse.TagGroup(response.getKey(), response.getValue()))
+        return result.entrySet().stream()
+                .map(response -> new TagGroup(response.getKey(), response.getValue()))
                 .toList();
-
-        return LectureReadResponse.of(lecture, reviewCount, roundedAverageScore, tagGroups);
     }
 
     @Transactional(readOnly = true)
@@ -202,19 +194,7 @@ public class LectureService {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(mainCategoryName, subCategoryName, searchKeyword, page, size, sort);
 
-        List<Long> ids = lectures.getContent().stream()
-                .map(Lecture::getId)
-                .toList();
-
-        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
-        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
-
-        List<LectureListReadResponse.LectureInfo> content = lectures.getContent().stream()
-                .map(lecture -> LectureListReadResponse.LectureInfo.of(
-                        lecture,
-                        reviewCount.getOrDefault(lecture.getId(), 0L),
-                        bookmarkCount.getOrDefault(lecture.getId(), 0L)))
-                .collect(Collectors.toList());
+        List<LectureListReadResponse.LectureInfo> content = getLectureInfos(lectures);
 
         int totalPages = lectures.getTotalPages();
         long totalElements = lectures.getTotalElements();
@@ -234,19 +214,7 @@ public class LectureService {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(mainCategoryName, null, searchKeyword, page, size, sort);
 
-        List<Long> ids = lectures.getContent().stream()
-                .map(Lecture::getId)
-                .toList();
-
-        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
-        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
-
-        List<LectureListReadResponse.LectureInfo> content = lectures.getContent().stream()
-                .map(lecture -> LectureListReadResponse.LectureInfo.of(
-                        lecture,
-                        reviewCount.getOrDefault(lecture.getId(), 0L),
-                        bookmarkCount.getOrDefault(lecture.getId(), 0L)))
-                .collect(Collectors.toList());
+        List<LectureListReadResponse.LectureInfo> content = getLectureInfos(lectures);
 
         int totalPages = lectures.getTotalPages();
         long totalElements = lectures.getTotalElements();
@@ -263,19 +231,7 @@ public class LectureService {
 
         Page<Lecture> lectures = lectureQueryRepository.findAll(null, null, searchKeyword, page, size, sort);
 
-        List<Long> ids = lectures.getContent().stream()
-                .map(Lecture::getId)
-                .toList();
-
-        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
-        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
-
-        List<LectureListReadResponse.LectureInfo> content = lectures.getContent().stream()
-                .map(lecture -> LectureListReadResponse.LectureInfo.of(
-                        lecture,
-                        reviewCount.getOrDefault(lecture.getId(), 0L),
-                        bookmarkCount.getOrDefault(lecture.getId(), 0L)))
-                .collect(Collectors.toList());
+        List<LectureListReadResponse.LectureInfo> content = getLectureInfos(lectures);
 
         int totalPages = lectures.getTotalPages();
         long totalElements = lectures.getTotalElements();
@@ -283,6 +239,46 @@ public class LectureService {
         int pageNumber = lectures.getPageable().getPageNumber();
 
         return LectureListReadResponse.of(totalPages, pageNumber, pageSize, totalElements, content);
+    }
+
+    private List<LectureListReadResponse.LectureInfo> getLectureInfos(Page<Lecture> lectures) {
+        List<Long> ids = lectures.getContent().stream()
+                .map(Lecture::getId)
+                .toList();
+
+        Map<Long, Long> reviewCount = lectureQueryRepository.findReviewCount(ids);
+        Map<Long, Long> bookmarkCount = lectureQueryRepository.findBookmarkCount(ids);
+        Map<Long, Double> reviewAverageScore = lectureQueryRepository.findReviewAverageScore(ids);
+        Map<Object, List<Review>> reviewsByLectureId = lectureQueryRepository.findAllReviewsByIds(ids)
+                .stream()
+                .collect(Collectors.groupingBy(review -> review.getLecture().getId()));
+
+        return lectures.getContent().stream()
+                .map(lecture -> {
+
+                    List<String> tags = reviewsByLectureId.getOrDefault(lecture.getId(), Collections.emptyList())
+                            .stream()
+                            .map(Review::getTags)
+                            .toList();
+
+                    List<TagGroup> tagGroups = getTagGroups(tags);
+
+                    Double averageScore = reviewAverageScore.getOrDefault(lecture.getId(), 0.0);
+                    if (averageScore == null) {
+                        averageScore = 0.0;
+                    }
+
+                    Double roundedAverageScore = Math.round(averageScore * 2) / 2.0;
+
+                    return LectureListReadResponse.LectureInfo.of(
+                            lecture,
+                            reviewCount.getOrDefault(lecture.getId(), 0L),
+                            bookmarkCount.getOrDefault(lecture.getId(), 0L),
+                            roundedAverageScore,
+                            tagGroups,
+                            lectureQueryRepository.findAllReviewsById(lecture.getId()));
+                })
+                .collect(Collectors.toList());
     }
 
     private LectureCategory findMainSubCategory(Integer mainCategoryId, Integer subCategoryId) {

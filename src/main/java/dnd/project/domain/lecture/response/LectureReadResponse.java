@@ -41,18 +41,4 @@ public class LectureReadResponse {
                 averageScore,
                 tagGroups);
     }
-
-    @Getter
-    @RequiredArgsConstructor
-    public static class TagGroup {
-        private final String name;
-        private final List<Tag> tags;
-
-        @Getter
-        @RequiredArgsConstructor
-        public static class Tag {
-            private final String name;
-            private final Integer count;
-        }
-    }
 }

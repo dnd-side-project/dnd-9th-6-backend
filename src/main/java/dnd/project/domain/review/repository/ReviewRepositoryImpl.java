@@ -1,9 +1,6 @@
 package dnd.project.domain.review.repository;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
 import dnd.project.domain.review.entity.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

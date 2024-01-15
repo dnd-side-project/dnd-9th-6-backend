@@ -4,10 +4,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dnd.project.docs.RestDocsSupport;
 import dnd.project.domain.lecture.controller.LectureController;
 import dnd.project.domain.lecture.entity.Lecture;
-import dnd.project.domain.lecture.response.LectureListReadResponse;
-import dnd.project.domain.lecture.response.LectureReadResponse;
-import dnd.project.domain.lecture.response.LectureReviewListReadResponse;
-import dnd.project.domain.lecture.response.LectureScopeListReadResponse;
+import dnd.project.domain.lecture.response.*;
 import dnd.project.domain.lecture.service.LectureService;
 import dnd.project.domain.review.entity.ReviewTag;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +13,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
@@ -62,7 +56,10 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 "스프링,스프링부트",
                                 "실무에 필요한 스프링 부트는 이 강의 하나로 모두 정리해드립니다."),
                         10L,
-                        5L),
+                        5L,
+                        5.0,
+                        List.of(new TagGroup("강사에 대해", List.of(new TagGroup.Tag("빠른 답변", 5), new TagGroup.Tag("듣기 좋은 목소리", 3)))),
+                        List.of(new LectureListReadResponse.LectureInfo.ReviewInfo(1L, "user1", "빠른 답변,듣기 좋은 목소리", "좋아요", LocalDateTime.of(2024, 1, 1, 0, 0), 5.0, 5L))),
                 LectureListReadResponse.LectureInfo.of(getLecture(2L,
                                 "스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술",
                                 "99,000",
@@ -72,7 +69,10 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 "스프링,스프링MVC",
                                 "웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다. 스프링 MVC의 핵심 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
                         5L,
-                        1L),
+                        1L,
+                        5.0,
+                        List.of(new TagGroup("강사에 대해", List.of(new TagGroup.Tag("빠른 답변", 5), new TagGroup.Tag("듣기 좋은 목소리", 3)))),
+                        List.of(new LectureListReadResponse.LectureInfo.ReviewInfo(1L, "user1", "빠른 답변,듣기 좋은 목소리", "좋아요", LocalDateTime.of(2024, 1, 1, 0, 0), 5.0, 5L))),
                 LectureListReadResponse.LectureInfo.of(getLecture(3L,
                                 "스프링 DB 2편 - 데이터 접근 활용 기술",
                                 "99000",
@@ -82,7 +82,10 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 "스프링,DB",
                                 "백엔드 개발에 필요한 DB 데이터 접근 기술을 활용하고, 완성할 수 있습니다. 스프링 DB 접근 기술의 원리와 구조를 이해하고, 더 깊이있는 백엔드 개발자로 성장할 수 있습니다."),
                         3L,
-                        4L),
+                        4L,
+                        5.0,
+                        List.of(new TagGroup("강사에 대해", List.of(new TagGroup.Tag("빠른 답변", 5), new TagGroup.Tag("듣기 좋은 목소리", 3)))),
+                        List.of(new LectureListReadResponse.LectureInfo.ReviewInfo(1L, "user1", "빠른 답변,듣기 좋은 목소리", "좋아요", LocalDateTime.of(2024, 1, 1, 0, 0), 5.0, 5L))),
                 LectureListReadResponse.LectureInfo.of(getLecture(4L,
                                 "배달앱 클론코딩 [with React Native]",
                                 "71,500",
@@ -92,7 +95,10 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 "리액트 네이티브",
                                 "리액트 네이티브로 라이더용 배달앱을 만들어봅니다. 6년간 리액트 네이티브로 5개 이상의 앱을 만들고, 카카오 모빌리티에 매각한 개발자의 강의입니다."),
                         4L,
-                        20L),
+                        20L,
+                        5.0,
+                        List.of(new TagGroup("강사에 대해", List.of(new TagGroup.Tag("빠른 답변", 5), new TagGroup.Tag("듣기 좋은 목소리", 3)))),
+                        List.of(new LectureListReadResponse.LectureInfo.ReviewInfo(1L, "user1", "빠른 답변,듣기 좋은 목소리", "좋아요", LocalDateTime.of(2024, 1, 1, 0, 0), 5.0, 5L))),
                 LectureListReadResponse.LectureInfo.of(getLecture(5L,
                                 "앨런 iOS 앱 개발 (15개의 앱을 만들면서 근본원리부터 배우는 UIKit) - MVVM까지",
                                 "205,700",
@@ -102,7 +108,10 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                 "iOS",
                                 "탄탄한 신입 iOS개발자가 되기 위한 기본기 갖추기. 15개의 앱을 만들어 보면서 익히는.. iOS프로그래밍의 기초"),
                         1L,
-                        11L));
+                        11L,
+                        5.0,
+                        List.of(new TagGroup("강사에 대해", List.of(new TagGroup.Tag("빠른 답변", 5), new TagGroup.Tag("듣기 좋은 목소리", 3)))),
+                        List.of(new LectureListReadResponse.LectureInfo.ReviewInfo(1L, "user1", "빠른 답변,듣기 좋은 목소리", "좋아요", LocalDateTime.of(2024, 1, 1, 0, 0), 5.0, 5L))));
 
         given(lectureService.getLectures(any(), any(), any(), any(), any(), any()))
                 .willReturn(
@@ -191,7 +200,35 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                                         fieldWithPath("data.lectures[].reviewCount").type(JsonFieldType.NUMBER)
                                                 .description("강의 리뷰 수"),
                                         fieldWithPath("data.lectures[].bookmarkCount").type(JsonFieldType.NUMBER)
-                                                .description("강의 북마크 수"))
+                                                .description("강의 북마크 수"),
+                                        fieldWithPath("data.lectures[].averageScore").type(JsonFieldType.NUMBER)
+                                                .description("강의 평점"),
+                                        fieldWithPath("data.lectures[].tagGroups[]").type(JsonFieldType.ARRAY)
+                                                .description("강의 태그 그룹 목록"),
+                                        fieldWithPath("data.lectures[].tagGroups[].name").type(JsonFieldType.STRING)
+                                                .description("강의 태그 타입 이름"),
+                                        fieldWithPath("data.lectures[].tagGroups[].tags[]").type(JsonFieldType.ARRAY)
+                                                .description("강의 태그 목록"),
+                                        fieldWithPath("data.lectures[].tagGroups[].tags[].name").type(JsonFieldType.STRING)
+                                                .description("강의 태그 이름"),
+                                        fieldWithPath("data.lectures[].tagGroups[].tags[].count").type(JsonFieldType.NUMBER)
+                                                .description("강의 태그 개수"),
+                                        fieldWithPath("data.lectures[].reviews[]").type(JsonFieldType.ARRAY)
+                                                .description("후기 목록"),
+                                        fieldWithPath("data.lectures[].reviews[].id").type(JsonFieldType.NUMBER)
+                                                .description("후기 ID"),
+                                        fieldWithPath("data.lectures[].reviews[].nickname").type(JsonFieldType.STRING)
+                                                .description("후기 작성자 닉네임"),
+                                        fieldWithPath("data.lectures[].reviews[].tags[]").type(JsonFieldType.ARRAY)
+                                                .description("후기 태그 목록"),
+                                        fieldWithPath("data.lectures[].reviews[].content").type(JsonFieldType.STRING)
+                                                .description("후기 내용"),
+                                        fieldWithPath("data.lectures[].reviews[].createdDate").type(JsonFieldType.STRING)
+                                                .description("후기 생성일"),
+                                        fieldWithPath("data.lectures[].reviews[].score").type(JsonFieldType.NUMBER)
+                                                .description("후기 점수"),
+                                        fieldWithPath("data.lectures[].reviews[].likeCount").type(JsonFieldType.NUMBER)
+                                                .description("후기 추천수"))
                                 .responseSchema(schema("LectureListReadResponse"))
                                 .build())));
     }
@@ -215,18 +252,18 @@ public class LectureControllerDocsTest extends RestDocsSupport {
                 .map(ReviewTag::getType)
                 .collect(Collectors.toSet());
 
-        List<LectureReadResponse.TagGroup> tagGroups = new ArrayList<>();
+        List<TagGroup> tagGroups = new ArrayList<>();
         for (String tagType : tagTypes) {
             List<String> tagNames = Arrays.stream(ReviewTag.values())
                     .filter(tag -> tag.getType().equals(tagType))
                     .map(ReviewTag::getName)
                     .toList();
 
-            List<LectureReadResponse.TagGroup.Tag> tagList = new ArrayList<>();
+            List<TagGroup.Tag> tagList = new ArrayList<>();
             for (int i = 0; i < tagNames.size(); i++) {
-                tagList.add(new LectureReadResponse.TagGroup.Tag(tagNames.get(i), i));
+                tagList.add(new TagGroup.Tag(tagNames.get(i), i));
             }
-            tagGroups.add(new LectureReadResponse.TagGroup(tagType, tagList));
+            tagGroups.add(new TagGroup(tagType, tagList));
         }
 
         given(lectureService.getLecture(any()))
