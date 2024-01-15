@@ -41,7 +41,8 @@ public class UserController {
     // 관심분야 추가 요청 API
     @PostMapping("")
     public CustomResponseEntity<Void> addInterests(
-            @AuthenticationPrincipal Long userId, UserRequest.Interests request
+            @AuthenticationPrincipal Long userId,
+            @RequestBody @Valid UserRequest.Interests request
     ) {
         return CustomResponseEntity.success(userService.addInterests(userId, request.toServiceRequest()));
     }
