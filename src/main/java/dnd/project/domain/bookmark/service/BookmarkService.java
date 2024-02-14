@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static dnd.project.global.common.Result.NOT_FOUND_LECTURE;
-import static dnd.project.global.common.Result.NOT_FOUND_USER;
+import static dnd.project.global.common.Result.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +31,16 @@ public class BookmarkService {
         Users user = getUser(userId);
         Lecture lecture = getLecture(lectureId);
 
+        if (bookmarkRepository.findByLectureAndUser(lecture, user).isPresent()) {
+            throw new CustomException(ALREADY_CREATED_BOOKMARK);
+        }
+
         bookmarkRepository.save(
                 Bookmark.builder()
                         .user(user)
                         .lecture(lecture)
-                        .build()
-        );
+                        .build());
+
         return null;
     }
 
