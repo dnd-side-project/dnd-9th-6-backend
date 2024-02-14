@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.querydsl.core.types.dsl.Expressions.stringTemplate;
 import static dnd.project.domain.bookmark.entity.QBookmark.bookmark;
 import static dnd.project.domain.lecture.entity.QLecture.lecture;
 import static dnd.project.domain.user.entity.QUsers.users;
@@ -30,7 +29,7 @@ public class BookmarkRepositoryImpl implements BookmarkCustomRepository {
                         bookmark.lecture.source.as("source"),
                         bookmark.lecture.title.as("title"),
                         bookmark.lecture.price.as("price"),
-                        stringTemplate("TO_CHAR({0}, 'yyyy-MM-dd')", bookmark.createdDate).as("addedDate")))
+                        bookmark.createdDate.as("addedDate")))
                 .from(bookmark)
                 .innerJoin(bookmark.lecture, lecture)
                 .innerJoin(bookmark.user, users)

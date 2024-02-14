@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
@@ -117,7 +118,7 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                 .source("fastcampus")
                 .title("100가지 시나리오로 학습하는 프론트엔드 : 5년 이상 경험을 초압축한 실전 문제 해결 패키지")
                 .price("211000")
-                .addedDate("2023-08-02")
+                .addedDate(LocalDateTime.of(2023, 8, 2, 0, 0, 0))
                 .build();
 
         BookmarkResponse.Detail response2 = BookmarkResponse.Detail.builder()
@@ -128,7 +129,7 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                 .source("fastcampus")
                 .title("시그니처 백엔드 Path 초격차 패키지 Online.")
                 .price("216500")
-                .addedDate("2023-08-07")
+                .addedDate(LocalDateTime.of(2023, 8, 7, 0, 0, 0))
                 .build();
 
         BookmarkResponse.Detail response3 = BookmarkResponse.Detail.builder()
@@ -139,7 +140,7 @@ public class BookmarkControllerDocsTest extends RestDocsSupport {
                 .source("coloso")
                 .title("영국 왕실에서만 사용하는 비밀 디저트 레시피 오픈")
                 .price("725000")
-                .addedDate("2023-08-14")
+                .addedDate(LocalDateTime.of(2023, 8, 14, 0, 0, 0))
                 .build();
 
         given(bookmarkService.readMyBookmark(any()))

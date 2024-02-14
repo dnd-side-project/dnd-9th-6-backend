@@ -1,9 +1,12 @@
 package dnd.project.domain.bookmark.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 public class BookmarkResponse {
 
@@ -19,6 +22,7 @@ public class BookmarkResponse {
         private String source;
         private String title;
         private String price;
-        private String addedDate;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDateTime addedDate;
     }
 }
